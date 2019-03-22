@@ -14,6 +14,7 @@ public class MaxTemperatureReducer extends Reducer<Text, IntWritable, Text, IntW
         for (IntWritable value: values) {
             maxValue = Math.max(maxValue, value.get());
         }
+        System.out.println(key + " : " + maxValue);
         context.write(key, new IntWritable(maxValue));
     }
 }
