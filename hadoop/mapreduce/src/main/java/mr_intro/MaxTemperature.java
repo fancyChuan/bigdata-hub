@@ -19,7 +19,7 @@ public class MaxTemperature {
             System.exit(-1);
         }
 
-        Job job = new Job();
+        Job job = new Job(); // todo:?
         job.setJarByClass(MaxTemperature.class);
         job.setJobName("Find Max Temperature");
 
