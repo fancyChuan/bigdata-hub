@@ -2,7 +2,7 @@
 
 主要参考《hadoop权威指南》第4版，源码地址：[https://github.com/tomwhite/hadoop-book](https://github.com/tomwhite/hadoop-book)
 ### 一、MapReduce组件
-#### windows下运行MR程序
+#### 1.1 windows下运行MR程序
 - 单机模式 
     - hadoop单机模式，配置了HADOOP_HOME以后，不需要做任何配置
     - 寻找对应版本的hadoop.dll 和 winutils.exe.各版本下载地址：[https://github.com/steveloughran/winutils](https://github.com/steveloughran/winutils)
@@ -16,13 +16,13 @@
 2. [Eclipse连接Hadoop分析的三种方式](https://my.oschina.net/OutOfMemory/blog/776772)
 - 建议：在window本地运行单机模式，用于开发调试。在一个虚拟机上部署一个伪分布式，用于测试。再部署一个完全分布式的集群用于模拟生产环境
 
-#### 打包成jar运行到伪/完全分布式
+#### 1.2 打包成jar运行到伪/完全分布式
 对于集群来说，我们本地开发MR程序的时候所使用的依赖，集群都有。因此我们打包的时候不需要把依赖也打包进来。只需要把运行的源码以及META-INF打包即可。
 
 因此，在IDEA里面，应该使用自定义的Empty如下图：
 ![打包成jar](https://note.youdao.com/yws/public/resource/5e17f5b36496bcc3b31a11e0a08e527e/xmlnote/5B97445A4659441BA919F853798AC7D3/37700)
 
-#### MR介绍
+#### 1.3 MR介绍
 MR作业(job)是客户端需要执行的一个工作单元：包括输入数据、MR程序和配置信息。
 
 Hadoop讲一个作业分成若干个任务(task)执行，一个任务失败了，yarn会将它分到一个不同的节点上重新调度运行。
@@ -39,3 +39,18 @@ Hadoop讲一个作业分成若干个任务(task)执行，一个任务失败了�
 - combiner
     - 集群的可用带宽限制了mr作业的数量，因此应尽量避免map和reduce任务之间的数据传输
     - combiner函数作用于map任务的输出，在传到reducer之前先做数据做处理，比如找到最大值
+
+#### 1.4 Hadoop Streaming
+- 允许使用其他非java语言开发MR程序
+- Hadoop Streaming使用Unix标准流作为程序之间的接口，非常适合文本处理
+- 运行：hadoop命令不支持streaming，需要执行streaming的jar文件
+```
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.5.0-cdh5.3.6.jar \
+-files xxx_map.rb, xxx_reduce.rb
+-input input/* \
+-output output \
+-mapper xxx_map.rb
+-combiner xxx_reduce.rb
+-reducer xxx_reduce.rb
+```
+上面命令在集群中使用时，需要加 -files 用于将脚本传输到集群
