@@ -1,7 +1,7 @@
 ## hadoop
 
 主要参考《hadoop权威指南》第4版，源码地址：[https://github.com/tomwhite/hadoop-book](https://github.com/tomwhite/hadoop-book)
-
+### 一、MapReduce组件
 #### windows下运行MR程序
 - 单机模式 
     - hadoop单机模式，配置了HADOOP_HOME以后，不需要做任何配置
@@ -21,3 +21,18 @@
 
 因此，在IDEA里面，应该使用自定义的Empty如下图：
 ![打包成jar](https://note.youdao.com/yws/public/resource/5e17f5b36496bcc3b31a11e0a08e527e/xmlnote/5B97445A4659441BA919F853798AC7D3/37700)
+
+#### MR介绍
+MR作业(job)是客户端需要执行的一个工作单元：包括输入数据、MR程序和配置信息。
+
+Hadoop讲一个作业分成若干个任务(task)执行，一个任务失败了，yarn会将它分到一个不同的节点上重新调度运行。
+- mapper
+    - map任务把输出写到本地硬盘而不是HDFS，可以数据本地化优势
+    - 为了运行效率高，一般不分片的大小设置为128MB
+- reduer
+    - reduce任务不具备数据本地化的优势
+    - reduce任务的数量并不是由输入数据的大小决定，而是独立设置的
+    - 如果有多个reduce任务，每个map任务就会对输出就行分区（一个reduce任务一个分区）【shuffle混洗】
+    - 默认的partitioner通过哈希函数来分区
+    - 调整混洗参数对作业总运行时间的影响非常大
+    - 当数据处理可以完全并行（无序shuffle）时，可能会出现没有reduce任务的情况
