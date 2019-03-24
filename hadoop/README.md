@@ -76,4 +76,4 @@ E:\JavaWorkshop\bigdata-learn\hadoop>type input\ncdc\sample.txt | python mapredu
 
 java接口
 - 从Hadoop URL读取数据
-
+- 通过FileSystem API读取数据
