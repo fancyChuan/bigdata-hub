@@ -64,9 +64,16 @@ E:\JavaWorkshop\bigdata-learn\hadoop>type input\ncdc\sample.txt | python mapredu
 1950    -0011
 1949    +0111
 1949    +0078
-E:\JavaWorkshop\bigdata-learn\hadoop>type input\ncdc\sample.txt | python mapreduce\src\main\python\max_temperature_map.py | python mapreduce\src\main\python\max_temperature_reduce.py
+E:\JavaWorkshop\bigdata-learn\hadoop>type input\ncdc\sample.txt | python mapreduce\src\main\python\max_temperature_map.py | sort | python mapreduce\src\main\python\max_temperature_reduce.py
 1950    -0011
 1949    +0078
 # 集群上运行
 ```
 > python体系下，作为Streaming的替代方案，Dumbo使MR接口更像python
+
+### 二、HDFS
+
+
+java接口
+- 从Hadoop URL读取数据
+
