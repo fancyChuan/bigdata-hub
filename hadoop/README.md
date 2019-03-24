@@ -79,4 +79,5 @@ java接口
 - 通过FileSystem API读取数据
     - 直接使用InputStream
     - 使用FSDataInputStream
-
+- 写入数据
+    
