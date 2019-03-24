@@ -54,3 +54,19 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-2.5.0-cdh5.3.6.j
 -reducer xxx_reduce.rb
 ```
 上面命令在集群中使用时，需要加 -files 用于将脚本传输到集群
+
+- python版本 参见： mapreduce/src/main/python
+```
+# 本地调试，使用type命令 类似于Linux的cat
+E:\JavaWorkshop\bigdata-learn\hadoop>type input\ncdc\sample.txt | python mapreduce\src\main\python\max_temperature_map.py
+1950    +0000
+1950    +0022
+1950    -0011
+1949    +0111
+1949    +0078
+E:\JavaWorkshop\bigdata-learn\hadoop>type input\ncdc\sample.txt | python mapreduce\src\main\python\max_temperature_map.py | python mapreduce\src\main\python\max_temperature_reduce.py
+1950    -0011
+1949    +0078
+# 集群上运行
+```
+> python体系下，作为Streaming的替代方案，Dumbo使MR接口更像python
