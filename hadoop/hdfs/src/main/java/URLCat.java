@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * 通过URLStreamHandler实例以标准输出方式显示Hdfs的文件
+ * 1. 通过URLStreamHandler实例以标准输出方式显示Hdfs的文件
  */
 public class URLCat {
 
