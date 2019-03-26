@@ -21,7 +21,7 @@ public class FileCopyWithProcess {
         FileSystem fs = FileSystem.get(URI.create(dst), conf);
         OutputStream out = fs.create(new Path(dst), new Progressable() {
             @Override
-            public void progress() {
+            public void progress() { // 没调用一次，也就是每次把64KB数据包写入DataNode管线后，答应一个时间点来显示整个运行过程
                 System.out.print(".");
             }
         });

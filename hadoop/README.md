@@ -80,4 +80,9 @@ java接口
     - 直接使用InputStream
     - 使用FSDataInputStream
 - 写入数据
+    - FSDataOutputStream
+- 目录
+    - mkdirs(Path p)
+- 查询文件系统
+    - 文件元数据： FileStatus，封装了文件长度、块大小、副本、修改时间、所有者、权限等信息
     
