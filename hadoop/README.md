@@ -85,4 +85,8 @@ java接口
     - mkdirs(Path p)
 - 查询文件系统
     - 文件元数据： FileStatus，封装了文件长度、块大小、副本、修改时间、所有者、权限等信息
-    
+    - 列出文件: listStatus()
+        - FileStatus[] listStatus(Path p) 
+        - FileStatus[] listStatus(Path p, PathFilter filter) 
+        - FileStatus[] listStatus(Path[] ps, PathFilter filter) 
+        - Hadoop的FileUtil中stat2Paths()可以把FileStatus[]转为Path[]
