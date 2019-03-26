@@ -90,3 +90,10 @@ java接口
         - FileStatus[] listStatus(Path p, PathFilter filter) 
         - FileStatus[] listStatus(Path[] ps, PathFilter filter) 
         - Hadoop的FileUtil中stat2Paths()可以把FileStatus[]转为Path[]
+    - 文件模式：可以使用通配符来寻找需要执行的文件
+        - FileStatus[] globStatus(Path pathPattern)
+        - FileStatus[] globStatus(Path pathPattern, PathFilter filter)
+        - 支持的通配符跟Unix系统一直
+    - PathFilter对象： 以编程的方式控制通配符
+        - 实现PathFilter接口的accept() 方法
+    - 删除数据： delete(Path f, boolean recursive) recursive=true时，非空目录及其内容会被永久性删除
