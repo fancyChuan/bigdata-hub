@@ -16,7 +16,9 @@ public class URLCat {
     public static void main(String[] args) throws Exception {
         InputStream in = null;
         try {
-            in = new URL(args[0]).openStream();
+            String url = args[0];
+            System.out.println("输入的url为：" + url);
+            in = new URL(url).openStream();
             IOUtils.copyBytes(in, System.out, 4096, false); // buffSize设置缓冲区大小， close设置复制结束后是否关闭输入流
         } finally {
             IOUtils.closeStream(in);

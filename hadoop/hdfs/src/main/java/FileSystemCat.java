@@ -19,7 +19,7 @@ public class FileSystemCat {
         FileSystem fs = FileSystem.get(URI.create(uri), conf);
         InputStream in = null;
         try {
-            in = fs.open(new Path(uri));
+            in = fs.open(new Path(uri)); // 得到一个FSDataInputStream对象，支持随机访问
             IOUtils.copyBytes(in, System.out, 4096, false);
         } finally {
             IOUtils.closeStream(in);

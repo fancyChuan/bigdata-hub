@@ -76,6 +76,9 @@ E:\JavaWorkshop\bigdata-learn\hadoop>type input\ncdc\sample.txt | python mapredu
 
 java接口
 - 从Hadoop URL读取数据
+    - java自带的URL可以读取url的信息，new URL("hdfs://host/path"").openStream()
+    - 默认读取不到hdfs，需要通过 URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory()) 参见[URLCat.java](https://github.com/fancyChuan/bigdata-learn/blob/master/hadoop/hdfs/src/main/java/URLCat.java)
+    - 每个JVM只能执行一次 setURLStreamHandlerFactory()
 - 通过FileSystem API读取数据
     - 直接使用InputStream
     - 使用FSDataInputStream
