@@ -14,7 +14,7 @@ public class FileSystemCat {
 
     public static void main(String[] args) throws IOException {
         String uri = args[0];
-
+        System.out.println("输入的文件路径为：" + uri);
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(URI.create(uri), conf);
         InputStream in = null;
