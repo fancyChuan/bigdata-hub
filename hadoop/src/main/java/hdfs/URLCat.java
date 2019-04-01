@@ -1,3 +1,5 @@
+package hdfs;
+
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
 import org.apache.hadoop.io.IOUtils;
 

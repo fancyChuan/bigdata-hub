@@ -1,3 +1,5 @@
+package hdfs;
+
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
 

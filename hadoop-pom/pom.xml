@@ -3,10 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>pom-manager</artifactId>
+        <artifactId>hadoop-book-pom-manager</artifactId>
         <groupId>cn.fancychuan</groupId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom-manager/pom.xml</relativePath>
+        <relativePath>../hadoop-book-pom-manager/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
