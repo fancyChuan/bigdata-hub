@@ -3,7 +3,8 @@ package mapreduce.intro;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        testMaxTemperatureOnLocal();
+        // testMaxTemperatureOnLocal();
+        testMaxTemperatureOnHadoop();
     }
 
     /**

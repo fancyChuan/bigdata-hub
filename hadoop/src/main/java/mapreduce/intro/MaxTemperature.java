@@ -1,5 +1,6 @@
 package mapreduce.intro;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -24,10 +25,13 @@ public class MaxTemperature {
             System.exit(-1);
         }
 
-        Job job = new Job(); // todo:?
+        Configuration conf = new Configuration();
+//        conf.addResource("alone/core-site.xml");
+//        conf.addResource("alone/hdfs-site.xml");
+        Job job = Job.getInstance(conf, "FindMaxTemperature");
         // 1. 执行要运行的jar类
         job.setJarByClass(MaxTemperature.class); // 这行的作用是执行命令 hadoop MaxTemperature input output 的时候能够把对应的jar文件加载到集群中
-        job.setJobName("Find Max Temperature");
+
          // 2. 配置输入输出的路径，可以实现多路径输入（多次调用addInputPaht()）
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
