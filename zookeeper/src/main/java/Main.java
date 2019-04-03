@@ -3,7 +3,8 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         // testCreateGroup();
-        testJoinGroup();
+        // testJoinGroup();
+        testListGroup();
     }
 
     /**
@@ -24,5 +25,14 @@ public class Main {
         String znodeName = "fromIDEA";
         String joinName = "joinIn";
         JoinGroup.main(new String[] {hosts, znodeName, joinName});
+    }
+
+    /**
+     * 3. 查看组成员（也就是还在运行的程序）
+     */
+    public static void testListGroup() throws Exception {
+        String hosts = "s00";
+        String znodeName = "fromIDEA";
+        ListGroup.main(new String[]{hosts, znodeName});
     }
 }

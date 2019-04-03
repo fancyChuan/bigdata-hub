@@ -100,3 +100,11 @@ java接口
     - PathFilter对象： 以编程的方式控制通配符
         - 实现PathFilter接口的accept() 方法
     - 删除数据： delete(Path f, boolean recursive) recursive=true时，非空目录及其内容会被永久性删除
+    
+    
+    
+    
+    
+    
+#### 参考资料
+1. [IDEA向hadoop集群提交MapReduce作业 - shirukai的博客 - CSDN博客](https://blog.csdn.net/shirukai/article/details/81021872)
