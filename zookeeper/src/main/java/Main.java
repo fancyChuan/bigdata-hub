@@ -10,4 +10,9 @@ public class Main {
         String znodeName = "fromIDEA";
         CreateGroup.main(new String[] {hosts, znodeName});
     }
+
+
+    public static void testJoinGroup() throws Exception {
+
+    }
 }
