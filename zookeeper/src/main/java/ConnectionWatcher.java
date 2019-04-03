@@ -5,6 +5,9 @@ import org.apache.zookeeper.ZooKeeper;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * 一个辅助类，等待与ZooKeeper建立连接
+ */
 public class ConnectionWatcher implements Watcher {
 
     private static final int SESSION_TIMEOUT = 5000;
