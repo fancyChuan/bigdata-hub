@@ -26,12 +26,19 @@ log.dirs=/opt/modules/kafka_2.9.2-0.8.1/logs
 ```
 # 1. 启动broker
 bin/kafka-server-start.sh config/server.properties
-# 2. 创建topic
+
+# 2.1 创建topic
 bin/kafka-topics.sh --create --replication-factor 1 --partitions 1 --topic test --zookeeper s00:2181/kafka
-# 查看当前所有topic
+# 2.2 查看当前所有topic
 bin/kafka-topics.sh --list --zookeeper s00:2181/kafka
+# 2.3 删除topic
+bin/kafka-topics.sh --delete --zookeeper s00:2181 --topic test
+# 2.4 查看topic描述
+bin/kafka-topics.sh --topic test --describe --zookeeper s00:2181/kafka
+
 # 3. 新建consumer
 bin/kafka-console-consumer.sh --zookeeper s00:2181/kafka --topic test
+
 # 4. 新建producer 
 bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
 ```
@@ -39,3 +46,9 @@ bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
 1. --zookeeper s00:2181/kafka 需要些实际使用的znode，如果是 s00:2181 那么就是根znode
 2. 单机模式下--replication-factor只能为1，--partitions 可以为1或者2
 > TODO: 为什么先启动producer然后产生的消息在consumer启动后会收不到？
+
+#### Kafka生产过程分析
+- 写入方式
+    - 消息被采用push模式推送到broker中，追加写入partition中，属于顺序写磁盘（比随机内存效率高，保证吞吐率）
+- 分区
+    - 
