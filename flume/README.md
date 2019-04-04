@@ -1,4 +1,5 @@
 ## Flume
+flume各发行版本和文档: [http://flume.apache.org/releases/index.html](http://flume.apache.org/releases/index.html)
 
 架构
 - Flume-ng只有一个角色的节点
