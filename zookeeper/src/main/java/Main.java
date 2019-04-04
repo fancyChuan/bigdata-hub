@@ -35,4 +35,13 @@ public class Main {
         String znodeName = "fromIDEA";
         ListGroup.main(new String[]{hosts, znodeName});
     }
+
+    /**
+     * 4. 删除组
+     */
+    public static void testDeleteGroup() throws Exception {
+        String hosts = "s00";
+        String znodeName = "fromIDEA";
+        DeleteGroup.main(new String[]{hosts, znodeName});
+    }
 }
