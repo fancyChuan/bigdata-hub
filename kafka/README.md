@@ -51,4 +51,21 @@ bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
 - 写入方式
     - 消息被采用push模式推送到broker中，追加写入partition中，属于顺序写磁盘（比随机内存效率高，保证吞吐率）
 - 分区
-    - 
+    - 消息被发送到topic的分区中，offset在分区类有效且唯一
+    - 分区的原因：
+        - 方便集群拓展
+        - 提高并发，因为可以以分区为单位读写
+    - 分区的原则：
+        - 指定了patition，则直接使用；
+        - 未指定patition但指定key，通过对key的value进行hash出一个patition
+        - patition和key都未指定，使用轮询选出一个patition
+- 副本
+    - 在replication之间选出一个leader
+    - producer和consumer只与这个leader交互，其它replication作为follower从leader中复制数据
+- 写入流程
+    - 1.producer先从zookeeper的 "/brokers/.../state"节点找到该partition的leader
+    - 2.producer将消息发送给该leader
+    - 3.leader将消息写入本地log
+    - 4.followers从leader pull消息，写入本地log后向leader发送ACK
+    - 5.leader收到所有ISR中的replication的ACK后，增加HW（high watermark，最后commit 的offset）并向producer发送ACK
+
