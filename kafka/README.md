@@ -47,7 +47,8 @@ bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
 2. 单机模式下--replication-factor只能为1，--partitions 可以为1或者2
 > TODO: 为什么先启动producer然后产生的消息在consumer启动后会收不到？
 
-#### Kafka生产过程分析
+### Kafka工作流程分析
+#### 1. Kafka生产过程分析
 - 写入方式
     - 消息被采用push模式推送到broker中，追加写入partition中，属于顺序写磁盘（比随机内存效率高，保证吞吐率）
 - 分区
@@ -69,3 +70,14 @@ bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
     - 4.followers从leader pull消息，写入本地log后向leader发送ACK
     - 5.leader收到所有ISR中的replication的ACK后，增加HW（high watermark，最后commit 的offset）并向producer发送ACK
 
+#### 2. broker保存信息
+- 存储方式
+    - 物理上把topic分成一个或多个patition（对应 server.properties 中的num.partitions=3配置）
+    - 每个patition物理上对应一个文件夹（该文件夹存储该patition的所有消息和索引文件）
+- 存储策略
+    - 无论消息是否被消费，kafka都会保留所有消息。
+    - 有两种策略可以删除旧数据：
+        - 基于时间：log.retention.hours=168
+        - 基于大小：log.retention.bytes=1073741824
+- ZooKeeper存储结构
+    []
