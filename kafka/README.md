@@ -100,3 +100,8 @@ bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
 - 消费方式
     - consumer采用pull（拉）模式从broker中读取数据
     > 对于Kafka而言，pull模式更合适，它可简化broker的设计，consumer可自主控制消费消息的速率，同时consumer可以自己控制消费方式——即可批量消费也可逐条消费
+    
+### API
+- 创建生产者
+    - 不带回调
+    
