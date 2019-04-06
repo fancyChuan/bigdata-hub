@@ -80,4 +80,6 @@ bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
         - 基于时间：log.retention.hours=168
         - 基于大小：log.retention.bytes=1073741824
 - ZooKeeper存储结构
-    []
+    ![image](https://github.com/fancyChuan/bigdata-learn/blob/master/kafka/ZooKeeper%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.jpeg?raw=true)
+    - 重点关注consumer和broker
+    - producer不在zk中注册，消费者在zk中注册
