@@ -39,7 +39,9 @@ public class Main {
     public static void testTransformation() {
         SparkConf conf = new SparkConf().setMaster("local").setAppName("helloSpark");
         JavaSparkContext sc = new JavaSparkContext(conf);
-        JavaRDD<String> inputRDD = sc.textFile("../resources/testfile.md");
-        inputRDD.filter(line -> {return line.contains("scala");});
+        JavaRDD<String> inputRDD = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md");
+        JavaRDD<String> scala = inputRDD.filter(line -> line.contains("Scala"));
+        JavaRDD<String> merge = scala.union(inputRDD.filter(line -> line.contains("Python")));
+        System.out.println(merge.collect());
     }
 }
