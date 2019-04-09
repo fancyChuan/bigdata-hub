@@ -36,12 +36,19 @@ public class Main {
         System.out.println(lines.collect());
     }
 
+    /**
+     * 3. 测试转化函数
+     */
     public static void testTransformation() {
         SparkConf conf = new SparkConf().setMaster("local").setAppName("helloSpark");
         JavaSparkContext sc = new JavaSparkContext(conf);
         JavaRDD<String> inputRDD = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md");
         JavaRDD<String> scala = inputRDD.filter(line -> line.contains("Scala"));
         JavaRDD<String> merge = scala.union(inputRDD.filter(line -> line.contains("Python")));
+        // 下面是行动函数
+        System.out.println(merge.count());
         System.out.println(merge.collect());
+        System.out.println(merge.take(2));
+        System.out.println(merge.first());
     }
 }

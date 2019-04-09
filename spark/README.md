@@ -17,6 +17,20 @@ JavaRDD<String> lines = sc.parallelize(Arrays.asList("hello", "spark"))
 val x = sc.parallelize(List("hello", "spark-shell"))
 ``` 
 #### 1.2  RDD操作
-转化(transformation)操作：返回一个新的RDD，进行的是惰性求值，可以操作任意数量的输入RDD，比如rdd1.union(rdd2)
+转化(transformation)操作
+- 返回一个新的RDD，进行的是惰性求值（读取文件sc.textFile()也是惰性的）
+- 可以操作任意数量的输入RDD，比如rdd1.union(rdd2)
+- Spark会使用谱系图（lineage graph）来记录不同RDD之间的关系
 
-行动(action)动作：触发实际计算，向驱动器程序返回结果或者把结果写入外部系统
+行动(action)操作
+- 触发实际计算，向驱动器程序返回结果或者把结果写入外部系统
+- 常用count()计数，take(num)取出数据，collect()获取整个RDD中的数据
+- 当调用一个新的行动操作时，整个RDD都会从头开始计算。可以通过将中间结果持久化避免这种低效的行为
+> collect()需要确保单台机器的内存放得下的时候才能使用
+
+#### 1.3 向Spark传递函数
+大部分转化操作和一部分行动操作都需要依赖用户传递的函数来计算。有几个注意的地方：
+- python和Scala会把函数所在的对象也序列化传出去，应注意使用局部变量来避免
+```
+https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/python/helloSpark.py
+```
