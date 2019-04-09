@@ -30,7 +30,15 @@ val x = sc.parallelize(List("hello", "spark-shell"))
 
 #### 1.3 向Spark传递函数
 大部分转化操作和一部分行动操作都需要依赖用户传递的函数来计算。有几个注意的地方：
-- python和Scala会把函数所在的对象也序列化传出去，应注意使用局部变量来避免
-```
-https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/python/helloSpark.py
-```
+- python和Scala会把函数所在的对象也序列化传出去，应注意使用局部变量来避免 参见：[passFunction.py](https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/python/helloSpark.py)
+- 传递的函数中包含不能序列化的对象会报错
+
+在java用于传递的函数需要实现org.apache.spark.api.java.function任一函数式接口
+- 标准Java函数式接口
+
+函数名 | 实现的方法 | 用途
+--- | --- | ---
+Function<T, R> | R call(T) | 接收1个输入返回一个输出，用于类似于map()和filter()等操作中
+Function2<T1, T2, R> | R call(T1, T2) | 接收2个输入返回一个输出，用于类似于fold()和aggregate()等操作中
+FlatMapFunction<T, R> | Iterator(R) call(T) | 接收一个输入返回任意多个输出，用于类似于flatMap()这样的操作
+

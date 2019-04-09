@@ -13,7 +13,8 @@ public class Main {
     public static void main(String[] args) {
         // testWordCount();
         // testHelloSpark();
-        testTransformation();
+        // testTransformation();
+        testPassFunction();
     }
 
     public static void testWordCount() {
@@ -50,5 +51,15 @@ public class Main {
         System.out.println(merge.collect());
         System.out.println(merge.take(2));
         System.out.println(merge.first());
+    }
+
+    /**
+     * 4. 向Spark传递函数
+     */
+    public static void testPassFunction() {
+        PassFunction pf = new PassFunction();
+        pf.testAnonymousInnerClass();
+        pf.testNamedClass();
+        pf.testLambda();
     }
 }
