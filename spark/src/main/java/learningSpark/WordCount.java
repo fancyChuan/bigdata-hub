@@ -10,6 +10,7 @@ import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class WordCount {
     public static void main(String[] args) {
@@ -19,8 +20,8 @@ public class WordCount {
         JavaRDD<String> input = sc.textFile(args[0]);
         JavaRDD<String> words = input.flatMap(new FlatMapFunction<String, String>() {
             @Override
-            public Iterable<String> call(String s) throws Exception {
-                return Arrays.asList(s.split(" "));
+            public Iterator<String> call(String s) throws Exception {
+                return Arrays.asList(s.split(" ")).iterator();
             }
         });
 
