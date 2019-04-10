@@ -85,3 +85,18 @@ MEMORY_AND_DISK | 内存存不下则溢写到磁盘
 MEMORY_AND_DISK_SER | 内存存不下则溢写到磁盘，进行序列化
 DISK_ONLY | 只放在磁盘
 > 在存储级别后面加个 "_2" 可以把持久化数据存为两份
+
+#### 1.5 键值对操作
+PairRDD 键值对RDD，元素为Java或Scala中的Tuple2对象或者python中的元组
+
+创建PairRDD，有两种方式：
+- 并行化初始化：Java使用sc.parallelizePairs() python可以直接使用sc.parallelize()
+- 从其他RDD转化而来: rdd.mapToPair() python直接rdd.map()
+> 注意在Java中没有二元组类型，需要使用scala.Tuple2()来创建
+
+PairRDD的转化操作
+函数名 | 目的 | 示例
+reduceByKey | 
+groupByKey | 
+combineByKey | 
+mapValues

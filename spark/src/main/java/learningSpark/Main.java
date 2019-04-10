@@ -3,8 +3,10 @@ package learningSpark;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaDoubleRDD;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import scala.Tuple2;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +23,8 @@ public class Main {
         // testPassFunction();
         // testSample();
         // testAction();
-        testConvertAndMean();
+        // testConvertAndMean();
+        testPairRDD();
     }
 
     public static void testWordCount() {
@@ -112,5 +115,22 @@ public class Main {
         JavaDoubleRDD doubleRDD = rdd.mapToDouble(x -> x*x); // 注意这个不是 JavaRDD<Double>
         doubleRDD.foreach(x -> System.out.println("[doubleRDD]" + x));
         System.out.println("平均值为： " + doubleRDD.mean());
+    }
+
+
+    public static void testPairRDD() {
+        JavaRDD<String> lines = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md");
+        // 以第一个字母作为key创建 PairRDD，注意要用Tuple2创建元素
+        JavaPairRDD<String, String> pairRDD1 = lines.mapToPair(line -> new Tuple2<>(line.split(" ")[0], line));
+        JavaPairRDD<String, Integer> pairRDD2 = sc.parallelizePairs(
+                Arrays.asList(new Tuple2<>("fancy", 24), new Tuple2<>("fancy", 30),
+                        new Tuple2<>("chuan", 20), new Tuple2<>("what", 3)));
+
+        JavaPairRDD mean = pairRDD2.mapValues(value -> new Tuple2(value, 1))
+                // 把 ("fancy", 24) 转为 ("fancy", (24,1))，再按照相同的key累加 (24, 1) (30, 1)
+                .reduceByKey((t1, t2) -> new Tuple2<>((Integer) t1._1 + (Integer) t2._1, (Integer) t1._2 + (Integer) t2._2))
+                // 对累加后的 (54, 2) 求 value 的平均值
+                .mapValues(valueCnt -> (Integer) valueCnt._1 / (Integer) valueCnt._2);
+        mean.foreach(x -> System.out.println(x));
     }
 }
