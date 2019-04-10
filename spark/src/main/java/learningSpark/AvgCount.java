@@ -1,5 +1,8 @@
 package learningSpark;
 
+/**
+ * 用于 aggregate() 操作的辅助类
+ */
 public class AvgCount {
     public int total;
     public int cnt;

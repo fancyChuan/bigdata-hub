@@ -66,3 +66,22 @@ Function<T, R> | R call(T) | 接收1个输入返回一个输出，用于类似�
 Function2<T1, T2, R> | R call(T1, T2) | 接收2个输入返回一个输出，用于类似于fold()和aggregate()等操作中
 FlatMapFunction<T, R> | Iterator(R) call(T) | 接收一个输入返回任意多个输出，用于类似于flatMap()这样的操作
 
+- 针对专门类型的函数接口
+函数名 | 等价函数 | 用途
+--- | --- | ---
+DoubleFlatMapFunction<T> | Function<T, Iterator<Double>> | 用于rdd.flatMapToDouble()生成DoubleRDD
+DoubleFunction<T> | Function<T, Double> | 用于rdd.mapToDouble()生成DoubleRDD
+PairFlatMapFunction<T, K, V> | Function<T, Iterator<Tuple2<K, V>>> | 用于rdd.flatMapToPair()生成PairRDD<K,V>
+PairMapFunction<T, K, V> | Function<T, Tuple2<K, V>> | 用于rdd.mapToPair()生成PairRDD<K,V>
+
+#### 1.4 持久化（缓存）
+- persist() 缓存，unpersist() 取消缓存
+- 缓存级别： 类型定义在StorageLevel中
+级别 | 含义解释
+--- | ---
+MEMORY_ONLY | 这是默认的持久化策略，使用cache()方法时，实际就是使用的这种持久化策略：使用未序列化的Java对象格式，将数据保存在内存中
+MEMORY_ONLY_SER | 含义同MEMORY_ONLY，只是会对RDD中的数据进行序列化，更省内存，能避免频繁GC
+MEMORY_AND_DISK | 内存存不下则溢写到磁盘
+MEMORY_AND_DISK_SER | 内存存不下则溢写到磁盘，进行序列化
+DISK_ONLY | 只放在磁盘
+> 在存储级别后面加个 "_2" 可以把持久化数据存为两份

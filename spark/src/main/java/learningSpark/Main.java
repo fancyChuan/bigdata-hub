@@ -1,6 +1,8 @@
 package learningSpark;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -18,7 +20,8 @@ public class Main {
         // testTransformation();
         // testPassFunction();
         // testSample();
-        testAction();
+        // testAction();
+        testConvertAndMean();
     }
 
     public static void testWordCount() {
@@ -99,5 +102,15 @@ public class Main {
                 (acc1, acc2) -> new AvgCount(acc1.total + acc2.total, acc1.cnt + acc2.cnt)
                 );
         System.out.println("aggregate求平均： " + avgCount.avg());
+    }
+
+    /**
+     * 7. 将IntegerRDD转为DoubleRDD并求平均
+     */
+    public static void testConvertAndMean() {
+        JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 3, 5));
+        JavaDoubleRDD doubleRDD = rdd.mapToDouble(x -> x*x); // 注意这个不是 JavaRDD<Double>
+        doubleRDD.foreach(x -> System.out.println("[doubleRDD]" + x));
+        System.out.println("平均值为： " + doubleRDD.mean());
     }
 }
