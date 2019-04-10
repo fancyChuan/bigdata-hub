@@ -22,6 +22,17 @@ val x = sc.parallelize(List("hello", "spark-shell"))
 - 可以操作任意数量的输入RDD，比如rdd1.union(rdd2)
 - Spark会使用谱系图（lineage graph）来记录不同RDD之间的关系
 
+函数 | 说明 | 举例
+--- | --- | ---
+filter | 过滤出符合条件的元素 
+map | 对每个元素执行传入的方法，一对一 | 求平方
+flatMap | 对每个元素执行传入的方法，一对多 | 把字符串切分为单词
+distinct | 去重，开销很大，需要通过网络把所有数据进行混洗
+union | 并集，合并前有重复的元素合并后也有 | rdd1.union(rdd2)
+intersection | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗 | 
+subtract | 差集，有需要混洗 | 
+
+
 行动(action)操作
 - 触发实际计算，向驱动器程序返回结果或者把结果写入外部系统
 - 常用count()计数，take(num)取出数据，collect()获取整个RDD中的数据
