@@ -9,12 +9,16 @@ import java.util.List;
 
 
 public class Main {
+    private static SparkConf conf = new SparkConf().setMaster("local[4]").setAppName("javaSpark");
+    private static JavaSparkContext sc = new JavaSparkContext(conf);
 
     public static void main(String[] args) {
         // testWordCount();
         // testHelloSpark();
         // testTransformation();
-        testPassFunction();
+        // testPassFunction();
+        // testSample();
+        testAction();
     }
 
     public static void testWordCount() {
@@ -61,5 +65,39 @@ public class Main {
         pf.testAnonymousInnerClass();
         pf.testNamedClass();
         pf.testLambda();
+    }
+
+    /**
+     * 5. 测试采样函数
+     *
+     * 使用场景： 检查导致数据倾斜的key
+     */
+    public static void testSample() {
+        JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 3, 5, 7, 8));
+        // 元素不可多次采样，每个元素被抽到的概率是0.5
+        JavaRDD<Integer> sample1 = rdd.sample(false, 0.5);
+        sample1.foreach(x -> System.out.print(x + "\t"));
+        // 元素可以多次采样，每个元素被抽到的期望次数是2
+        System.out.println("===========");
+        JavaRDD<Integer> sample2 = rdd.sample(true, 2);
+        sample2.foreach(x -> System.out.print(x + "\t"));
+    }
+
+    /**
+     * 6. 测试行动操作
+     */
+    public static void testAction() {
+        JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 3, 5, 7, 8));
+        // reduce() 用于求RDD中元素的累加
+        System.out.println(rdd.reduce((a, b) -> a + b));
+        // fold() 每个分区第一次调用时都有个初始值作为第一次调用时的结果
+        // setMaster("local[4]") 那么rdd就有4个分区，那么结果会比reduce的多500
+        System.out.println("RDD分区数为： "+ rdd.getNumPartitions() + "\t运行结果: " + rdd.fold(100, (a, b) -> a + b));
+        // aggregate()
+        AvgCount avgCount = rdd.aggregate(new AvgCount(0, 0),
+                (acc, value) -> new AvgCount(acc.total + value, acc.cnt + 1),
+                (acc1, acc2) -> new AvgCount(acc1.total + acc2.total, acc1.cnt + acc2.cnt)
+                );
+        System.out.println("aggregate求平均： " + avgCount.avg());
     }
 }

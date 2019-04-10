@@ -7,7 +7,6 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.storage.StorageLevel;
 import scala.Serializable;
 
-import static learningSpark.Utils.getTestFileRDD;
 
 /**
  * java版向Spark传递函数
