@@ -1,9 +1,6 @@
 package producer;
 
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.clients.producer.*;
 
 import java.util.Properties;
 
@@ -27,6 +24,10 @@ public class NewProducerCallback {
         // value序列化
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
+        // 跟自定义分区绑定。有两种写法
+        // props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, "producer.SelfPartitioner");
+        // props.put("partitioner.class", "producer.SelfPartitioner");
+
         KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(props);
 
         for (int i = 0; i < 5; i++) {
@@ -35,8 +36,6 @@ public class NewProducerCallback {
 
                 @Override
                 public void onCompletion(RecordMetadata metadata, Exception exception) {
-                    System.out.println(metadata.partition() + "---" + metadata.offset());
-
                     if (exception == null) {
                         System.out.println(metadata.partition() + "---" + metadata.offset());
                     }
