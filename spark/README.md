@@ -135,3 +135,18 @@ countByKey() | 对key计数
 collectAsMap() | 将RDD结果转为Map格式
 lookup(key) | 查找键为key的元素
  
+ 
+### 2. 数据分区
+能从分区中获益的操作： 
+- cogroup() groupWith() join() leftOuterJoin() groupByKey() reduceByKey() combineByKey() lookup()
+- 对于像join() cogroup() 这样的二元操作，预先进行分区能让至少一个RDD不发生数据混洗
+
+影响分区方式的操作：
+- map() 操作所接受的函数理论上可以改变元素的键，其运行的结果不会有固定的分区方式。作为替换，mapValues() flatMapValues()可以保证键保持不变，分区也就不变
+- 所有会为结果RDD设置好分区的操作：
+    - cogroup() groupWith() join() leftOuterJoin() rightOuterJoin() 
+    - groupByKey() reduceByKey() combineByKey() 
+    - lookup() partitionBy() sort() 
+    - 如果父RDD有分区方式的话： mapValues() filter()
+
+对于二元操作，结果RDD的分区方式取决于父RDD。当两个父RDD都有分区方式时取决于第一个，否则取决于有分区方式的那个。默认是使用哈希分区，分区的数量与操作的并行度一样。

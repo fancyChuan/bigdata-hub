@@ -1,6 +1,7 @@
 package learningSpark;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.spark.Partition;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -17,17 +18,9 @@ public class Main {
     private static SparkConf conf = new SparkConf().setMaster("local[4]").setAppName("javaSpark");
     private static JavaSparkContext sc = new JavaSparkContext(conf);
 
-    public static void main(String[] args) {
-        // testWordCount();
-        // testHelloSpark();
-        // testTransformation();
-        // testPassFunction();
-        // testSample();
-        // testAction();
-        // testConvertAndMean();
-        testPairRDD();
-    }
-
+    /**
+     * 1. word count
+     */
     public static void testWordCount() {
         String input = "E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md";
         String output = "E:\\JavaWorkshop\\bigdata-learn\\spark\\out\\wordcount";
@@ -147,5 +140,48 @@ public class Main {
         for (Map.Entry<String, Double> entry: countMap.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
+    }
+
+    /**
+     * 9. 数据分区相关
+     */
+    public static void testPartition() {
+        // 指定最少5个分区
+        JavaRDD<String> lines = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md", 5);
+        JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 3, 5, 7, 8, 15, 20, 50), 3);
+        System.out.println("分区方式：" + rdd.partitioner());
+        System.out.println("分区数量：" + rdd.getNumPartitions());
+        System.out.println("==========");
+        List<Partition> partitions = rdd.partitions();
+        for (Partition p: partitions) {
+            System.out.println(p.index());
+            System.out.println(p);
+        }
+        // 对每个分区执行操作：打印内容
+        rdd.foreachPartition(iterator -> {
+            System.out.println("===============================================");
+            while (iterator.hasNext()) {
+                System.out.println(iterator.next());
+            }
+        });
+        System.out.println("分区1的内容为：");
+        System.out.println(StringUtils.join(rdd.collectPartitions(new int[] {1}), "\t"));
+        System.out.println("分区0的内容为：");
+        List<Integer>[] first = rdd.collectPartitions(new int[] {0}); // 特别注意分区返回的内容的格式为： [[], [], [] ...]
+        for (List<Integer> item: first) {
+            System.out.println(StringUtils.join(item, "\t"));
+        }
+    }
+
+    public static void main(String[] args) {
+        // testWordCount();
+        // testHelloSpark();
+        // testTransformation();
+        // testPassFunction();
+        // testSample();
+        // testAction();
+        // testConvertAndMean();
+        // testPairRDD();
+        testPartition();
     }
 }
