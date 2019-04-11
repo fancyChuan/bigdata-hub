@@ -118,7 +118,9 @@ public class Main {
         System.out.println("平均值为： " + doubleRDD.mean());
     }
 
-
+    /**
+     * 8. PairRDD相关操作
+     */
     public static void testPairRDD() {
         JavaRDD<String> lines = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md");
         // 以第一个字母作为key创建 PairRDD，注意要用Tuple2创建元素
