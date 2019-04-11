@@ -137,11 +137,11 @@ lookup(key) | 查找键为key的元素
  
  
 ### 2. 数据分区
-能从分区中获益的操作： 
+#### 2.1 能从分区中获益的操作： 
 - cogroup() groupWith() join() leftOuterJoin() groupByKey() reduceByKey() combineByKey() lookup()
 - 对于像join() cogroup() 这样的二元操作，预先进行分区能让至少一个RDD不发生数据混洗
 
-影响分区方式的操作：
+#### 2.2 影响分区方式的操作：
 - map() 操作所接受的函数理论上可以改变元素的键，其运行的结果不会有固定的分区方式。作为替换，mapValues() flatMapValues()可以保证键保持不变，分区也就不变
 - 所有会为结果RDD设置好分区的操作：
     - cogroup() groupWith() join() leftOuterJoin() rightOuterJoin() 
@@ -150,3 +150,12 @@ lookup(key) | 查找键为key的元素
     - 如果父RDD有分区方式的话： mapValues() filter()
 
 对于二元操作，结果RDD的分区方式取决于父RDD。当两个父RDD都有分区方式时取决于第一个，否则取决于有分区方式的那个。默认是使用哈希分区，分区的数量与操作的并行度一样。
+
+#### 2.3 自定义分区方式
+Spark提供HashPartitioner和RangePartitioner，同时允许自定义Partitioner对象，可以让用户利用领域知识进一步减少通信开销。
+
+实现：继承org.apache.spark.Partitioner并实现三个方法
+- numPartitions： 返回创建的分区数
+- getPartition： 返回给定key的分区编号
+- equals：很重要，Spark需要用这个方法来判断分区器对象是否和其他分区器实例相同，这样Spark才能判断两个RDD的分区方式是否相同
+> 注意：若算法依赖java的hashCode()，这个方法可能会返回负数，需要确保getPartition()永远返回一个非负数

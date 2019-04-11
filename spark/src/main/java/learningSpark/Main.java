@@ -173,6 +173,18 @@ public class Main {
         }
     }
 
+    public static void testDomainPartitioner() {
+        JavaRDD<String> urls = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\urls.txt");
+        JavaPairRDD<String, String> pairURL = urls.mapToPair(url -> new Tuple2<>(url.split(" ")[1], url.split(" ")[0]));
+        JavaPairRDD<String, String> partedURL = pairURL.partitionBy(new DomainNamePartitioner(3));
+        partedURL.foreachPartition(iterator -> {
+            System.out.println("===============================================");
+            while (iterator.hasNext()) {
+                System.out.println(iterator.next());
+            }
+        });
+    }
+
     public static void main(String[] args) {
         // testWordCount();
         // testHelloSpark();
@@ -182,6 +194,7 @@ public class Main {
         // testAction();
         // testConvertAndMean();
         // testPairRDD();
-        testPartition();
+        // testPartition();
+        testDomainPartitioner();
     }
 }
