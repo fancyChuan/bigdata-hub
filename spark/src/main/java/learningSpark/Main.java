@@ -10,6 +10,7 @@ import scala.Tuple2;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 public class Main {
@@ -126,11 +127,23 @@ public class Main {
                 Arrays.asList(new Tuple2<>("fancy", 24), new Tuple2<>("fancy", 30),
                         new Tuple2<>("chuan", 20), new Tuple2<>("what", 3)));
 
+        // 对具有相同key的value求平均
         JavaPairRDD mean = pairRDD2.mapValues(value -> new Tuple2(value, 1))
                 // 把 ("fancy", 24) 转为 ("fancy", (24,1))，再按照相同的key累加 (24, 1) (30, 1)
                 .reduceByKey((t1, t2) -> new Tuple2<>((Integer) t1._1 + (Integer) t2._1, (Integer) t1._2 + (Integer) t2._2))
                 // 对累加后的 (54, 2) 求 value 的平均值
                 .mapValues(valueCnt -> (Integer) valueCnt._1 / (Integer) valueCnt._2);
         mean.foreach(x -> System.out.println(x));
+
+        System.out.println("==== 使用combinerByKey求平均 ====");
+        JavaPairRDD avgCounts = pairRDD2.combineByKey(
+                (value -> new Tuple2<Integer, Integer>(value, 1)),
+                ((kv1, value) -> new Tuple2<>(kv1._1 + value, kv1._2 + 1)),
+                ((kv1, kv2) -> new Tuple2<>(kv1._1 + kv2._1, kv1._2 + kv2._2)))
+                .mapValues(valueCnt -> (Integer) valueCnt._1 / (Integer) valueCnt._2);
+        Map<String, Double> countMap = avgCounts.collectAsMap();
+        for (Map.Entry<String, Double> entry: countMap.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
     }
 }

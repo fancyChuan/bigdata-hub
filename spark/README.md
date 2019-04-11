@@ -88,15 +88,34 @@ DISK_ONLY | 只放在磁盘
 
 #### 1.5 键值对操作
 PairRDD 键值对RDD，元素为Java或Scala中的Tuple2对象或者python中的元组
-
+> Tuple2对象可以通过 _1  _2 来访问元素
 创建PairRDD，有两种方式：
 - 并行化初始化：Java使用sc.parallelizePairs() python可以直接使用sc.parallelize()
 - 从其他RDD转化而来: rdd.mapToPair() python直接rdd.map()
 > 注意在Java中没有二元组类型，需要使用scala.Tuple2()来创建
 
 PairRDD的转化操作
-函数名 | 目的 | 示例
-reduceByKey | 
-groupByKey | 
-combineByKey | 
-mapValues
+函数名 | 作用
+--- | ---
+reduceByKey | 把相同的key汇总到一起进行reduce操作
+groupByKey | 把相同key的value分组
+combineByKey | 基于key进行聚合，功能特点跟aggregate很想
+mapValues | 只对value执行操作
+flatMapValues | 只对value操作，跟flatMap类似
+keys() | 返回仅包含key的RDD
+values() | 返回仅包含value的RDD
+sortByKey() | 对元素按key排序
+rdd1.subtractByKey(rdd2) | 删掉rdd1中与rdd2的key相同的元素
+rdd1.join(rdd2) | 内连接
+rdd1.rightOutJoin(rdd2) | 右外连接
+rdd1.leftOutJoin(rdd2) | 左外连接
+rdd1.cogroup(rdd2) | 将两个RDD具有相同key的value分组到一起
+
+combineByKey(createCombiner, mergeValue, mergeCombiners, partitioner) 执行细节
+- 执行过程
+    - combineByKey() 会遍历分区中的所有数据
+    - 在每个分区一旦遇到新元素，就会调用createCombiner() 函数来创建key所对应的累加器的初始值
+    - 在分区中已经遇到过的元素，调用mergeValue() 把累加器对应的值合并
+    - 对于存在多个分区的相同的key，调用mergeCombiners()方法合并各个分区的结果
+- combinerByKey有多个参数对应聚合操作的各个阶段，非常适合用来解析聚合操作各个阶段的功能划分
+- todo：最后一个参数分区？？ 
