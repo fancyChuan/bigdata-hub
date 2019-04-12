@@ -78,6 +78,7 @@ PairMapFunction<T, K, V> | Function<T, Tuple2<K, V>> | 用于rdd.mapToPair()生�
 #### 1.4 持久化（缓存）
 - persist() 缓存，unpersist() 取消缓存
 - 缓存级别： 类型定义在StorageLevel中
+
 级别 | 含义解释
 --- | ---
 MEMORY_ONLY | 这是默认的持久化策略，使用cache()方法时，实际就是使用的这种持久化策略：使用未序列化的Java对象格式，将数据保存在内存中
@@ -100,7 +101,7 @@ PairRDD 键值对RDD，元素为Java或Scala中的Tuple2对象或者python中的
 --- | ---
 reduceByKey | 把相同的key汇总到一起进行reduce操作
 groupByKey | 把相同key的value分组
-combineByKey | 基于key进行聚合，功能特点跟aggregate很想
+combineByKey | 基于key进行聚合，功能特点跟aggregate很像
 mapValues | 只对value执行操作
 flatMapValues | 只对value操作，跟flatMap类似
 keys() | 返回仅包含key的RDD
