@@ -103,8 +103,8 @@ bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
     
 #### 4.API
 - 创建生产者
-    - 不带回调
-    - 带回调
+    - 不带回调 (NewProducer.java)[https://github.com/fancyChuan/bigdata-learn/blob/master/kafka/src/main/java/producer/NewProducer.java]
+    - 带回调 (NewProducerCallback.java)[https://github.com/fancyChuan/bigdata-learn/blob/master/kafka/src/main/java/producer/NewProducerCallback.java]
 - 创建消费者
     - 高级API
     - 低级API，开发步骤
