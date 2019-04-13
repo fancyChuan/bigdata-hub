@@ -54,7 +54,7 @@ foreach(func) | |
 
 #### 1.3 向Spark传递函数
 大部分转化操作和一部分行动操作都需要依赖用户传递的函数来计算。有几个注意的地方：
-- python和Scala会把函数所在的对象也序列化传出去，应注意使用局部变量来避免 参见：[passFunction.py](https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/python/helloSpark.py)
+- python和Scala会把函数所在的对象也序列化传出去，应注意使用局部变量来避免 参见：[passFunction.py](https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/python/passFunction.py)
 - 传递的函数中包含不能序列化的对象会报错
 
 在java用于传递的函数需要实现org.apache.spark.api.java.function任一函数式接口
@@ -67,6 +67,7 @@ Function2<T1, T2, R> | R call(T1, T2) | 接收2个输入返回一个输出，用
 FlatMapFunction<T, R> | Iterator(R) call(T) | 接收一个输入返回任意多个输出，用于类似于flatMap()这样的操作
 
 - 针对专门类型的函数接口
+
 函数名 | 等价函数 | 用途
 --- | --- | ---
 DoubleFlatMapFunction<T> | Function<T, Iterator<Double>> | 用于rdd.flatMapToDouble()生成DoubleRDD
@@ -77,6 +78,7 @@ PairMapFunction<T, K, V> | Function<T, Tuple2<K, V>> | 用于rdd.mapToPair()生�
 #### 1.4 持久化（缓存）
 - persist() 缓存，unpersist() 取消缓存
 - 缓存级别： 类型定义在StorageLevel中
+
 级别 | 含义解释
 --- | ---
 MEMORY_ONLY | 这是默认的持久化策略，使用cache()方法时，实际就是使用的这种持久化策略：使用未序列化的Java对象格式，将数据保存在内存中
@@ -99,7 +101,7 @@ PairRDD 键值对RDD，元素为Java或Scala中的Tuple2对象或者python中的
 --- | ---
 reduceByKey | 把相同的key汇总到一起进行reduce操作
 groupByKey | 把相同key的value分组
-combineByKey | 基于key进行聚合，功能特点跟aggregate很想
+combineByKey | 基于key进行聚合，功能特点跟aggregate很像
 mapValues | 只对value执行操作
 flatMapValues | 只对value操作，跟flatMap类似
 keys() | 返回仅包含key的RDD
