@@ -161,3 +161,17 @@ Spark提供HashPartitioner和RangePartitioner，同时允许自定义Partitioner
 - getPartition： 返回给定key的分区编号
 - equals：很重要，Spark需要用这个方法来判断分区器对象是否和其他分区器实例相同，这样Spark才能判断两个RDD的分区方式是否相同
 > 注意：若算法依赖java的hashCode()，这个方法可能会返回负数，需要确保getPartition()永远返回一个非负数
+
+
+### 3. 数据的读取与保存
+
+spark支持的一些常见的格式
+- 文件文件
+    - sc.textFile()
+    - sc.wholeTextFiles()
+    - saveAsTextFile()，spark将传入的路径作为目录对待
+- JSON
+- CSV
+- SequenceFiles 用于键值对数据的常见Hadoop文件格式
+- Protocol buffers 快速节约空间的跨语言格式
+- 对象文件 用来将Spark作业中的数据存储下来以让共享的代码读取。改变类的时候会它会失效，因为依赖于java序列化
