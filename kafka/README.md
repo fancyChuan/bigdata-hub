@@ -105,3 +105,11 @@ bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
 - 创建生产者
     - 不带回调
     - 带回调
+- 创建消费者
+    - 高级API
+    - 低级API，开发步骤
+        - 根据指定分区从主体分区元数据中找到主副本 findLeader()
+        - 获取分区最新的消费进度（offset）getLastOffset()
+        - 从主副本中拉去分区的消息 run()
+        - 识别主副本的变化，重试 findNewLeader()
+        
