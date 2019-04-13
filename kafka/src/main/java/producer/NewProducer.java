@@ -1,8 +1,10 @@
 package producer;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class NewProducer {
@@ -25,6 +27,12 @@ public class NewProducer {
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         // value序列化
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
+        // 配置拦截器链
+        ArrayList<String> list = new ArrayList<>();
+        list.add("intercetor.TimeIntercetor"); // 谁先添加谁先执行
+        list.add("intercetor.CountInterceptor");
+        props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, list);
 
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
         for (int i = 0; i < 10; i++) {
