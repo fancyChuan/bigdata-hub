@@ -34,8 +34,12 @@ public class Main {
         String path = "E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\jsonFile.txt";
         JavaRDD<String> inputs = sc.textFile(path);
         JavaRDD<Student> result = inputs.mapPartitions(new ParseJson());
-        System.out.println("解析结果为：");
-        System.out.println(result.collect());
+        // System.out.println("解析结果为：");
+        // System.out.println(result.collect());
+
+        JavaRDD<String> formatted = result.filter(student -> student.getScore() > 90).mapPartitions(new WriteJson());
+        System.out.println(formatted.collect());
+        formatted.saveAsTextFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\target\\out\\writeJson");
     }
 
 
