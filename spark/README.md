@@ -179,6 +179,9 @@ spark支持的一些常见的格式
     - 对于大规模数据，格式错误是家常便饭，一般会跳过解析出错的数据，但需要使用累加器跟踪错误的个数
     - 性能还不错，使用比较简单的常用库： python使用自带的json，而Java和Scala则使用Jackson
 - CSV
+    - 不支持嵌套字段，需要手动组合和分解特定的字段
+    - 使用的库：python自带的csv，java、scala使用opencsv库（hadoop的CSVInputFormat也可以读取，只不过不支持换行符）
+    
 - SequenceFiles 用于键值对数据的常见Hadoop文件格式
 - Protocol buffers 快速节约空间的跨语言格式
 - 对象文件 用来将Spark作业中的数据存储下来以让共享的代码读取。改变类的时候会它会失效，因为依赖于java序列化
