@@ -182,6 +182,11 @@ spark支持的一些常见的格式
     - 不支持嵌套字段，需要手动组合和分解特定的字段
     - 使用的库：python自带的csv，java、scala使用opencsv库（hadoop的CSVInputFormat也可以读取，只不过不支持换行符）
     
-- SequenceFiles 用于键值对数据的常见Hadoop文件格式
+- SequenceFile 用于键值对数据的常见Hadoop文件格式
+    - 由没有对象关系结构的键值对文件组成
 - Protocol buffers 快速节约空间的跨语言格式
 - 对象文件 用来将Spark作业中的数据存储下来以让共享的代码读取。改变类的时候会它会失效，因为依赖于java序列化
+    - 看起来像是SequenceFile的简单封装，允许只包含值的RDD
+    - 用java序列化写出（和SequenceFile不一样），有可能相当慢
+    - objectFile() saveAsObjectFile()
+    - 在python中无法使用，作为代替使用：saveAsPickleFile() pickleFile()
