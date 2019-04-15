@@ -169,8 +169,15 @@ spark支持的一些常见的格式
 - 文件文件
     - sc.textFile()
     - sc.wholeTextFiles()
+        -  得到一个PairRDD，文件名为key，整个文件内容为value
+        - wholeTextFiles对于大量的小文件效率比较高，大文件效果没有那么高
+        - 一些文件系统的路径名采用通配符的形式效果比一个一个文件名添加上去更高效
     - saveAsTextFile()，spark将传入的路径作为目录对待
 - JSON
+    - 注意是否有跨行json
+    - 如果构建json解析器的开销比较大，那么可以使用mapPartitions()来重用解析器
+    - 对于大规模数据，格式错误是家常便饭，一般会跳过解析出错的数据，但需要使用累加器跟踪错误的个数
+    - 性能还不错，使用比较简单的常用库： python使用自带的json，而Java和Scala则使用Jackson
 - CSV
 - SequenceFiles 用于键值对数据的常见Hadoop文件格式
 - Protocol buffers 快速节约空间的跨语言格式

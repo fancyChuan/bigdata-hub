@@ -31,11 +31,16 @@ public class Main {
     }
 
     public static void testJsonOpt() {
-
+        String path = "E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\jsonFile.txt";
+        JavaRDD<String> inputs = sc.textFile(path);
+        JavaRDD<Student> result = inputs.mapPartitions(new ParseJson());
+        System.out.println("解析结果为：");
+        System.out.println(result.collect());
     }
 
 
     public static void main(String[] args) {
-        testWholeTextFiles();
+        // testWholeTextFiles();
+        testJsonOpt();
     }
 }
