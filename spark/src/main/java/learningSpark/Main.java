@@ -173,6 +173,9 @@ public class Main {
         }
     }
 
+    /**
+     * 10. 自定义分区器
+     */
     public static void testDomainPartitioner() {
         JavaRDD<String> urls = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\urls.txt");
         JavaPairRDD<String, String> pairURL = urls.mapToPair(url -> new Tuple2<>(url.split(" ")[1], url.split(" ")[0]));
