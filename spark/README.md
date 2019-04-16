@@ -203,6 +203,7 @@ SparkSQL中的结构化数据
 
 
 ### 4. Spark编程进阶
+#### 4.1 共享变量
 两种类型的共享变量：累加器（accumulator）与广播变量（broadcast variable）
 - 累加器用来对信息进行聚合
     - sc.accumulator(initnum)
@@ -225,7 +226,7 @@ SparkSQL中的结构化数据
     - 广播的优化
         - 可以使用spark.serializer属性来选择更搞笑的序列化库，比如Kryo
 
-基于分区的操作
+#### 4.2 基于分区的操作
 - 基于分区对数据进行操作可以让我们避免为每个数据元素进行重复的配置工作（如打开数据库连接或创建随机数生成器等）
 - 主要方法有：map/foreach
 - 按分区执行的操作符
@@ -235,3 +236,22 @@ SparkSQL中的结构化数据
 mapPartitions | 输入RDD的每个分区中的元素迭代器 | 返回元素的迭代器 | 避免创建对象的开销
 mapPartitionsWithIndex | 分区序号，以及分区中元素的迭代器 | 返回元素的迭代器
 forEachPartitions | 元素迭代器 | 无
+
+#### 4.3 与外部程序间的管道
+Spark提供pipe()函数，可以把RDD的元素从Unix标准流中输出，允许用户使用任意语言实现处理逻辑
+
+
+#### 4.4 数值RDD的操作
+
+StatsCounter中可用的汇总统计数据
+方法 | 含义
+--- | ---
+count() | RDD 中的元素个数
+mean() | 元素的平均值
+sum() | 总和
+max() | 最大值
+min() | 最小值
+variance() | 元素的方差
+sampleVariance() | 从采样中计算出的方差
+stdev() | 标准差
+sampleStdev() | 采样的标准差
