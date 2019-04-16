@@ -21,6 +21,11 @@
             <version>2.3.3</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-mapred</artifactId>
             <version>1.7.6</version> <!-- Spark fails with Avro 1.7.7. TODO: investigate why -->

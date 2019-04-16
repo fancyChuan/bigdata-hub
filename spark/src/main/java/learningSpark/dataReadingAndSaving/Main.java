@@ -30,6 +30,9 @@ public class Main {
         System.out.println(rdd.collect());
     }
 
+    /**
+     * 2. JSON操作
+     */
     public static void testJsonOpt() {
         String path = "E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\jsonFile.txt";
         JavaRDD<String> inputs = sc.textFile(path);
