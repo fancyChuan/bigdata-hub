@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+    <!-- 设置hdfs的nameservice为ns1，供core-site.xml中的fs.defaultFS使用 -->
+    <property>
+        <name>dfs.nameservices</name>
+        <value>ns1</value>
+    </property>
+    <!-- ns1下有两个NameNode -->
+    <property>
+        <name>dfs.ha.namenodes.ns1</name>
+        <value>nn1,nn2</value>
+    </property>
+    <!-- Namenode rpc address -->
+    <property>
+        <name>dfs.namenode.rpc-address.ns1.nn1</name>
+        <value>s01:8020</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.ns1.nn2</name>
+        <value>s02:8020</value>
+    </property>
+    <!-- Namenode http web address -->
+    <property>
+        <name>dfs.namenode.http-address.ns1.nn1</name>
+        <value>s01:50070</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.ns1.nn2</name>
+        <value>s02:50070</value>
+    </property>
+    <!-- share edits address -->
+    <property>
+        <name>dfs.namenode.shared.edits.dir</name>
+        <value>qjournal://s01:8485;s02:8485;s03:8485/ns1</value>
+    </property>  
+    <!-- share edits dir 指定journalNode在本地磁盘存放数据的位置 -->
+    <property>
+        <name>dfs.journalnode.edits.dir</name>
+        <value>/data/hadoop/journal</value>
+    </property>
+    <!-- zookeeper failover 开启NameNode失败自动切换 -->
+    <property>
+       <name>dfs.ha.automatic-failover.enabled</name>
+       <value>true</value>
+    </property>
+    <!-- hdfs proxy cli 配置失败自动切换实现方式 -->
+    <property>
+        <name>dfs.client.failover.proxy.provider.ns1</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+    </property>    
+    <!-- sshfence 配置隔离机制 -->
+    <property>
+        <name>dfs.ha.fencing.methods</name>
+        <value>sshfence</value>
+    </property>
+    <!-- 使用隔离机制时需要ssh免密登录 -->
+    <property>
+        <name>dfs.ha.fencing.ssh.private-key-files</name>
+        <value>/home/beifeng/.ssh/id_rsa</value>
+    </property>
+</configuration>
