@@ -1,5 +1,6 @@
 package learningSpark.dataReadingAndSaving;
 
+import common.Student;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;

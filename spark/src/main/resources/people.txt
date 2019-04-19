@@ -1,0 +1,7 @@
+Michael, 29
+Andy, 30
+Justin, 19
+fancy, 66
+chuan, 77
+fancyChuan, 14
+man, 13

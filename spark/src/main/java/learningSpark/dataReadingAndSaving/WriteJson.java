@@ -1,5 +1,6 @@
 package learningSpark.dataReadingAndSaving;
 
+import common.Student;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.codehaus.jackson.map.ObjectMapper;
 

@@ -1,4 +1,4 @@
-package learningSpark.dataReadingAndSaving;
+package common;
 
 import scala.Serializable;
 
