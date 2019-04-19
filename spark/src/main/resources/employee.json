@@ -1,0 +1,7 @@
+{"name": "zhangsan", "age": 26, "depId": 1, "gender": "male", "salary": 20000}
+{"name": "lisi", "age": 36, "depId": 2, "gender": "female", "salary": 8500}
+{"name": "wangwu", "age": 23, "depId": 1, "gender": "male", "salary": 5000}
+{"name": "zhaoliu", "age": 25, "depId": 3, "gender": "male", "salary": 7000}
+{"name": "marry", "age": 19, "depId": 2, "gender": "female", "salary": 6600}
+{"name": "Tom", "age": 36, "depId": 1, "gender": "female", "salary": 5000}
+{"name": "kitty", "age": 43, "depId": 2, "gender": "female", "salary": 6000}
