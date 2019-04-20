@@ -124,6 +124,19 @@ public class Main {
         df.show();
     }
 
+    /**
+     * 5. 无类型的自定义聚合函数
+     */
+    public static void testUntypedUDF() {
+        // 注册函数
+        spark.udf().register("myAverage", new MyAverage());
+        // 使用函数
+        Dataset<Row> emp = spark.read().json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\employee.json");
+        emp.createOrReplaceTempView("employee");
+        Dataset<Row> result = spark.sql("select depId, myAverage(salary) avgSalary from employee group by depId");
+        result.show();
+    }
+
     public static void testJoin() {
         Dataset<Row> dept = spark.read().json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\department.json");
         Dataset<Row> emp = spark.read().json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\employee.json");
@@ -134,6 +147,7 @@ public class Main {
         // helloSparkSQL();
         // testCreateDataSet();
         // testConvertRDDUsingReflection();
-        testConvertRDDGivingSchema();
+        // testConvertRDDGivingSchema();
+        testUntypedUDF();
     }
 }
