@@ -14,11 +14,11 @@ import java.util.List;
 /**
  * 自定义聚合函数
  */
-public class MyAverage extends UserDefinedAggregateFunction {
+public class MyAverageUntyped extends UserDefinedAggregateFunction {
     private StructType inputSchema; // 函数的参数信息
     private StructType bufferSchema;
 
-    public MyAverage() {
+    public MyAverageUntyped() {
         // 创建入参数据类型， select xxx(a, b) from xx  其中a, b的类型都应该在inputSchema中定义
         List<StructField> inputFields = new ArrayList<>();
         inputFields.add(DataTypes.createStructField("salary", DataTypes.LongType, true));

@@ -25,9 +25,12 @@ SparkSQL支持两种方法将RDDs转为Datasets：
 
 
 #### 聚合操作
-无类型的自定义聚合操作
+用于Row是无类型的自定义聚合操作
 - 需要继承 UserDefinedAggregateFunction 抽象类并实现方法
 - 步骤
     - 先定义**输入的数据**、**中间计算结果**和**最终结果** 的结构化信息
     - 实现 initialize() update() merge() evaluate() 几个函数
     - 注册使用
+    
+用于Row是有结构化的自定义聚合操作
+- 继承 Aggregator 并实现方法

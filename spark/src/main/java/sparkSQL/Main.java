@@ -28,7 +28,7 @@ public class Main {
         df.show();
         df.printSchema(); // df的字段等元信息
 
-        df.select(col("name")).show();
+        df.select("name").show();
         df.select(col("name"), col("score").plus(1));
         df.groupBy("name").count().show();
         df.filter(col("score").gt(95)).show();
@@ -129,7 +129,7 @@ public class Main {
      */
     public static void testUntypedUDF() {
         // 注册函数
-        spark.udf().register("myAverage", new MyAverage());
+        spark.udf().register("myAverage", new MyAverageUntyped());
         // 使用函数
         Dataset<Row> emp = spark.read().json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\employee.json");
         emp.createOrReplaceTempView("employee");
