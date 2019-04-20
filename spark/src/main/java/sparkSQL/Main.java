@@ -5,8 +5,12 @@ import common.Student;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.*;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -24,7 +28,7 @@ public class Main {
         df.show();
         df.printSchema(); // df的字段等元信息
 
-        df.select("name").show();
+        df.select(col("name")).show();
         df.select(col("name"), col("score").plus(1));
         df.groupBy("name").count().show();
         df.filter(col("score").gt(95)).show();
@@ -65,7 +69,7 @@ public class Main {
      *  - SparkSQL会根据反射的信息推断出Schema
      *  - Datasets每一行的列可以通过索引，也可以通过列名获取
      */
-    public static void testConvertRDDUsingRelection() {
+    public static void testConvertRDDUsingReflection() {
         // 这里使用SparkSession来读取文件，也可以通过SparkContext，只是SparkContext.textFile得到的是RDD，而SparkSession得到的是Datasets
         Dataset<String> dataset = spark.read().textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\people.txt");
         dataset.show();
@@ -92,6 +96,34 @@ public class Main {
 
     }
 
+    /**
+     * 4. 指定Schema信息将RDD转为Datasets
+     *
+     *  使用DataTypes.createStructField 创建结构化信息的字段
+     *  使用DataTypes.createStructType  创建结构化信息schema
+     */
+    public static void testConvertRDDGivingSchema() {
+        JavaRDD<String> rdd = spark.sparkContext()
+                .textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\people.txt", 1)
+                .toJavaRDD(); // 上面一行得到的RDD类型，并不是JavaRDD，需要转换
+        // Generate the schema based on the string of schema
+        String schemaString = "name age";
+        ArrayList<StructField> arrayList = new ArrayList<>();
+        for (String fieldName : schemaString.split(" ")) {
+            StructField field = DataTypes.createStructField(fieldName, DataTypes.StringType, true);
+            arrayList.add(field);
+        }
+        StructType schema = DataTypes.createStructType(arrayList);
+
+        // 先把RDD转为Row数据，才能使用自定义的Schema
+        JavaRDD<Row> rowRDD = rdd.map(line -> {
+            String[] fields = line.split(", ");
+            return RowFactory.create(fields[0], fields[1]);
+        });
+        Dataset<Row> df = spark.createDataFrame(rowRDD, schema);
+        df.show();
+    }
+
     public static void testJoin() {
         Dataset<Row> dept = spark.read().json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\department.json");
         Dataset<Row> emp = spark.read().json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\employee.json");
@@ -101,6 +133,7 @@ public class Main {
     public static void main(String[] args) throws AnalysisException {
         // helloSparkSQL();
         // testCreateDataSet();
-        testConvertRDDUsingRelection();
+        // testConvertRDDUsingReflection();
+        testConvertRDDGivingSchema();
     }
 }

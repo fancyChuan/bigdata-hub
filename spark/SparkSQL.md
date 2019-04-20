@@ -20,3 +20,5 @@ Encoder 动态生成代码以便spark各种操作，并在执行计划中做优�
 SparkSQL支持两种方法将RDDs转为Datasets：
 - 利用反射推测出Schema信息
 - 指定Schema信息
+    - 当java bean无法被使用时，需要指定，比如RDD的元素是字符串
+    - 使用DataTypes创建Schema信息
