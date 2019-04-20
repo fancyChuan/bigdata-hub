@@ -28,7 +28,7 @@ scp -r /data/hadoop/tmp hadoop@s02://data/hadoop/
 # 方式2(推荐)：在s02上执行
 bin/hdfs namenode -bootstrapStandby
 ```
-- 格式化ZK
+- 格式化ZK，配置和启动参考zookeeper部分
 ```
 bin/hdfs zkfc -formatZK
 ```
@@ -36,4 +36,17 @@ bin/hdfs zkfc -formatZK
 ```
 sbin/start-dfs.sh
 sbin/start-yarn.sh
+```
+
+### 2. ZooKeeper
+基本配置：[zookeeper](https://github.com/fancyChuan/bigdata-learn/tree/master/环境搭建/zookeeper)
+
+使用说明：注意配置的目录地址以及需要更换主机名，把配置文件放在 $ZOOKEEPER_HOME/conf下面
+
+启动步骤
+```
+# 1. 创建myid，每台主机需要有个唯一的id号，且与zoo.cfg中的server.X的X一致
+进入dataDir=/data/zookeeper/data，然后vim myid 输入数字，然后保存
+# 2. 在每个节点启动
+bin/zkServer.sh start
 ```
