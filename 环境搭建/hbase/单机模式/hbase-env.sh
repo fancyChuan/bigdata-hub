@@ -27,8 +27,7 @@
 export JAVA_HOME=/usr/local/jdk
 
 # Extra Java CLASSPATH elements.  Optional.
-# 将hadoop集群的信息让HBase能够读得到。也可以把 hdfs-site.xml放到hbase配置目录
-export HBASE_CLASSPATH=/usr/local/hadoop/etc/hadoop
+# export HBASE_CLASSPATH=
 
 # The maximum amount of heap to use. Default is left to JVM default.
 # export HBASE_HEAPSIZE=1G
@@ -126,8 +125,7 @@ export HBASE_REGIONSERVER_OPTS="$HBASE_REGIONSERVER_OPTS -XX:PermSize=128m -XX:M
 # export HBASE_SLAVE_SLEEP=0.1
 
 # Tell HBase whether it should manage it's own instance of Zookeeper or not.
-# 不使用hbase自带的zk
-export HBASE_MANAGES_ZK=false
+# export HBASE_MANAGES_ZK=true
 
 # The default log rolling policy is RFA, where the log file is rolled as per the size defined for the 
 # RFA appender. Please refer to the log4j.properties file to see more details on this appender.

@@ -23,14 +23,11 @@
 <configuration>
     <property>
         <name>hbase.rootdir</name>
-        <value>hdfs://ns1/hbase</value><!-- 这样要使用HA用到的名称，可以不写端口好 -->
+        <value>/opt/modules/hbase/data</value>
     </property>
+    <!-- 单机单节点用hbase自带的ZooKeeper -->
     <property>
-        <name>hbase.zookeeper.quorum</name>
-        <value>s01,s02,s03</value>
-    </property>
-    <property>
-        <name>hbase.cluster.distributed</name>
-        <value>true</value>
+        <name>hbase.zookeeper.property.dataDir</name>
+        <value>/opt/modules/hbase/data/zkData</value>
     </property>
 </configuration>
