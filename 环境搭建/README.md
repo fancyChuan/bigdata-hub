@@ -1,4 +1,8 @@
 ## Hadoop生态常用基本配置
+说明：
+- 配置涉及的s00/s01/s02/s03需要根据实际情况调整，
+- 配置涉及的目录也需要调整
+- 所有的框架都需要做一个软链接到/usr/local/下。比如 ln -s /opt/app/hive-1.2.1 /usr/local/hive
 
 ### 1. Hadoop
 #### 1.1 伪分布式
@@ -49,4 +53,18 @@ sbin/start-yarn.sh
 进入dataDir=/data/zookeeper/data，然后vim myid 输入数字，然后保存
 # 2. 在每个节点启动
 bin/zkServer.sh start
+```
+
+### 3. Hive
+使用1.2.1版本，2.0版本以后可能会不支持MR引擎，更多的是使用spark
+
+基本配置：[hive](https://github.com/fancyChuan/bigdata-learn/tree/master/环境搭建/hive)
+
+启动步骤
+```
+# 启动metastore服务在后台运行
+nohup hive --service metastore &
+# 启动hiveserver2
+nohup hive --service hiveserver2 &
+# 启动hive cli或者beeline
 ```
