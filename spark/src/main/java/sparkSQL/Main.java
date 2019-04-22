@@ -1,5 +1,6 @@
 package sparkSQL;
 
+import common.Employee;
 import common.Person;
 import common.Student;
 import org.apache.spark.api.java.JavaRDD;
@@ -137,6 +138,32 @@ public class Main {
         result.show();
     }
 
+    /**
+     * 6. 强类型的自定义聚合函数
+     * 可能异常：
+     *  No applicable constructor/method found for actual parameters "long"; candidates are: "public void common.Employee.setAge(int)"
+     *  [*]需要把Employee的age类型从int改为long，似乎spark里面不能使用int
+     *  No applicable constructor/method found for actual parameters "long"; candidates are: "public static java.lang.Integer java.lang.Integer.valueOf(java.lang.String, int) throws java.lang.NumberFormatException", "public static java.lang.Integer java.lang.Integer.valueOf(int)", "public static java.lang.Integer java.lang.Integer.valueOf(java.lang.String) throws java.lang.NumberFormatException"
+     *  [*]也不能是Integer，要改为long
+     *  No applicable constructor/method found for zero actual parameters; candidates are: "public long sparkSQL.Average.getCount()"
+     *  [*]需要把Average类设为public，不能跟MyAverageTyped写在一个文件
+     */
+    public static void testTypedUDF() {
+        //TODO: No applicable constructor/method found for zero actual parameters; candidates are: "public long sparkSQL.Average.getCount()"
+        // 创建Datasets的时候指定类型，注意和上一个函数的对比Dataset<Row> emp 这里是Dataset<Employee> emp
+        Dataset<Employee> emp = spark.read()
+                .json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\employee.json")
+                .as(Encoders.bean(Employee.class));
+        emp.show();
+        emp.printSchema();
+
+        MyAverageTyped average = new MyAverageTyped();
+        TypedColumn<Employee, Double> averageSalary = average.toColumn().name("average_salary");
+        Dataset<Double> result = emp.select(averageSalary);
+        result.show();
+        spark.stop();
+    }
+
     public static void testJoin() {
         Dataset<Row> dept = spark.read().json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\department.json");
         Dataset<Row> emp = spark.read().json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\employee.json");
@@ -148,6 +175,7 @@ public class Main {
         // testCreateDataSet();
         // testConvertRDDUsingReflection();
         // testConvertRDDGivingSchema();
-        testUntypedUDF();
+        // testUntypedUDF();
+        testTypedUDF();
     }
 }
