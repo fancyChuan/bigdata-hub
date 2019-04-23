@@ -45,4 +45,45 @@ SparkSQL支持两种方法将RDDs转为Datasets：
     
 用于Row是有结构化的自定义聚合操作
 - 继承 Aggregator 并实现方法
-- 
+
+两种自定义聚合函数与RDD的aggregate操作的区别于联系
+
+对比项  | 无类型 | 类型安全（类型） | RDD的聚合操作
+--- | --- | --- | ---
+继承类 | UserDefinedAggregateFunction | Aggregator |
+初始值 | initialize() | zero() | new Tuple()
+更新操作 | update() | reduce() | 实现接口
+合并操作 | merge() | merge() | 实现接口
+计算返回值 | evaluate() | finish() | 对结果RDD再操作
+
+
+#### 数据源
+SparkSQL支持多种数据源
+- 基本的load/save操作
+```
+Dataset<Row> usersDF = spark.read().load("examples/src/main/resources/users.parquet");
+usersDF.select("name", "favorite_color").write().save("namesAndFavColors.parquet");
+```
+- 手动指定读取数据源的类型(json, parquet, jdbc, orc, libsvm, csv, text)和选项
+```
+Dataset<Row> peopleDF = spark.read().format("json").load("examples/src/main/resources/people.json");
+peopleDF.select("name", "age").write().format("parquet").save("namesAndAges.parquet");
+
+Dataset<Row> peopleDFCsv = spark.read().format("csv")
+    .option("sep", ";")
+    .option("inferSchema", "true")
+    .option("header", "true")
+    .load("examples/src/main/resources/people.csv");
+
+usersDF.write().format("orc")
+    .option("orc.bloom.filter.columns", "favorite_color")
+    .option("orc.dictionary.key.threshold", "1.0")
+    .option("orc.column.encoding.direct", "name")
+    .save("users_with_options.orc");
+```
+- 直接用SQL读取文件
+```
+Dataset<Row> sqlDF = spark.sql("SELECT * FROM parquet.`examples/src/main/resources/users.parquet`");
+```
+
+数据保存模式
