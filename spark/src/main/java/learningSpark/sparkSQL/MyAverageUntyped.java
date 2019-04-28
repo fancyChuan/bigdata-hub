@@ -1,4 +1,4 @@
-package sparkSQL;
+package learningSpark.sparkSQL;
 
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.expressions.MutableAggregationBuffer;

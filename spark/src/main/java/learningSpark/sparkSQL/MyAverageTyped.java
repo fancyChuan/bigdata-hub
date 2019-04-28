@@ -1,12 +1,10 @@
-package sparkSQL;
+package learningSpark.sparkSQL;
 
-import common.Employee;
+import learningSpark.common.Employee;
 
 import org.apache.spark.sql.Encoder;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.expressions.Aggregator;
-
-import java.io.Serializable;
 
 
 /**

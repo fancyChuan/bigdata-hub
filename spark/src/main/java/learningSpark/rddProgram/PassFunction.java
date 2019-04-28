@@ -1,4 +1,4 @@
-package learningSpark;
+package learningSpark.rddProgram;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -17,6 +17,13 @@ public class PassFunction implements Serializable {
     public PassFunction() {
         SparkConf conf = new SparkConf().setMaster("local").setAppName("passFunction");
         JavaSparkContext sc = new JavaSparkContext(conf);
+        this.lines = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md");
+        System.out.println("构造器初始化，共有行数：" + this.lines.count());
+        System.out.println("持久化RDD...");
+        this.lines.persist(StorageLevel.MEMORY_AND_DISK());
+    }
+
+    public PassFunction(JavaSparkContext sc) {
         this.lines = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md");
         System.out.println("构造器初始化，共有行数：" + this.lines.count());
         System.out.println("持久化RDD...");

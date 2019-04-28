@@ -1,4 +1,4 @@
-package learningSpark;
+package learningSpark.rddProgram;
 
 import org.apache.spark.Partitioner;
 

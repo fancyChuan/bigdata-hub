@@ -1,8 +1,8 @@
-package sparkSQL;
+package learningSpark.sparkSQL;
 
-import common.Employee;
-import common.Person;
-import common.Student;
+import learningSpark.common.Employee;
+import learningSpark.common.Person;
+import learningSpark.common.Student;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.*;
@@ -18,7 +18,7 @@ import java.util.Collections;
 import static org.apache.spark.sql.functions.col;
 
 public class Main {
-    private static SparkSession spark = SparkSession.builder().master("local[1]").appName("hello-sparkSQL").getOrCreate();
+    private static SparkSession spark = SparkSession.builder().master("local[1]").appName("hello-learningSpark.sparkSQL").getOrCreate();
 
     /**
      * 1. SparkSQL基本使用
@@ -145,11 +145,11 @@ public class Main {
      *  [*]需要把Employee的age类型从int改为long，似乎spark里面不能使用int
      *  No applicable constructor/method found for actual parameters "long"; candidates are: "public static java.lang.Integer java.lang.Integer.valueOf(java.lang.String, int) throws java.lang.NumberFormatException", "public static java.lang.Integer java.lang.Integer.valueOf(int)", "public static java.lang.Integer java.lang.Integer.valueOf(java.lang.String) throws java.lang.NumberFormatException"
      *  [*]也不能是Integer，要改为long
-     *  No applicable constructor/method found for zero actual parameters; candidates are: "public long sparkSQL.Average.getCount()"
+     *  No applicable constructor/method found for zero actual parameters; candidates are: "public long learningSpark.sparkSQL.Average.getCount()"
      *  [*]需要把Average类设为public，不能跟MyAverageTyped写在一个文件
      */
     public static void testTypedUDF() {
-        //TODO: No applicable constructor/method found for zero actual parameters; candidates are: "public long sparkSQL.Average.getCount()"
+        //TODO: No applicable constructor/method found for zero actual parameters; candidates are: "public long learningSpark.sparkSQL.Average.getCount()"
         // 创建Datasets的时候指定类型，注意和上一个函数的对比Dataset<Row> emp 这里是Dataset<Employee> emp
         Dataset<Employee> emp = spark.read()
                 .json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\employee.json")
@@ -171,11 +171,11 @@ public class Main {
     }
 
     public static void main(String[] args) throws AnalysisException {
-        // helloSparkSQL();
-        // testCreateDataSet();
-        // testConvertRDDUsingReflection();
-        // testConvertRDDGivingSchema();
-        // testUntypedUDF();
+        helloSparkSQL();
+        testCreateDataSet();
+        testConvertRDDUsingReflection();
+        testConvertRDDGivingSchema();
+        testUntypedUDF();
         testTypedUDF();
     }
 }

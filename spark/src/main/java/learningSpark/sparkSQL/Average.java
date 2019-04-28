@@ -1,4 +1,4 @@
-package sparkSQL;
+package learningSpark.sparkSQL;
 
 import java.io.Serializable;
 

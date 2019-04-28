@@ -1,4 +1,4 @@
-package common;
+package learningSpark.common;
 
 import scala.Serializable;
 

@@ -1,6 +1,6 @@
 package learningSpark.dataReadingAndSaving;
 
-import common.Student;
+import learningSpark.common.Student;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -48,7 +48,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        // testWholeTextFiles();
+        testWholeTextFiles();
         testJsonOpt();
     }
 }

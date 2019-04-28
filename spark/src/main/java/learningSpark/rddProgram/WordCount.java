@@ -1,4 +1,4 @@
-package learningSpark;
+package learningSpark.rddProgram;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -16,8 +16,13 @@ public class WordCount {
     public static void main(String[] args) {
         SparkConf conf = new SparkConf().setMaster("local[1]").setAppName("wordCount-java");
         JavaSparkContext sc = new JavaSparkContext(conf);
+        String inputPath = args[0];
+        String outputPath = args[1];
+        run(sc, inputPath, outputPath);
+    }
 
-        JavaRDD<String> input = sc.textFile(args[0]);
+    public static void run(JavaSparkContext sc, String inputPath, String outputPath) {
+        JavaRDD<String> input = sc.textFile(inputPath);
         JavaRDD<String> words = input.flatMap(new FlatMapFunction<String, String>() {
             @Override
             public Iterator<String> call(String s) throws Exception {
@@ -38,6 +43,6 @@ public class WordCount {
         });
 
         System.out.println(counts.first());
-        counts.saveAsTextFile(args[1]);
+        counts.saveAsTextFile(outputPath);
     }
 }

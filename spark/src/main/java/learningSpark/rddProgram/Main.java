@@ -1,4 +1,4 @@
-package learningSpark;
+package learningSpark.rddProgram;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.Partition;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 
 public class Main {
-    private static SparkConf conf = new SparkConf().setMaster("local[4]").setAppName("javaSpark");
+    private static SparkConf conf = new SparkConf().setMaster("local").setAppName("javaSpark");
     private static JavaSparkContext sc = new JavaSparkContext(conf);
 
     /**
@@ -23,8 +23,8 @@ public class Main {
      */
     public static void testWordCount() {
         String input = "E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md";
-        String output = "E:\\JavaWorkshop\\bigdata-learn\\spark\\out\\wordcount";
-        WordCount.main(new String[] {input, output});
+        String output = "E:\\JavaWorkshop\\bigdata-learn\\spark\\target\\out\\wordcount";
+        WordCount.run(sc, input, output);
     }
 
     /**
@@ -33,8 +33,8 @@ public class Main {
      * python、scala使用的是SparkContext
      */
     public static void testHelloSpark() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("helloSpark");
-        JavaSparkContext sc = new JavaSparkContext(conf);
+//        SparkConf conf = new SparkConf().setMaster("local").setAppName("helloSpark");
+//        JavaSparkContext sc = new JavaSparkContext(conf);
         List<String> list = Arrays.asList("hello", "spark");
         JavaRDD<String> lines = sc.parallelize(list);
         System.out.println(lines);
@@ -45,8 +45,8 @@ public class Main {
      * 3. 测试转化函数
      */
     public static void testTransformation() {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("helloSpark");
-        JavaSparkContext sc = new JavaSparkContext(conf);
+//        SparkConf conf = new SparkConf().setMaster("local").setAppName("helloSpark");
+//        JavaSparkContext sc = new JavaSparkContext(conf);
         JavaRDD<String> inputRDD = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md");
         JavaRDD<String> scala = inputRDD.filter(line -> line.contains("Scala"));
         JavaRDD<String> merge = scala.union(inputRDD.filter(line -> line.contains("Python")));
@@ -61,7 +61,7 @@ public class Main {
      * 4. 向Spark传递函数
      */
     public static void testPassFunction() {
-        PassFunction pf = new PassFunction();
+        PassFunction pf = new PassFunction(sc);
         pf.testAnonymousInnerClass();
         pf.testNamedClass();
         pf.testLambda();
@@ -189,15 +189,15 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // testWordCount();
-        // testHelloSpark();
-        // testTransformation();
-        // testPassFunction();
-        // testSample();
-        // testAction();
-        // testConvertAndMean();
-        // testPairRDD();
-        // testPartition();
+        testWordCount();
+        testHelloSpark();
+        testTransformation();
+        testPassFunction();
+        testSample();
+        testAction();
+        testConvertAndMean();
+        testPairRDD();
+        testPartition();
         testDomainPartitioner();
     }
 }
