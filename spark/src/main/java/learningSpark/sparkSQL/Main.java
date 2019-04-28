@@ -24,7 +24,7 @@ public class Main {
      * 1. SparkSQL基本使用
      */
     public static void helloSparkSQL() throws AnalysisException {
-        SparkSession spark = SparkSession.builder().master("local[1]").appName("hello-word").getOrCreate();
+            SparkSession spark = SparkSession.builder().master("local[1]").appName("hello-word").getOrCreate();
         Dataset<Row>df = spark.read().json("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\jsonFile.txt");
         df.show();
         df.printSchema(); // df的字段等元信息

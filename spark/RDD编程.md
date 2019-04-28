@@ -1,5 +1,18 @@
 ## RDD编程
+某些Scala 代码无法在Java 里调用，特别是那些使用了隐式类型转换、默认参数和某些Scala 反射机制的代码
 
+JavaSparkContext是SparkContext的子类，针对java的SparkContext版本
+
+SparkSession是一个统一的入口，可以直接调用SparkContext的方法，也可以执行SparkSQL相关的方法
+```
+SparkConfig conf = new SparkConfig()
+JavaSparkContext sc = new JavaSparkContext(conf)
+// 统一的入口比如
+SparkSession spark = SparkSession.builder().setMaster().appName().config(conf).getOrCreate()
+// 可以转为sc或者sqlContext
+SQLContext sqlContext = spark.sqlContext();
+SparkContext sc = spark.sparkContext();
+```
 
 ### 1. RDD基础
 RDD：对数据的抽象——弹性分布式数据集，每个RDD都被分为多个分区运行在不同节点上，可以包含python、java、scala中任意类型的对象，甚至是用户自定义对象。
