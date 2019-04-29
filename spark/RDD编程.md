@@ -14,6 +14,10 @@ SQLContext sqlContext = spark.sqlContext();
 SparkContext sc = spark.sparkContext();
 ```
 
+pyspark
+- 使用javaAPI构建任务，数据使用原生python处理并在JVM里实现缓存cache和移动shuffle
+- python驱动程序的SparkContext通过py4j启动JVM并创建一个JavaSparkContext对象
+
 ### 1. RDD基础
 RDD：对数据的抽象——弹性分布式数据集，每个RDD都被分为多个分区运行在不同节点上，可以包含python、java、scala中任意类型的对象，甚至是用户自定义对象。
 
