@@ -27,3 +27,8 @@
 - 参数优化算法
     - 随机梯度下降法（SGD，stochastic gradient descent）
 - Limited-Memory BFGS（L-BFGS）。这是一种优化算法,且属于准牛顿算法家族（Quasi-Newton methods）的一种
+
+
+
+#### 数据集下载
+- MovieLens100k数据：[从http://files.grouplens.org/datasets/movielens/ml-100k.zip](http://files.grouplens.org/datasets/movielens/ml-100k.zip)
