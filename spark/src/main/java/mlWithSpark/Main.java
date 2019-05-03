@@ -11,7 +11,8 @@ public class Main {
     private static SparkSession spark = SparkSession.builder().config(conf).getOrCreate();
 
     public static void main(String[] args) {
-        firstJavaApp();
+        // firstJavaApp();
+        exploreUserData();
     }
 
     public static void firstJavaApp() {
@@ -27,6 +28,11 @@ public class Main {
         System.out.println("总销售额：" + totalRevenue);
         productCnt.foreach(tuple -> System.out.println("most propular, product=" + tuple._1 + " 被购买的次数：" + tuple._2));
 
+    }
+
+    public static void exploreUserData() {
+        DataExplore explore = new DataExplore(spark);
+        explore.userDataExplore();
     }
 
 }
