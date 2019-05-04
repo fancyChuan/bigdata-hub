@@ -33,7 +33,8 @@ public class Main {
 
     public static void exploreUserData() {
         DataExplore explore = new DataExplore(spark);
-        explore.userDataExplore();
+        // explore.userDataExplore();
+        explore.movieDataExplore();
     }
 
 }
