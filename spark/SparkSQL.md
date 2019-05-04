@@ -20,7 +20,7 @@ ds.show();
 > 是整个application生效的，还是一直存在？？ 
 
 
-DataFrame/Datasets 结构化数据，是需要有结构的描述信息的，也就是元数据
+DataFrame/Datasets 结构化数据，是需要有结构的描述信息Schema，也就是元数据，创建方式参见 [SchemaTest.java](https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/java/learningSpark/sparkSQL/SchemaTest.java)
 
 RDD与Datasets在序列化上的区别：
 - RDD: 通过Java serialization 或 Kryo 序列化
