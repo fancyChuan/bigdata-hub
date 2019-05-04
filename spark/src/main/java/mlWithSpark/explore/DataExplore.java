@@ -7,8 +7,6 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructType;
 
 import java.util.Arrays;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class DataExplore {
     private SparkSession spark;
@@ -45,11 +43,14 @@ public class DataExplore {
         userData.groupBy("gender").count().show();
         System.out.println("【年龄分布】");
         Row row = spark.sql("select max(age) maxAge, min(age) minAge from user_data").first();
+        System.out.println("最大年龄：" + row.get(0) + "\t最小年龄：" + row.get(1));
         // 新建一个统计年龄区间的自定义累加器
         AgeAccumulator ageAccumulator = new AgeAccumulator(row.getInt(0), row.getInt(1), 20);
 
         userData.select("age").toLocalIterator().forEachRemaining(row1 -> ageAccumulator.add(row1.getInt(0)));
-        System.out.println(ageAccumulator.value());
+        System.out.println(ageAccumulator.value()); // 原始的无序状态
+        System.out.println(ageAccumulator.sortedValue(true)); // 正序
+        System.out.println(ageAccumulator.sortedValue(false)); // 倒序
         System.out.println("【职业统计】");
     }
 }

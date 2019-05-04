@@ -32,3 +32,11 @@
 
 #### 数据集下载
 - MovieLens100k数据：[从http://files.grouplens.org/datasets/movielens/ml-100k.zip](http://files.grouplens.org/datasets/movielens/ml-100k.zip)
+
+
+#### 涉及知识点整理
+- 自定义累加器
+    - 统计年龄分区情况的累加器，支持按value正序和倒叙 [AgeAccumulator](https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/java/mlWithSpark/explore\AgeAccumulator.java)
+        - 实现自定义比较器 java.util.Comparator
+        - 利用 Collections.sort() 进行排序
+        - 直接对TreeMap()指定比较器

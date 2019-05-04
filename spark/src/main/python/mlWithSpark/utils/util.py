@@ -24,7 +24,8 @@ def get_user_data():
 
     from pyspark.sql import SQLContext
 
-    sqlContext = SQLContext(sc)
-    user_df = sqlContext.read.format("com.databricks.spark.csv").options(header=None, delimiter="|").load(
+    # sqlContext = SQLContext(sc)
+
+    user_df = spark.read.format("com.databricks.spark.csv").options(header=None, delimiter="|").load(
         "E:\\JavaWorkshop\\bigdata-learn\\spark\\data\\ml-100k\\u.user", schema=custom_schema)
     return user_df
