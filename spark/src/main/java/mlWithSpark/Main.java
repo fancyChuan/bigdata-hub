@@ -1,5 +1,6 @@
 package mlWithSpark;
 
+import mlWithSpark.explore.DataExplore;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
