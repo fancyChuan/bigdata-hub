@@ -19,6 +19,7 @@ public interface SchemaInfo {
             DataTypes.createStructField("id", DataTypes.StringType, true),
             DataTypes.createStructField("name", DataTypes.StringType, true),
             DataTypes.createStructField("date", DataTypes.StringType, true),
+            DataTypes.createStructField("what", DataTypes.StringType, true), // 不知道这个字段代表什么，先用what代替
             DataTypes.createStructField("url", DataTypes.StringType, true)
     ));
 }
