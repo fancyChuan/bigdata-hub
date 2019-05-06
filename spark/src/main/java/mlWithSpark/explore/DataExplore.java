@@ -63,7 +63,7 @@ public class DataExplore {
                 .option("header", "false")
                 .schema(SchemaInfo.movieSchame)
                 .load("E:\\JavaWorkshop\\bigdata-learn\\spark\\data\\ml-100k\\u.item");
-        movieData.show(5);
+        movieData.show(5, false);
         movieData.createOrReplaceTempView("movie_data");
         // LongAccumulator yearAccumulator = spark.sparkContext().longAccumulator();
         // movieData.toJavaRDD().foreach(row -> yearAccumulator.add(extractYear(row.getString(2)))); // 这里的map算子用到了外部对象的方法extractYear，应该对象需要能够序列化
@@ -98,6 +98,19 @@ public class DataExplore {
         // 不使用Lambda实现UDF
         spark.udf().register("movieYear2", new ExtractMovieYear(), DataTypes.IntegerType);
         spark.sql("select movieYear2(date) year, count(1) cnt from movie_data group by movieYear2(date)").show();
+    }
+
+    public void ratingDataExplore() {
+        Dataset<Row> ratingData = spark.read()
+                .format("csv")
+                .option("delimiter", "\t")
+                .option("header", false)
+                .schema(SchemaInfo.ratingSchema)
+                .load("E:\\JavaWorkshop\\bigdata-learn\\spark\\data\\ml-100k\\u.data");
+        ratingData.show(5);
+        ratingData.createOrReplaceTempView("rating_data");
+        spark.sql("select max(rating), min(rating), avg(rating) from rating_data").show();
+        spark.sql("select rating, count(1) cnt from rating_data group by rating order by cnt desc").show();
     }
 
 }

@@ -22,4 +22,11 @@ public interface SchemaInfo {
             DataTypes.createStructField("what", DataTypes.StringType, true), // 不知道这个字段代表什么，先用what代替
             DataTypes.createStructField("url", DataTypes.StringType, true)
     ));
+
+    StructType ratingSchema = DataTypes.createStructType(Arrays.asList(
+            DataTypes.createStructField("user_id", DataTypes.IntegerType, true),
+            DataTypes.createStructField("movie_id", DataTypes.IntegerType, true),
+            DataTypes.createStructField("rating", DataTypes.IntegerType, true),
+            DataTypes.createStructField("timestamp", DataTypes.IntegerType, true)
+    ));
 }

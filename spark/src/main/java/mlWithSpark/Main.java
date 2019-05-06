@@ -34,7 +34,8 @@ public class Main {
     public static void exploreUserData() {
         DataExplore explore = new DataExplore(spark);
         // explore.userDataExplore();
-        explore.movieDataExplore();
+        // explore.movieDataExplore();
+        explore.ratingDataExplore();
     }
 
 }
