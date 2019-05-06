@@ -1,10 +1,11 @@
 package mlWithSpark.explore;
 
+import mlWithSpark.udf.ExtractMovieYear;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.util.LongAccumulator;
+import org.apache.spark.sql.types.DataTypes;
 import scala.Tuple2;
 
 
@@ -39,7 +40,7 @@ public class DataExplore {
         // 新建一个统计年龄区间的自定义累加器
         AgeAccumulator ageAccumulator = new AgeAccumulator(row.getInt(0), row.getInt(1), 20);
         // 使用自定义累加器统计年龄区间情况
-        userData.select("age").toLocalIterator().forEachRemaining(row1 -> ageAccumulator.add(row1.getInt(0)));
+        userData.select("age").toLocalIterator().forEachRemaining((Row row1) -> ageAccumulator.add(row1.getInt(0)));
         System.out.println(ageAccumulator.value()); // 原始的无序状态
         System.out.println(ageAccumulator.sortedValue(true)); // 正序
         System.out.println(ageAccumulator.sortedValue(false)); // 倒序
@@ -47,6 +48,14 @@ public class DataExplore {
         spark.sql("select occupation, count(1) cnt from user_data group by occupation order by cnt desc").show();
     }
 
+    /**
+     * 电影数据探索
+     *
+     *  需求点：
+     *      1. 提取电影上映年份并统计
+     *          方法1： 转为RDD，使用mapToPair().reduceByKey()
+     *          方法2： 自定义SparkSQL函数，实现 UDF1<String> 接口
+     */
     public void movieDataExplore() {
         Dataset<Row> movieData = spark.read()
                 .format("csv")
@@ -74,19 +83,21 @@ public class DataExplore {
                 .reduceByKey(((v1, v2) -> v1 + v2))
                 .sortByKey();
         System.out.println(movieYearCount.collect());
+        // SparkSQL UDF实现电影上映月份统计
+        spark.udf().register("movieYear", (String movieDay) -> {
+            Integer year;
+            try {
+                int length = movieDay.length();
+                year = Integer.valueOf(movieDay.substring(length - 4, length));
+            } catch (Exception e) {
+                year = 1900;
+            }
+            return year;
+        }, DataTypes.IntegerType);
+        spark.sql("select movieYear(date) year, count(1) cnt from movie_data group by movieYear(date)").show();
+        // 不使用Lambda实现UDF
+        spark.udf().register("movieYear2", new ExtractMovieYear(), DataTypes.IntegerType);
+        spark.sql("select movieYear2(date) year, count(1) cnt from movie_data group by movieYear2(date)").show();
     }
 
-
-    // 提取电影上映年份的函数
-    public Integer extractYear(String movieDate) {
-        try {
-            int length = movieDate.length();
-            String year = movieDate.substring(length - 4, length);
-            return Integer.valueOf(year);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return 1900;
-        }
-    }
 }

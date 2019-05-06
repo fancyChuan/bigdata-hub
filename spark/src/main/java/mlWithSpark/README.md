@@ -36,7 +36,9 @@
 
 #### 涉及知识点整理
 - 自定义累加器
-    - 统计年龄分区情况的累加器，支持按value正序和倒叙 [AgeAccumulator](https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/java/mlWithSpark/explore\AgeAccumulator.java)
+    - 统计年龄分区情况的累加器，支持按value正序和倒叙 [AgeAccumulator.java](https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/java/mlWithSpark/explore\AgeAccumulator.java)
         - 实现自定义比较器 java.util.Comparator
         - 利用 Collections.sort() 进行排序
         - 直接对TreeMap()指定比较器
+- 自定义SparkSQL函数
+    - 提取电影上映年份并统计：实现 UDF1<String> 接口 [DataExplore.java](https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/java/mlWithSpark/explore\DataExplore.java)
