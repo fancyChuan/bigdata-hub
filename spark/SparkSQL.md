@@ -36,6 +36,14 @@ SparkSQL支持两种方法将RDDs转为Datasets：
 
 
 #### 聚合操作
+常用的聚合操作【java写法】
+- 分组计数 df.groupBy("column").count().show()
+    - 结果按指定字段排序 df.groupBy("column").count().sort("count") // 计数默认字段名为 "count"
+    - 结果按指定字段排序 df.groupBy("column").count().sort(col("count").desc()) 
+    - 字段重命名       df.groupBy("column").count().withColumnRenamed("count", "cnt").sort("cnt")
+    - 字段重命名       df.groupBy("column").agg(count).sort("cnt")
+    - 直接使用SQL解决： spark.sql("select column, count(1) cnt from df group by column order by cnt desc")
+    
 用于Row是无类型的自定义聚合操作
 - 需要继承 UserDefinedAggregateFunction 抽象类并实现方法
 - 步骤

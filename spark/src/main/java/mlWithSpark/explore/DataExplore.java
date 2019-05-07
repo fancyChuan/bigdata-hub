@@ -1,10 +1,13 @@
 package mlWithSpark.explore;
 
 import mlWithSpark.udf.ExtractMovieYear;
+import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.functions;
 import org.apache.spark.sql.types.DataTypes;
 import scala.Tuple2;
 
@@ -109,8 +112,20 @@ public class DataExplore {
                 .load("E:\\JavaWorkshop\\bigdata-learn\\spark\\data\\ml-100k\\u.data");
         ratingData.show(5);
         ratingData.createOrReplaceTempView("rating_data");
+        // 求最大最小平均值
         spark.sql("select max(rating), min(rating), avg(rating) from rating_data").show();
+        ratingData.agg(functions.max("rating"), functions.avg("rating")); // 另一种实现方法
         spark.sql("select rating, count(1) cnt from rating_data group by rating order by cnt desc").show();
+        // 分组排序的几种写法
+        spark.sql("select user_id, count(1) cnt from rating_data group by user_id order by cnt desc").show();
+        ratingData.groupBy("user_id").count().orderBy("count"); // orderBy() 是 sort()的别名
+        ratingData.groupBy("user_id").count().sort(functions.col("count").desc()); // 倒序的写法
+        ratingData.groupBy("usre_id").agg(functions.count("user_id").as("cnt")).sort("cnt"); // 使用agg()函数
+        // 使用 JavaDoubleRDD 实现同样的功能
+        JavaDoubleRDD ratingRDD = ratingData.select("rating").toJavaRDD().mapToDouble((Row row) -> row.getInt(0));
+        System.out.println("最大值：" + ratingRDD.max() + "\t平均值：" + ratingRDD.mean() + "\t最小值：" + ratingRDD.min());
+        System.out.println("计数：" + ratingRDD.countByValue());
+
     }
 
 }
