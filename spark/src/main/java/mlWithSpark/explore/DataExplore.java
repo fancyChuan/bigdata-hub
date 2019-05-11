@@ -103,6 +103,9 @@ public class DataExplore {
         spark.sql("select movieYear2(date) year, count(1) cnt from movie_data group by movieYear2(date)").show();
     }
 
+    /**
+     * 评级数据探索
+     */
     public void ratingDataExplore() {
         Dataset<Row> ratingData = spark.read()
                 .format("csv")
