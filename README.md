@@ -8,6 +8,10 @@
 ### 学习项目
 - hadoop
 - zookeeper
+- kafka
+- spark
+- hbase
+- hive
 
 
 ### 程序包下载
