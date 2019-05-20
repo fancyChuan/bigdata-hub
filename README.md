@@ -21,3 +21,7 @@
 - CDH其他下载： [http://archive.cloudera.com/cm5/](http://archive.cloudera.com/cm5/)
 
 - 清华Apache镜像： [https://mirrors.tuna.tsinghua.edu.cn/apache/](https://mirrors.tuna.tsinghua.edu.cn/apache/)
+
+
+### 学习资料
+- 《spark快速大数据分析(learning-spark)》: [https://github.com/databricks/learning-spark](https://github.com/databricks/learning-spark)
