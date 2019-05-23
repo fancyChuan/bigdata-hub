@@ -18,4 +18,16 @@ join无关的优化：
 set hive.map.aggr = true
 set hive.groupby.skewindata = true
 ```
-- 
+- count(distinct)优化
+    - Hive将会把Map阶段的输出全部分布到一个Reduce Task上，此时很容易引起性能问题
+    - 优化方法：先group by再count
+```
+select  count(*) 
+from (select user from some_table group by user) temp;
+# todo： 是否也可以  select user, count(1) from some_table group by user
+```
+
+大表join小表优化
+
+
+set hive.auto.convert.join = false;
