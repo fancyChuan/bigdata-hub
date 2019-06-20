@@ -24,3 +24,12 @@ select dealid, count(distinct uid), count(distinct date) from order group by dea
 6. 物理层优化器进行MR任务的变换，生成最终的执行计划
 
 #### 1. 
+
+
+
+
+
+
+### 参考资料
+1. [使用Hive API分析HQL的执行计划、Job数量和表的血缘关系 – lxw的大数据田地](http://lxw1234.com/archives/2015/09/476.htm)
+2. [【美团技术分享】sql语句转换成mapreduce - Mr.Ming2 - 博客园](https://www.cnblogs.com/Dhouse/p/7132476.html)

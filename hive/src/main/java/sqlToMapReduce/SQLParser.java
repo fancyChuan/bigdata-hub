@@ -25,6 +25,6 @@ public class SQLParser {
                 "  count(distinct base.userid) buyer_count\n" +
                 "GROUP BY base.datekey, base.clienttype";
 
-        ParseDriver.HiveLexerX lexerX = new ParseDriver.HiveLexerX(new ExpressionTree.ANTLRNoCaseStringStream(sql));
+        // ParseDriver.HiveLexerX lexerX = new ParseDriver.HiveLexerX(new ExpressionTree.ANTLRNoCaseStringStream(sql));
     }
 }
