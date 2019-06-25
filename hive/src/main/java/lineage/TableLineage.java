@@ -1,4 +1,4 @@
-package sqlToMapReduce;
+package lineage;
 
 import org.apache.hadoop.hive.ql.lib.*;
 import org.apache.hadoop.hive.ql.parse.*;
@@ -9,7 +9,7 @@ import java.util.Stack;
 import java.util.TreeSet;
 
 /**
- * TODO：未调通
+ * 表级别血缘
  */
 public class TableLineage implements NodeProcessor {
     TreeSet<String> inputTableList = new TreeSet<String>();
@@ -87,29 +87,14 @@ public class TableLineage implements NodeProcessor {
     }
 
     public static void main(String[] args) throws SemanticException, ParseException {
-        String sql = "FROM\n" +
-                "( \n" +
-                "  SELECT\n" +
-                "    p.datekey datekey,\n" +
-                "    p.userid userid,\n" +
-                "    c.clienttype\n" +
-                "  FROM\n" +
-                "    detail.usersequence_client c\n" +
-                "    JOIN fact.orderpayment p ON p.orderid = c.orderid\n" +
-                "    JOIN default.user du ON du.userid = p.userid\n" +
-                "  WHERE p.datekey = 20131118 \n" +
-                ") base\n" +
-                "INSERT OVERWRITE TABLE `test`.`customer_kpi`\n" +
-                "SELECT\n" +
-                "  base.datekey,\n" +
-                "  base.clienttype,\n" +
-                "  count(distinct base.userid) buyer_count\n" +
-                "GROUP BY base.datekey, base.clienttype";
+        String query = "INSERT OVERWRITE TABLE test.customer_kpi SELECT base.datekey,base.clienttype, count(distinct base.userid) buyer_count FROM ( SELECT p.datekey datekey, p.userid userid, c.clienttype FROM detail.usersequence_client c JOIN fact.orderpayment p ON p.orderid = c.orderid JOIN default.user du ON du.userid = p.userid WHERE p.datekey = 20131118 ) base GROUP BY base.datekey, base.clienttype";
+        // String query = "with q1 as ( select key from src where key = '5'), q2 as ( select key from with1 a inner join with2 b on a.id = b.id) insert overwrite table temp.dt_mobile_play_d_tmp2 partition(dt='2018-07-17') select * from q1 cross join q2";
+        // String query = "insert into qc.tables_lins_cnt partition(dt='2016-09-15') select a.x from (select x from cc group by x) a left  join yy b on a.id = b.id left join (select * from zz where id=1) c on c.id=b.id";
+        // String query ="from (select id,name from xx where id=1) a insert overwrite table  dsl.dwm_all_als_active_d partition (dt='main') select id group by id insert overwrite table  dsl.dwm_all_als_active_d2 partition (dt='main') select name group by name";
 
-        // ParseDriver.HiveLexerX lexerX = new ParseDriver.HiveLexerX(new ExpressionTree.ANTLRNoCaseStringStream(sql));
 
         TableLineage tableLineage = new TableLineage();
-        tableLineage.getLineageInfo(sql);
+        tableLineage.getLineageInfo(query);
 
         System.out.println("input:" + tableLineage.getInputTableList());
         System.out.println("output:" + tableLineage.getOutputTableList());
