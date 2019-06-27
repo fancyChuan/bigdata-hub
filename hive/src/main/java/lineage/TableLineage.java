@@ -69,11 +69,10 @@ public class TableLineage implements NodeProcessor {
     public void getLineageInfo(String query) throws ParseException, SemanticException {
         ParseDriver parseDriver = new ParseDriver();
         ASTNode tree = parseDriver.parse(query);
-        System.out.println(tree);
+        System.out.println(tree.dump()); // 打印出整个抽象语法树
         while (tree.getToken() == null && tree.getChildCount() > 0) {
             tree = (ASTNode) tree.getChild(0);
         }
-        System.out.println(tree);
         inputTableList.clear();
         outputTableList.clear();
         withTableList.clear();
@@ -101,6 +100,7 @@ public class TableLineage implements NodeProcessor {
         System.out.println("input:" + tableLineage.getInputTableList());
         System.out.println("output:" + tableLineage.getOutputTableList());
         System.out.println("with:" + tableLineage.getWithTableList());
+
 
     }
 }
