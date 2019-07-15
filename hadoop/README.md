@@ -38,11 +38,11 @@ Hadoop将一个作业分成若干个任务(task)执行，一个任务失败了�
     - reduce任务不具备数据本地化的优势
     - reduce任务的数量并不是由输入数据的大小决定，而是独立设置的
     - 如果有多个reduce任务，默认通过哈希函数来对map的输出数据进行分区，比如有3个reducer，那么每个map的输出都会放到三个分区中，每个reducer任务对应一个分区
-    - 也就是说：每一个reduce都会获得所有map的一份数据，这个过程就成为shuffle
+    - 也就是说：每一个reduce都会获得所有map的一份数据，这个过程就成为shuffle 见下图
     - 调整shuffle混洗参数对作业总运行时间的影响非常大
     - 当数据处理可以完全并行（无序shuffle）时，可能会出现没有reduce任务的情况
     
-![image](https://github.com/fancyChuan/bigdata-learn/blob/master/hadoop/img/多个reduce任务的数据流.png?raw=true)    
+    ![image](https://github.com/fancyChuan/bigdata-learn/blob/master/hadoop/img/多个reduce任务的数据流.png?raw=true)    
 - combiner
     - 集群的可用带宽限制了mr作业的数量，因此应尽量避免map和reduce任务之间的数据传输
     - combiner函数作用于map任务的输出，在传到reducer之前先做数据做处理，比如找到最大值

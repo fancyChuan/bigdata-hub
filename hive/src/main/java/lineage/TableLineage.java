@@ -3,6 +3,10 @@ package lineage;
 import org.apache.hadoop.hive.ql.lib.*;
 import org.apache.hadoop.hive.ql.parse.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Stack;
@@ -30,7 +34,7 @@ public class TableLineage implements NodeProcessor {
 
     public Object process(Node node, Stack<Node> stack, NodeProcessorCtx nodeProcessorCtx, Object... objects) throws SemanticException {
         ASTNode astNode = (ASTNode) node;
-        System.out.println(astNode);
+        // System.out.println(astNode);
         switch (astNode.getToken().getType()) {
             // create table
             case HiveParser.TOK_CREATETABLE: {
@@ -69,7 +73,7 @@ public class TableLineage implements NodeProcessor {
     public void getLineageInfo(String query) throws ParseException, SemanticException {
         ParseDriver parseDriver = new ParseDriver();
         ASTNode tree = parseDriver.parse(query);
-        System.out.println(tree.dump()); // 打印出整个抽象语法树
+        // System.out.println(tree.dump()); // 打印出整个抽象语法树
         while (tree.getToken() == null && tree.getChildCount() > 0) {
             tree = (ASTNode) tree.getChild(0);
         }
@@ -92,7 +96,21 @@ public class TableLineage implements NodeProcessor {
         // String query = "with q1 as ( select key from src where key = '5'), q2 as ( select key from with1 a inner join with2 b on a.id = b.id) insert overwrite table temp.dt_mobile_play_d_tmp2 partition(dt='2018-07-17') select * from q1 cross join q2";
         // String query = "insert into qc.tables_lins_cnt partition(dt='2016-09-15') select a.x from (select x from cc group by x) a left  join yy b on a.id = b.id left join (select * from zz where id=1) c on c.id=b.id";
         // String query ="from (select id,name from xx where id=1) a insert overwrite table  dsl.dwm_all_als_active_d partition (dt='main') select id group by id insert overwrite table  dsl.dwm_all_als_active_d2 partition (dt='main') select name group by name";
-        String query = "SELECT user_id, username from ods_touna.dw_user limit 10";
+        // String query = "SELECT user_id, username from ods_touna.dw_user limit 10";
+
+        String query = "";
+        File file = new File("E:\\JavaWorkshop\\bigdata-learn\\hive\\src\\main\\resources\\xxx.sql");
+        long length = file.length();
+        byte[] bytes = new byte[(int) length];
+        try {
+            FileInputStream inputStream = new FileInputStream(file);
+            inputStream.read(bytes);
+            inputStream.close();
+            query = new String(bytes);
+            System.out.println(query);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         TableLineage tableLineage = new TableLineage();
         tableLineage.getLineageInfo(query);
