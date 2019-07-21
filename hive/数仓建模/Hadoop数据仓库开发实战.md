@@ -50,3 +50,14 @@
     - 货币金额统一用“分”来表示
     - 如何灵活运用时间分区
     - 数据类型定义规范等
+
+#### 3. 流程规范
+用于规范开发流程行为，以保证数据交付进度和质量，降低交付风险
+
+分为需求流程规范和开发流程规范
+
+![image](https://github.com/fancyChuan/bigdata-learn/blob/master/hive/img/数仓建模/数仓的需求流程规范.png?raw=true)
+
+![image](https://github.com/fancyChuan/bigdata-learn/blob/master/hive/img/数仓建模/数仓的开发流程规范.png?raw=true)
+
+注意开发流程规范中，要有数据初步验证、发布后要配置数据质量监控
