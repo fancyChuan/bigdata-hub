@@ -1,5 +1,7 @@
 package lineage;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.ql.Context;
 import org.apache.hadoop.hive.ql.lib.*;
 import org.apache.hadoop.hive.ql.parse.*;
 
@@ -70,28 +72,45 @@ public class TableLineage implements NodeProcessor {
         return null;
     }
 
-    public void getLineageInfo(String query) throws ParseException, SemanticException {
-        ParseDriver parseDriver = new ParseDriver();
-        ASTNode tree = parseDriver.parse(query);
-        // System.out.println(tree.dump()); // 打印出整个抽象语法树
-        while (tree.getToken() == null && tree.getChildCount() > 0) {
-            tree = (ASTNode) tree.getChild(0);
-        }
-        inputTableList.clear();
-        outputTableList.clear();
-        withTableList.clear();
-
-        LinkedHashMap<Rule, NodeProcessor> rules = new LinkedHashMap<Rule, NodeProcessor>();
-
-        Dispatcher ruleDispatcher = new DefaultRuleDispatcher(this, rules, null);
-        GraphWalker graphWalker = new DefaultGraphWalker(ruleDispatcher);
-
-        ArrayList topNodes = new ArrayList();
-        topNodes.add(tree);
-        graphWalker.startWalking(topNodes, null);
+    public String dealWithSql(String sql) {
+        // sql = sql.replace("`", "");
+        sql = sql.replace(";", "");
+        return sql;
     }
 
-    public static void main(String[] args) throws SemanticException, ParseException {
+    public void getLineageInfo(String query) throws ParseException, SemanticException, IOException {
+        query = dealWithSql(query);
+        ParseDriver parseDriver = new ParseDriver();
+        try {
+            Configuration hiveConf = new Configuration();
+            hiveConf.set("hive.support.quoted.identifiers", "column"); // 处理 select x as `字段x` from.. 这种含有``的sql
+            hiveConf.set("_hive.hdfs.session.path", "hdfs"); // 伪造HDFS_SESSION_PATH_KEY以绕过代码检查 // TODO:这里源码为什么要做检验？
+            hiveConf.set("_hive.local.session.path", "local"); // 伪造LOCAL_SESSION_PATH_KEY以绕过代码检查
+            Context ctx = new Context(hiveConf);
+            ASTNode tree = parseDriver.parse(query, ctx);
+            // System.out.println(tree.dump()); // 打印出整个抽象语法树
+            while (tree.getToken() == null && tree.getChildCount() > 0) {
+                tree = (ASTNode) tree.getChild(0);
+            }
+            inputTableList.clear();
+            outputTableList.clear();
+            withTableList.clear();
+
+            LinkedHashMap<Rule, NodeProcessor> rules = new LinkedHashMap<Rule, NodeProcessor>();
+
+            Dispatcher ruleDispatcher = new DefaultRuleDispatcher(this, rules, null);
+            GraphWalker graphWalker = new DefaultGraphWalker(ruleDispatcher);
+
+            ArrayList topNodes = new ArrayList();
+            topNodes.add(tree);
+            graphWalker.startWalking(topNodes, null);
+        } catch (Exception e) {
+            System.out.println("======================== 解析SQL出错 ===========================");
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) throws SemanticException, ParseException, IOException {
         // String query = "create TABLE test.customer_kpi as SELECT base.datekey,base.clienttype, count(distinct base.userid) buyer_count FROM ( SELECT p.datekey datekey, p.userid userid, c.clienttype FROM detail.usersequence_client c JOIN fact.orderpayment p ON p.orderid = c.orderid JOIN default.user du ON du.userid = p.userid WHERE p.datekey = 20131118 ) base GROUP BY base.datekey, base.clienttype";
         // String query = "with q1 as ( select key from src where key = '5'), q2 as ( select key from with1 a inner join with2 b on a.id = b.id) insert overwrite table temp.dt_mobile_play_d_tmp2 partition(dt='2018-07-17') select * from q1 cross join q2";
         // String query = "insert into qc.tables_lins_cnt partition(dt='2016-09-15') select a.x from (select x from cc group by x) a left  join yy b on a.id = b.id left join (select * from zz where id=1) c on c.id=b.id";
