@@ -41,6 +41,10 @@ bin/hdfs zkfc -formatZK
 sbin/start-dfs.sh
 sbin/start-yarn.sh
 ```
+- 启动历史日志服务器
+```
+sbin/mr-jobhistory-daemon.sh start jobhistoryserver
+```
 
 ### 2. ZooKeeper
 基本配置：[zookeeper](https://github.com/fancyChuan/bigdata-learn/tree/master/环境搭建/zookeeper)
