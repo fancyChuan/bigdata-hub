@@ -1,6 +1,15 @@
-
-
 ### DDL(Data Definition Language)
+- Create/Drop/Alter/Use Database
+- Create/Drop/Truncate Table
+- Alter Table/Partition/Column
+- Create/Drop/Alter View
+- Create/Drop/Alter Index
+- Create/Drop Macro
+- Create/Drop/Reload Function
+- Create/Drop/Grant/Revoke Roles and Privileges
+- Show
+- Describe
+
 #### 1. [create/Drop/Alter/Use Database](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-Create/Drop/Alter/UseDatabase)
 - create database
 ```sql
