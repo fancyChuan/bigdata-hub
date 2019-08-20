@@ -31,3 +31,7 @@
    事务日志目录dataLogDir: /var/lib/zookeeper
 ```
 
+
+【常用网址】
+1. [cdh各组件版本信息](https://www.cloudera.com/documentation/enterprise/release-notes/topics/cdh_vd_cdh_package_tarball_516.html)
+2. [cdh各组件maven信息](https://www.cloudera.com/documentation/enterprise/release-notes/topics/cdh_vd_cdh5_maven_repo.html)
