@@ -12,9 +12,10 @@ public class AnalyseSQL {
     public static void main(String[] args) throws IOException, SemanticException, ParseException {
         TableLineage tableLineage = new TableLineage();
 
-        String sqltext = FileUtils.readFromFile("E:\\JavaWorkshop\\bigdata-learn\\hive\\src\\main\\resources\\sqls.txt");
+        // String sqltext = FileUtils.readFromFile("E:\\JavaWorkshop\\bigdata-learn\\hive\\src\\main\\resources\\sqls.txt");
+        String sqltext = FileUtils.readFromFile("E:\\JavaWorkshop\\bigdata-learn\\hive\\src\\main\\resources\\测试样例SQL.sql");
         String[] sqls = sqltext.split(";");
-        for (int i = 1000; i < sqls.length; i++) {
+        for (int i = 0; i < sqls.length; i++) {
             String sql = sqls[i];
             System.out.println(i + "\tsql:" + sql);
             boolean needToParse = !sql.replace("\r\n", "")
