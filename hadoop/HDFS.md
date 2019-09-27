@@ -131,4 +131,30 @@ sbin/hadoop-daemon.sh start namenode
 （3）bin/hdfs dfsadmin -safemode leave	（功能描述：离开安全模式状态）
 （4）bin/hdfs dfsadmin -safemode wait	（功能描述：等待安全模式状态）
 ```
-##### 5.5.3
+##### 5.5.3 案例
+模拟等待安全模式
+```
+# 1.查看当前模式
+[atguigu@hadoop102 hadoop-2.7.2]$ hdfs dfsadmin -safemode get
+Safe mode is OFF
+# 2.先进入安全模式
+[atguigu@hadoop102 hadoop-2.7.2]$ bin/hdfs dfsadmin -safemode enter
+# 3.创建并执行下面的脚本
+在/opt/module/hadoop-2.7.2路径上，编辑一个脚本safemode.sh
+[atguigu@hadoop102 hadoop-2.7.2]$ touch safemode.sh
+[atguigu@hadoop102 hadoop-2.7.2]$ vim safemode.sh
+
+#!/bin/bash
+hdfs dfsadmin -safemode wait
+hdfs dfs -put /opt/module/hadoop-2.7.2/README.txt /
+
+[atguigu@hadoop102 hadoop-2.7.2]$ chmod 777 safemode.sh
+
+[atguigu@hadoop102 hadoop-2.7.2]$ ./safemode.sh 
+# 4.再打开一个窗口，执行
+[atguigu@hadoop102 hadoop-2.7.2]$ bin/hdfs dfsadmin -safemode leave
+# 5.观察
+（a）再观察上一个窗口
+Safe mode is OFF
+（b）HDFS集群上已经有上传的数据了。
+```
