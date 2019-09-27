@@ -81,3 +81,37 @@ SecondaryNameNode：专门用于FsImage和Edits的合并
 </property >
 ```
 #### 5.4 NN故障处理
+两种方法：
+- 将2NN中的数据拷贝到NN存储数据的目录
+```
+# 1. kill -9 NameNode进程
+# 2. 删除NN存储的数据（/data/hadoop/tmp/dfs/name）
+rm -rf /data/hadoop/tmp/dfs/name/*
+# 3. 拷贝2NN中数据到原NN存储数据的目录
+scp -r beifeng@s02:/data/hadoop/tmp/dfs/namesecondary/* /data/hadoop/tmp/dfs/name/
+# 4. 重新启动NameNode
+sbin/hadoop-daemon.sh start namenode
+```
+- 使用-importCheckpoint选项启动NameNode守护进程，从而将SecondaryNameNode中数据拷贝到NameNode目录中
+```
+# 1. 修改hdfs-site.xml
+<property>
+  <name>dfs.namenode.checkpoint.period</name>
+  <value>120</value>
+</property>
+<property>
+  <name>dfs.namenode.name.dir</name>
+  <value>/opt/module/hadoop-2.7.2/data/tmp/dfs/name</value>
+</property>
+# 2. kill -9 NameNode进程
+# 3. 删除NameNode存储的数据（/opt/module/hadoop-2.7.2/data/tmp/dfs/name）
+# 4. 如果SecondaryNameNode不和NameNode在一个主机节点上，需要将SecondaryNameNode存储数据的目录拷贝到NameNode存储数据的平级目录，并删除in_use.lock文件
+scp -r atguigu@hadoop104:/opt/module/hadoop-2.7.2/data/tmp/dfs/namesecondary  atguigu@hadoop104:/opt/module/hadoop-2.7.2/data/tmp/dfs/
+
+cd namesecondary
+rm -rf in_use.lock
+# 5. 导入检查点数据（等待一会ctrl+c结束掉）
+bin/hdfs namenode -importCheckpoint
+# 6. 启动NameNode
+sbin/hadoop-daemon.sh start namenode
+```
