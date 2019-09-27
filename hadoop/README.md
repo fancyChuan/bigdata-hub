@@ -78,36 +78,6 @@ E:\JavaWorkshop\bigdata-learn\hadoop>type input\ncdc\sample.txt | python mapredu
 ```
 > python体系下，作为Streaming的替代方案，Dumbo使MR接口更像python
 
-### 二、HDFS
-
-
-java接口
-- 从Hadoop URL读取数据
-    - java自带的URL可以读取url的信息，new URL("hdfs://host/path"").openStream()
-    - 默认读取不到hdfs，需要通过 URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory()) 参见[URLCat.java](https://github.com/fancyChuan/bigdata-learn/blob/master/hadoop/src/main/java/hdfs/URLCat.java)
-    - 每个JVM只能执行一次 setURLStreamHandlerFactory()
-- 通过FileSystem API读取数据
-    - 直接使用InputStream
-    - 使用FSDataInputStream
-- 写入数据
-    - FSDataOutputStream
-- 目录
-    - mkdirs(Path p)
-- 查询文件系统
-    - 文件元数据： FileStatus，封装了文件长度、块大小、副本、修改时间、所有者、权限等信息
-    - 列出文件: listStatus()
-        - FileStatus[] listStatus(Path p) 
-        - FileStatus[] listStatus(Path p, PathFilter filter) 
-        - FileStatus[] listStatus(Path[] ps, PathFilter filter) 
-        - Hadoop的FileUtil中stat2Paths()可以把FileStatus[]转为Path[]
-    - 文件模式：可以使用通配符来寻找需要执行的文件
-        - FileStatus[] globStatus(Path pathPattern)
-        - FileStatus[] globStatus(Path pathPattern, PathFilter filter)
-        - 支持的通配符跟Unix系统一直
-    - PathFilter对象： 以编程的方式控制通配符
-        - 实现PathFilter接口的accept() 方法
-    - 删除数据： delete(Path f, boolean recursive) recursive=true时，非空目录及其内容会被永久性删除
-    
     
     
     
