@@ -106,7 +106,7 @@ sbin/hadoop-daemon.sh start namenode
 # 2. kill -9 NameNode进程
 # 3. 删除NameNode存储的数据（/opt/module/hadoop-2.7.2/data/tmp/dfs/name）
 # 4. 如果SecondaryNameNode不和NameNode在一个主机节点上，需要将SecondaryNameNode存储数据的目录拷贝到NameNode存储数据的平级目录，并删除in_use.lock文件
-scp -r atguigu@hadoop104:/opt/module/hadoop-2.7.2/data/tmp/dfs/namesecondary  atguigu@hadoop104:/opt/module/hadoop-2.7.2/data/tmp/dfs/
+scp -r hadoop@hadoop104:/opt/module/hadoop-2.7.2/data/tmp/dfs/namesecondary  hadoop@hadoop104:/opt/module/hadoop-2.7.2/data/tmp/dfs/
 
 cd namesecondary
 rm -rf in_use.lock
@@ -135,24 +135,24 @@ sbin/hadoop-daemon.sh start namenode
 模拟等待安全模式
 ```
 # 1.查看当前模式
-[atguigu@hadoop102 hadoop-2.7.2]$ hdfs dfsadmin -safemode get
+[hadoop@hadoop102 hadoop-2.7.2]$ hdfs dfsadmin -safemode get
 Safe mode is OFF
 # 2.先进入安全模式
-[atguigu@hadoop102 hadoop-2.7.2]$ bin/hdfs dfsadmin -safemode enter
+[hadoop@hadoop102 hadoop-2.7.2]$ bin/hdfs dfsadmin -safemode enter
 # 3.创建并执行下面的脚本
 在/opt/module/hadoop-2.7.2路径上，编辑一个脚本safemode.sh
-[atguigu@hadoop102 hadoop-2.7.2]$ touch safemode.sh
-[atguigu@hadoop102 hadoop-2.7.2]$ vim safemode.sh
+[hadoop@hadoop102 hadoop-2.7.2]$ touch safemode.sh
+[hadoop@hadoop102 hadoop-2.7.2]$ vim safemode.sh
 
 #!/bin/bash
 hdfs dfsadmin -safemode wait
 hdfs dfs -put /opt/module/hadoop-2.7.2/README.txt /
 
-[atguigu@hadoop102 hadoop-2.7.2]$ chmod 777 safemode.sh
+[hadoop@hadoop102 hadoop-2.7.2]$ chmod 777 safemode.sh
 
-[atguigu@hadoop102 hadoop-2.7.2]$ ./safemode.sh 
+[hadoop@hadoop102 hadoop-2.7.2]$ ./safemode.sh 
 # 4.再打开一个窗口，执行
-[atguigu@hadoop102 hadoop-2.7.2]$ bin/hdfs dfsadmin -safemode leave
+[hadoop@hadoop102 hadoop-2.7.2]$ bin/hdfs dfsadmin -safemode leave
 # 5.观察
 （a）再观察上一个窗口
 Safe mode is OFF
@@ -237,7 +237,7 @@ hdfs dfsadmin -refreshNodes
 yarn rmadmin -refreshNodes
 ```
 #### 6.6 DataNode多目录配置
-每个目录存储的数据不一样
+每个目录存储的数据不一样，主要用于想要扩展集群的大小的时候，新的磁盘可以通过这个方式配置进集群
 
 hdfs-site.xml
 ```
@@ -246,3 +246,61 @@ hdfs-site.xml
     <value>file:///${hadoop.tmp.dir}/dfs/data1,file:///${hadoop.tmp.dir}/dfs/data2</value>
 </property>
 ```
+### 7. HDFS 2.x新特性
+#### 7.1 集群间数据拷贝
+```
+# 1. scp实现两个远程主机之间的文件复制
+scp -r hello.txt root@hadoop103:/user/hadoop/hello.txt		// 推 push
+scp -r root@hadoop103:/user/hadoop/hello.txt  hello.txt		// 拉 pull
+//通过本地主机中转实现两个远程主机的文件复制；如果在两个远程主机之间ssh没有配置的情况下可以使用该方式。
+scp -r root@hadoop103:/user/hadoop/hello.txt root@hadoop104:/user/hadoop 
+
+# 2．采用distcp命令实现两个Hadoop集群之间的递归数据复制
+bin/hadoop distcp hdfs://haoop102:9000/user/hadoop/hello.txt hdfs://hadoop103:9000/user/hadoop/hello.txt
+```
+#### 7.2 小文件存档
+- HDFS存储小文件的弊端（实际工作中，应该尽量避免使用HDFS处理小文件）
+- 解决存储小文件的方法之一：使用存档
+> HDFS存档文件或HAR文件，是一个更高效的文件归档工具，它将文件存入HDFS块，在减少NameNode内存使用的同时，允许对文件进行透明的访问。具体说来，HDFS存档文件对内还是一个一个独立文件，对NameNode而言却是一个整体，减少了NameNode的内存。
+- 操作命令
+```
+# 归档文件
+bin/hadoop archive -archiveName input.har –p  /user/hadoop/input   /user/hadoop/output
+# 查看归档
+hadoop fs -lsr /user/hadoop/output/input.har  # 查看的是归档后对于NameNode而言的结果
+hadoop fs -lsr har:///user/hadoop/output/input.har  # 可以查看归档的所有小文件
+# 解归档文件
+hadoop fs -cp har:/// user/hadoop/output/input.har/*    /user/hadoop
+```
+
+### 8. HDFS高可用
+#### 8.1 HDFS-HA工作要点
+- 元数据管理方式需要改变
+    - 内存中各自保存一份元数据；
+    - Edits日志只有Active状态的NameNode节点可以做写操作；
+    - 两个NameNode都可以读取Edits；
+    - 共享的Edits放在一个共享存储中管理（qjournal和NFS两个主流实现）；
+- 需要一个状态管理功能模块
+    - 实现了一个zkfailover，常驻在每一个namenode所在的节点，每一个zkfailover负责监控自己所在NameNode节点，利用zk进行状态标识
+    - 当需要进行状态切换时，由zkfailover来负责切换，切换时需要防止brain split现象的发生。
+- 必须保证两个NameNode之间能够ssh无密码登录
+- 隔离（Fence），即同一时刻仅仅有一个NameNode对外提供服务
+
+#### 8.2 HDFS-HA自动故障转移工作机制
+自动故障转移为HDFS部署增加了两个新组件：ZooKeeper和ZKFailoverController（ZKFC）进程
+
+HA的自动故障转移依赖于ZooKeeper的以下功能：
+- 1）故障检测：集群中的每个NameNode在ZooKeeper中维护了一个持久会话，如果机器崩溃，ZooKeeper中的会话将终止，ZooKeeper通知另一个NameNode需要触发故障转移。
+- 2）现役NameNode选择：ZooKeeper提供了一个简单的机制用于唯一的选择一个节点为active状态。如果目前现役NameNode崩溃，另一个节点可能从ZooKeeper获得特殊的排外锁以表明它应该成为现役NameNode。
+
+ZKFC是自动故障转移中的另一个新组件，是ZooKeeper的客户端，也监视和管理NameNode的状态。每个运行NameNode的主机也运行了一个ZKFC进程，ZKFC负责：
+- 1）健康监测：ZKFC使用一个健康检查命令定期地ping与之在相同主机的NameNode，只要该NameNode及时地回复健康状态，ZKFC认为该节点是健康的。如果该节点崩溃，冻结或进入不健康状态，健康监测器标识该节点为非健康的。
+- 2）ZooKeeper会话管理：当本地NameNode是健康的，ZKFC保持一个在ZooKeeper中打开的会话。如果本地NameNode处于active状态，ZKFC也保持一个特殊的znode锁，该锁使用了ZooKeeper对短暂节点的支持，如果会话终止，锁节点将自动删除。
+- 3）基于ZooKeeper的选择：如果本地NameNode是健康的，且ZKFC发现没有其它的节点当前持有znode锁，它将为自己获取该锁。如果成功，则它已经赢得了选择，并负责运行故障转移进程以使它的本地NameNode为Active。故障转移进程与前面描述的手动故障转移相似，首先如果必要保护之前的现役NameNode，然后本地NameNode转换为Active状态。
+
+![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/HDFS-HA故障转移机制?raw=true)
+
+
+
+#### 8.3 HDFS-HA集群配置
+#### 8.4 YARN-HA配置
