@@ -158,3 +158,91 @@ hdfs dfs -put /opt/module/hadoop-2.7.2/README.txt /
 Safe mode is OFF
 （b）HDFS集群上已经有上传的数据了。
 ```
+
+### 6. DataNode
+#### 6.1 DAtaNode工作机制
+
+![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/DataNode工作机制?raw=true)
+
+
+#### 6.2 数据完整性
+DataNode节点保证数据完整性的方法。
+- 1）当DataNode读取Block的时候，它会计算CheckSum。
+- 2）如果计算后的CheckSum，与Block创建时值不一样，说明Block已经损坏。
+- 3）Client读取其他DataNode上的Block。
+- 4）DataNode在其文件创建后周期验证CheckSum
+
+#### 6.3 掉线时限参数设置
+HDFS默认的超时时长为10分钟+30秒
+
+计算公式：timeout=2*dfs.namenode.heartbeat.recheck-interval+10*dfs.heartbeat.interval
+```
+# hdfs-site.xml
+<property>
+    <name>dfs.namenode.heartbeat.recheck-interval</name>
+    <value>300000</value><!-- 默认5分钟，单位是毫秒 -->
+</property>
+<property>
+    <name>dfs.heartbeat.interval</name>
+    <value>3</value> <!-- 默认3秒，单位是秒 -->
+</property>
+
+```
+#### 6.4 服役新数据节点
+注意先清空磁盘上需要来存放HDFS的位置上的所有文件，比如/opt/module/hadoop-2.7.2/data和log
+
+步骤：
+```
+# 直接启动DataNode即可关联到集群
+sbin/hadoop-daemon.sh start datanode
+sbin/yarn-daemon.sh start nodemanager
+# 如果数据不均衡，可以使用命令实现集群的再平衡
+sbin/start-balancer.sh
+```
+#### 6.5 退役旧数据节点
+通过白名单的方式退役（更严格）
+- 配置需要服役的主机，退役的DN不配置进去
+```
+# 1.配置白名单
+# vim /usr/local/hadoop/etc/hadoop/dfs.hosts
+s01
+s02
+s03
+
+# 2.配置白名单位置
+# vim hdfs-site.xml
+<property>
+    <name>dfs.hosts</name>
+    <value>/usr/local/hadoop/etc/hadoop/dfs.hosts</value>
+</property>
+# 3.刷新NameNode
+hdfs dfsadmin -refreshNodes
+# 4.更新ResourceManager节点
+yarn rmadmin -refreshNodes
+```
+
+通过黑名单的方式退役（更温和）
+```
+# 1.新建黑名单文件
+# vim /usr/local/hadoop/etc/hadoop/dfs.hosts.exclude
+添加要退役的节点，比如s04
+# 2.修改hdfs-site.xml
+<property>
+    <name>dfs.hosts.exclude</name>
+    <value>/usr/local/hadoop/etc/hadoop/dfs.hosts.exclude</value>
+</property>
+# 3.刷新NameNode
+hdfs dfsadmin -refreshNodes
+# 4.更新ResourceManager节点
+yarn rmadmin -refreshNodes
+```
+#### 6.6 DataNode多目录配置
+每个目录存储的数据不一样
+
+hdfs-site.xml
+```
+<property>
+    <name>dfs.datanode.data.dir</name>
+    <value>file:///${hadoop.tmp.dir}/dfs/data1,file:///${hadoop.tmp.dir}/dfs/data2</value>
+</property>
+```
