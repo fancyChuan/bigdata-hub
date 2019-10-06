@@ -27,6 +27,21 @@
     - 提交的是封装了MapReduce程序相关运行参数的job对象
 
 ### 2. Hadoop序列化
+要在MapReduce中使用自定义的类，要保证能够序列化。有两种：使用Serializable或hadoop自带的序列化机制Writable
+
+如果要把自定义的bean放到key中传输，那么还需要实现Comparable接口，因为MR框架的shuffle要求key必须能够排序
+
 为什么不用java自带的序列化？
 > java序列化是一个重量级序列化框架（Serializable），一个对象被序列化之后会附带许多额外的信息（各种校验信息、header、继承体系等），不利于在网络中高效传输
+
+### 3. MapReduce框架原理
+#### 3.1 InputFormat数据输入
+- 并行度决定机制：
+    - 数据块：HDFS上块的大小，比如128M
+    - 数据切片：数据切片只是在逻辑上对输入进行分片
+
+![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/数据切片与MapTask并行度决定机制.png?raw=true)
+
+> 第4点的理解：一个文件夹下有两个文件，一个300m一个100m，那么默认会切分为4个分片，启动4个MapTask。也就是说，对每个文件做分片
+
 

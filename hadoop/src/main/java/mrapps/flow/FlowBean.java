@@ -6,6 +6,9 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
+/**
+ * 要在MapReduce中使用自定义的类，要保证能够序列化。这里使用的是hadoop自带的序列化框架
+ */
 public class FlowBean implements Writable {
     private long upFlow;
     private long downFlow;
