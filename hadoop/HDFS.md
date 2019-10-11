@@ -298,7 +298,7 @@ ZKFC是自动故障转移中的另一个新组件，是ZooKeeper的客户端，�
 - 2）ZooKeeper会话管理：当本地NameNode是健康的，ZKFC保持一个在ZooKeeper中打开的会话。如果本地NameNode处于active状态，ZKFC也保持一个特殊的znode锁，该锁使用了ZooKeeper对短暂节点的支持，如果会话终止，锁节点将自动删除。
 - 3）基于ZooKeeper的选择：如果本地NameNode是健康的，且ZKFC发现没有其它的节点当前持有znode锁，它将为自己获取该锁。如果成功，则它已经赢得了选择，并负责运行故障转移进程以使它的本地NameNode为Active。故障转移进程与前面描述的手动故障转移相似，首先如果必要保护之前的现役NameNode，然后本地NameNode转换为Active状态。
 
-![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/HDFS-HA故障转移机制?raw=true)
+![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/HDFS-HA故障转移机制.png?raw=true)
 
 
 
