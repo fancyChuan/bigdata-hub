@@ -44,4 +44,17 @@
 
 > 第4点的理解：一个文件夹下有两个文件，一个300m一个100m，那么默认会切分为4个分片，启动4个MapTask。也就是说，对每个文件做分片
 
+#### 3.2 job提交流程源码和切片机制
+#### 3.3 FileInputFormat切片机制
+#### 3.4 CombineTextInputFormat切片机制
+- TextInputFormat切片机制是对任务按文件规划切片，不管文件多小都会是一个单独的切片，交给一个MapTask处理，这样会有大量的MapTask
+- CombineTextInputFormat应用场景
+    - 用于小文件过多的场景，可以将多个小文件从逻辑上规划到一个切片中，处理之后的多个小文件就可以交给一个MapTask处理
+- 虚拟存储切片最大值设置
+```
+CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);// 4m
+```
+- 切片机制
 
+
+#### 3.5 
