@@ -35,6 +35,7 @@
 > java序列化是一个重量级序列化框架（Serializable），一个对象被序列化之后会附带许多额外的信息（各种校验信息、header、继承体系等），不利于在网络中高效传输
 
 ### 3. MapReduce框架原理
+输入 -> 切片 -> KV值 -> 
 #### 3.1 InputFormat数据输入
 - 并行度决定机制：
     - 数据块：HDFS上块的大小，比如128M
@@ -75,5 +76,24 @@ job.setInputFormatClass(CombineTextInputFormat.class);
 CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);
 ```
 
+#### 3.5 FileInputFormat实现类
+FileInputFormat针对不同的文件格式（比如基于行的日志文件、二进制格式文件、数据库表等）会有不同的实现类，包括；TextInputFormat、KeyValueTextInputFormat、NLineInputFormat、CombineTextInputFormat等
 
-#### 3.5 
+- TextInputFormat 
+    - 默认的实现类，按行读取每条记录
+    - key是该行在整个文件的**起始字节偏移量**LongWritable 
+    - value是这行的内容，不包含任何终止符Text
+    - kv方法是LineRecordReader
+- KeyValueTextInputFormat 
+    - 每一行均为一条记录，被分隔符切分为key/value
+    - 分隔符通过在驱动类中设置 conf.set(KeyValueLineRecordReaderKEY_VALUE_SEPERATOR, "\t") 默认为tab
+- NLineInputFormat
+    - 代表每个map进程处理的InputSplit不再按block去划分，而是按照NlineInputFormat执行的行数来划分
+    - 即输入文件的总行数/n=切片数，如果不整除，切片数=商+1
+    - kv方法是LineRecordReader
+- CombineTextInputFormat
+    - kv方法是CombineFileRecordReader
+- FixedLengthInputFormat
+    - kv方法是FixedLengthRecordReader
+- SequenceFileInputFormat
+    - kv方法是SequenceFileRecordReader
