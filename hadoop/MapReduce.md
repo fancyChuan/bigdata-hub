@@ -97,3 +97,5 @@ FileInputFormat针对不同的文件格式（比如基于行的日志文件、�
     - kv方法是FixedLengthRecordReader
 - SequenceFileInputFormat
     - kv方法是SequenceFileRecordReader
+
+#### 3.6 
