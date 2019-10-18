@@ -102,7 +102,7 @@ public class WordCount {
 
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
-            args = new String [] {"hadoop/src/main/java/mapreduce/intro/wordcount.txt", "hadoop/target/out"};
+            args = new String [] {"E:\\JavaWorkshop\\bigdata-learn\\hadoop\\input\\wordcount.txt", "hadoop/target/wordcount"};
         }
         int status = new WordCount().run(args);
         System.exit(status);
