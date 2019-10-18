@@ -86,7 +86,7 @@ FileInputFormat针对不同的文件格式（比如基于行的日志文件、�
     - kv方法是LineRecordReader
 - KeyValueTextInputFormat 
     - 每一行均为一条记录，被分隔符切分为key/value
-    - 分隔符通过在驱动类中设置 conf.set(KeyValueLineRecordReaderKEY_VALUE_SEPERATOR, "\t") 默认为tab
+    - 分隔符通过在驱动类中设置 conf.set(KeyValueLineRecordReaderKEY_VALUE_SEPERATOR, "/t") 默认为tab
 - NLineInputFormat
     - 代表每个map进程处理的InputSplit不再按block去划分，而是按照NlineInputFormat执行的行数来划分
     - 即输入文件的总行数/n=切片数，如果不整除，切片数=商+1
@@ -97,5 +97,10 @@ FileInputFormat针对不同的文件格式（比如基于行的日志文件、�
     - kv方法是FixedLengthRecordReader
 - SequenceFileInputFormat
     - kv方法是SequenceFileRecordReader
+
+- 自定义InputFormat，步骤如下：
+    - 自定义一个类继承FileInputFormat
+    - 自顶一个一个类继承RecordReader，实现自定义的将数据转为key/value形式
+    - 示例 [SelfFileInputFormat.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/fileinputformat/SelfFileInputFormat.java)
 
 #### 3.6 
