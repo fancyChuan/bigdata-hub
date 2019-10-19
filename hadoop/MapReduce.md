@@ -37,17 +37,20 @@
 ### 3. MapReduce框架原理
 输入 -> 切片 -> KV值 -> 
 #### 3.1 InputFormat数据输入
+##### 3.1.1 切片和并行度决定机制 
 - 并行度决定机制：
     - 数据块：HDFS上块的大小，比如128M
     - 数据切片：数据切片只是在逻辑上对输入进行分片
+
+> 设置reduce的并行数 job.setNumReduceTasks(10);
 
 ![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/数据切片与MapTask并行度决定机制.png?raw=true)
 
 > 第4点的理解：一个文件夹下有两个文件，一个300m一个100m，那么默认会切分为4个分片，启动4个MapTask。也就是说，对每个文件做分片
 
-#### 3.2 job提交流程源码和切片机制
-#### 3.3 FileInputFormat切片机制
-#### 3.4 CombineTextInputFormat切片机制
+##### 3.1.2 job提交流程源码和切片机制
+##### 3.1.3 FileInputFormat切片机制
+##### 3.1.4 CombineTextInputFormat切片机制
 - TextInputFormat切片机制是对任务按文件规划切片，不管文件多小都会是一个单独的切片，交给一个MapTask处理，这样会有大量的MapTask
 - CombineTextInputFormat应用场景
     - 用于小文件过多的场景，可以将多个小文件从逻辑上规划到一个切片中，处理之后的多个小文件就可以交给一个MapTask处理
@@ -76,7 +79,7 @@ job.setInputFormatClass(CombineTextInputFormat.class);
 CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);
 ```
 
-#### 3.5 FileInputFormat实现类
+##### 3.1.5 FileInputFormat实现类
 FileInputFormat针对不同的文件格式（比如基于行的日志文件、二进制格式文件、数据库表等）会有不同的实现类，包括；TextInputFormat、KeyValueTextInputFormat、NLineInputFormat、CombineTextInputFormat等
 
 - TextInputFormat 
@@ -98,9 +101,34 @@ FileInputFormat针对不同的文件格式（比如基于行的日志文件、�
 - SequenceFileInputFormat
     - kv方法是SequenceFileRecordReader
 
-- 自定义InputFormat，步骤如下：
-    - 自定义一个类继承FileInputFormat
-    - 自顶一个一个类继承RecordReader，实现自定义的将数据转为key/value形式
-    - 示例 [SelfFileInputFormat.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/fileinputformat/SelfFileInputFormat.java)
+##### 3.1.6 自定义InputFormat
+步骤如下：
+- 自定义一个类继承FileInputFormat
+- 自顶一个一个类继承RecordReader，实现自定义的将数据转为key/value形式
+- 示例 [SelfFileInputFormat.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/fileinputformat/SelfFileInputFormat.java)
 
-#### 3.6 
+#### 3.2 MR详细工作流程
+需要分组，将分组的需求转为排序的需求
+
+全排序，因为大数据量，所以先选择局部排序（采用的是快速排序），之后进行归并排序（完成合并的同时完成排序）
+
+![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/MapReduce详细工作流程1.png?raw=true)
+
+![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/MapReduce详细工作流程2.png?raw=true)
+
+#### 3.3 Shuffle机制
+
+Partition分区：
+-所谓的分区就是标明了这条数据应该去到哪个ReduceTask
+
+```
+public class HashPartitioner<K, V> extends Partitioner<K, V> {
+  public int getPartition(K key, V value, int numReduceTasks) {
+    return (key.hashCode() & Integer.MAX_VALUE) % numReduceTasks; // 使用Integer.MAX_VALUE是为了防止出现负的hash
+  }
+}
+```
+#### 3.4 MapTask工作机制
+
+
+#### 3.5 ReduceTask工作机制
