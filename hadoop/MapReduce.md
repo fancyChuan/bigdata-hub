@@ -128,6 +128,8 @@ public class HashPartitioner<K, V> extends Partitioner<K, V> {
   }
 }
 ```
+- 自定义分区 参见 [SelfPartitioner.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/partition/SelfPartitioner.java)
+
 #### 3.4 MapTask工作机制
 
 
