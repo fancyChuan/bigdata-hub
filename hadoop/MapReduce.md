@@ -182,6 +182,9 @@ public class HashPartitioner<K, V> extends Partitioner<K, V> {
 - 二次排序：在自定义排序中如果compareTo中的判断条件为两个即为二次排序
 
 自定义排序Writable
+- 实现WritableComparable接口重写compareTo方法（注意这个时候就不需要在实现Writable接口了）
+- 参见 [FlowBeanComparable.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/comparable/FlowBeanComparable.java)
+- 实现区内排序 [PartitionSortApp.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/comparable/PartitionSortApp.java)
 
 
 #### 3.4 MapTask工作机制
