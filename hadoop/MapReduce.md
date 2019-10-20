@@ -144,6 +144,7 @@ collector.close();
 ```
 
 #### 3.3 Shuffle机制
+三次排序（如果有Combiner，就会有两次Combiner生效）
 
 ![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/shuffle机制.png?raw=true)
 
@@ -186,6 +187,20 @@ public class HashPartitioner<K, V> extends Partitioner<K, V> {
 - 参见 [FlowBeanComparable.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/comparable/FlowBeanComparable.java)
 - 实现区内排序 [PartitionSortApp.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/comparable/PartitionSortApp.java)
 
+##### 3.3.3 Combiner合并
+概述：
+- Combiner是MR程序中的另一个组件，意义是对每一个MapTask的输出进行局部汇总以减少网络传输量
+- Combiner组件的父类是Reducer
+- 跟Reducer的区别在于运行的位置：
+    - Combiner在每一个MapTask所在的节点运行
+    - Reducer接收全局所有Mapper的输出结果
+- 使用要求
+    - 不影响最终的业务逻辑（比如求平均值就不能使用Combiner）
+    - Combiner输出的kv类型应该与Reducer输入的kv类型一致
+
+自定义Combiner
+- 自定义Combiner类并继承Reducer，重写reduce方法
+- 在job驱动类中设置 job.setCombinerClass(WordcountCombiner.class);
 
 #### 3.4 MapTask工作机制
 

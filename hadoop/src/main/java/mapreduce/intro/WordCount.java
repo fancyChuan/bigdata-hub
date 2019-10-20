@@ -5,7 +5,6 @@ import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -18,9 +17,9 @@ public class WordCount {
 
     // step 1: map class
     // public class Mapper<KEYIN, VALUEIN, KEYOUT, VALUEOUT>
-    public static class WCMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+    public static class WCMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
         private Text mapOutputKey = new Text();
-        private final static  IntWritable mapOutputValue = new IntWritable(1);
+        private final static  LongWritable mapOutputValue = new LongWritable(1);
 
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -39,13 +38,13 @@ public class WordCount {
 
 
     // step2 reduce
-    private static class WCReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
-        private   IntWritable outputValue = new IntWritable();
+    public static class WCReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
+        private   LongWritable outputValue = new LongWritable();
 
         @Override
-        protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+        protected void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
             int sum = 0;
-            for (IntWritable value: values) {
+            for (LongWritable value: values) {
                 sum += value.get();
             }
             outputValue.set(sum);
@@ -70,7 +69,7 @@ public class WordCount {
         // 配置Mapper
         job.setMapperClass(WCMapper.class);
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputValueClass(LongWritable.class);
 
         // shuffle 过程
         // 1) partition
@@ -85,7 +84,7 @@ public class WordCount {
         // 配置reduce
         job.setReducerClass(WCReducer.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(LongWritable.class);
         // reduce 优化
         // 增加reduce的个数
         // job.setNumReduceTasks(2);
