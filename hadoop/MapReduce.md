@@ -147,7 +147,7 @@ collector.close();
 
 ![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/shuffle机制.png?raw=true)
 
-Partition分区：
+##### 3.3.1 Partition分区：
 -所谓的分区就是标明了这条数据应该去到哪个ReduceTask
 
 ```
@@ -166,6 +166,24 @@ public class HashPartitioner<K, V> extends Partitioner<K, V> {
     - 准确的说是，自定义分区号的最大值不能大于ReduceTask。比如只有4个分区号（0/1/2/4）ReduceTask为4个，那么也会报错
     - 自定义分区数小于ReduceTask可以运行，但是会造成ReduceTask空转不干活。比如4个分区号，但是有5个ReduceTask，那么其中一个ReduceTask不干活，输出空的结果文件
     - 分区号需要从0开始，逐一累加
+
+##### 3.3.2 WritableComparable
+排序是MR框架中最重要的操作之一。MapTask和ReduceTask都会对数据按照key进行排序，这是hadoop的默认行为，不管程序逻辑上是不是真的需要排序。所以有的时候我们也可以利用这种特性，把需要排序的内容设置到key的位置上
+> 对于MapTask，它会将处理的结果暂时放到环形缓冲区中，当环形缓冲区使用率达到一定阈值后，再对缓冲区中的数据进行一次快速排序，并将这些有序数据溢写到磁盘上，而当数据处理完毕后，它会对磁盘上所有文件进行归并排序。
+
+> 对于ReduceTask，它从每个MapTask上远程拷贝相应的数据文件，如果文件大小超过一定阈值，则溢写磁盘上，否则存储在内存中。如果磁盘上文件数目达到一定阈值，则进行一次归并排序以生成一个更大文件；如果内存中文件大小或者数目超过一定阈值，则进行一次合并后将数据溢写到磁盘上。当所有数据拷贝完毕后，ReduceTask统一对内存和磁盘上的所有数据进行一次归并排序。
+
+默认排序是按照字典顺序排序，且采用的是快速排序
+
+排序的分类：
+- 部分排序：保证输出的每个文件内部有序
+- 全排序：只设置一个TaskReduce，结果只有一个文件，但是这样效率很低
+- 辅助排序（GroupingComparator）：在Reduce端对key进行排序。使用场景：key为bean对象时，让一个或多个字段相同的key进入同一个reduce方法
+- 二次排序：在自定义排序中如果compareTo中的判断条件为两个即为二次排序
+
+自定义排序Writable
+
+
 #### 3.4 MapTask工作机制
 
 

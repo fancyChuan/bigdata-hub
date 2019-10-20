@@ -1,15 +1,15 @@
-package mrapps.flow;
+package mrapps.comparable;
 
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * 要在MapReduce中使用自定义的类，要保证能够序列化。这里使用的是hadoop自带的序列化框架
+ * 自定义排序，允许对bean根据sumFlow进行排序
  */
-public class FlowBean implements Writable {
+public class FlowBeanComparable implements WritableComparable<FlowBeanComparable> {
     private long upFlow;
     private long downFlow;
     private long sumFlow;
@@ -34,7 +34,7 @@ public class FlowBean implements Writable {
         sumFlow = in.readLong();
     }
 
-    public FlowBean() {
+    public FlowBeanComparable() {
     }
 
     // 对于bean来说这个方法不是必要的，只是为了后面编写MR的时候方便点
@@ -71,5 +71,10 @@ public class FlowBean implements Writable {
 
     public void setSumFlow(long sumFlow) {
         this.sumFlow = sumFlow;
+    }
+
+    @Override
+    public int compareTo(FlowBeanComparable bean) {
+        return Long.compare(bean.sumFlow, this.sumFlow);
     }
 }
