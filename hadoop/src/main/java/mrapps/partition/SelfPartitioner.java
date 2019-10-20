@@ -11,7 +11,7 @@ public class SelfPartitioner extends Partitioner<Text, FlowBean> {
     @Override
     public int getPartition(Text text, FlowBean flowBean, int numPartitions) {
         String phone = text.toString();
-        switch (phone.substring(0, 3)) {
+        switch (phone.substring(0, 3)) { // 这个地方是5个分区，如果有4个ReduceTask，会报错；而如果是6个ReduceTask，那么不报错，只是有一个ReduceTask不干活，浪费了资源
             case "136":
                 return 0;
             case "137":

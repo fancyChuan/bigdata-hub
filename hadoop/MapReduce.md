@@ -145,6 +145,8 @@ collector.close();
 
 #### 3.3 Shuffle机制
 
+![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/shuffle机制.png?raw=true)
+
 Partition分区：
 -所谓的分区就是标明了这条数据应该去到哪个ReduceTask
 
@@ -156,7 +158,14 @@ public class HashPartitioner<K, V> extends Partitioner<K, V> {
 }
 ```
 - 自定义分区 参见 [SelfPartitioner.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/partition/SelfPartitioner.java)
-
+    - 继承Partitioner类并重写getPartition()方法
+    - 在job驱动中，设置自定义Partitioner
+    - 根据自定义分区的逻辑设置相应的ReduceTask数量
+- 自定义分区数与ReduceTask数量的关系
+    - 自定义分区数不能大于ReduceTask，否则会报错
+    - 准确的说是，自定义分区号的最大值不能大于ReduceTask。比如只有4个分区号（0/1/2/4）ReduceTask为4个，那么也会报错
+    - 自定义分区数小于ReduceTask可以运行，但是会造成ReduceTask空转不干活。比如4个分区号，但是有5个ReduceTask，那么其中一个ReduceTask不干活，输出空的结果文件
+    - 分区号需要从0开始，逐一累加
 #### 3.4 MapTask工作机制
 
 
