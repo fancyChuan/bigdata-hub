@@ -116,6 +116,33 @@ FileInputFormat针对不同的文件格式（比如基于行的日志文件、�
 
 ![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/MapReduce详细工作流程2.png?raw=true)
 
+流程详解：上面的流程图是MR最全工作流程，shuffle过程从第7步开始16步结束。具体shuffle过程如下：
+- 1) MapTask收集我们的map()方法输出的kv对，放到内存缓冲区中
+- 2）从内存缓冲区不断溢出本地磁盘文件，可能会溢出多个文件
+- 3）多个溢出文件会被合并成大的溢出文件
+- 4）在溢出过程及合并的过程中，都要调用Partitioner进行分区和针对key进行排序
+- 5）ReduceTask根据自己的分区号，去各个MapTask机器上取相应的结果分区数据
+- 6）ReduceTask会取到同一个分区的来自不同MapTask的结果文件，ReduceTask会将这些文件再进行合并（归并排序）
+- 7）合并成大文件后，Shuffle的过程也就结束了，后面进入ReduceTask的逻辑运算过程（从文件中取出一个一个的键值对Group，调用用户自定义的reduce()方法）
+
+注意：shuffle中缓冲区大小会影响MR效率，原则上缓冲区越大，磁盘IO次数越少，速度越快，可以通过io.sort.mb调整，默认是100M
+
+相应的源码
+```
+context.write(k, NullWritable.get());
+output.write(key, value);
+collector.collect(key, value,partitioner.getPartition(key, value, partitions));
+	HashPartitioner();
+collect()
+	close()
+	collect.flush()
+sortAndSpill()
+	sort()   QuickSort
+mergeParts();
+	
+collector.close();
+```
+
 #### 3.3 Shuffle机制
 
 Partition分区：
