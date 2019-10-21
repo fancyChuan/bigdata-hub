@@ -202,6 +202,11 @@ public class HashPartitioner<K, V> extends Partitioner<K, V> {
 - 自定义Combiner类并继承Reducer，重写reduce方法
 - 在job驱动类中设置 job.setCombinerClass(WordcountCombiner.class);
 
+##### 3.3.4 GroupingComparator分组（辅助排序）（二次排序）
+MR中是先排序后分组，当我们需要统计每笔订单（一个订单会有多个商品）中金额最大的商品，这个时候就需要二次排序，也就是需要先分组后排序
+
+参见 [UsingGroupingCompartorApp.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/groupingcomparator/UsingGroupingCompartorApp.java)
+
 #### 3.4 MapTask工作机制
 
 
