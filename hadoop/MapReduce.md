@@ -211,3 +211,10 @@ MR中是先排序后分组，当我们需要统计每笔订单（一个订单会
 
 
 #### 3.5 ReduceTask工作机制
+
+#### 3.6 OutputFormat数据输出
+OutputFormat是所有MR输出的基类，常用的有：
+- 文本输出TextOutputFormat： 默认的输出格式，把每条记录写成文本行
+- SequenceFileOutputFormat： 格式紧凑容易被压缩，常用将SequenceFileInputFormat的输出作为后续MR任务的输入
+
+自定义OutputFormat
