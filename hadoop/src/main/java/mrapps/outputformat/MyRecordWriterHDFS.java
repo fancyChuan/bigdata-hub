@@ -1,25 +1,30 @@
 package mrapps.outputformat;
 
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 
 /**
- * 自定义 在本地文件系统写入数据
+ * 自定义RecordWriter 数据写到HDFS上并且能够使用Driver中设置的输出路径
  */
-public class MyRecordWriter extends RecordWriter<LongWritable, Text> {
-    private FileOutputStream want;
-    private FileOutputStream other;
+public class MyRecordWriterHDFS extends RecordWriter<LongWritable, Text> {
+    private FSDataOutputStream want;
+    private FSDataOutputStream other;
 
-    public void initialize(String outputPath) throws FileNotFoundException {
-        want = new FileOutputStream(outputPath + "/want.txt");
-        other = new FileOutputStream(outputPath + "/other.txt");
+    public void initialize(TaskAttemptContext job) throws IOException {
+        String outDir = job.getConfiguration().get(FileOutputFormat.OUTDIR);
+        FileSystem fileSystem = FileSystem.get(job.getConfiguration());
+         want = fileSystem.create(new Path(outDir + "/want.txt"));
+         other = fileSystem.create(new Path(outDir + "/other.txt"));
     }
 
     @Override // 将KV写出，每个KV调用一次

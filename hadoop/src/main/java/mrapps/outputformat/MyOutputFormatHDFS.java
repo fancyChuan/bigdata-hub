@@ -8,11 +8,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 
-public class MyOutputFormat extends FileOutputFormat<LongWritable, Text> {
+public class MyOutputFormatHDFS extends FileOutputFormat<LongWritable, Text> {
     @Override
     public RecordWriter<LongWritable, Text> getRecordWriter(TaskAttemptContext job) throws IOException, InterruptedException {
-        MyRecordWriter myRecordWriter = new MyRecordWriter();
-        myRecordWriter.initialize("hadoop/target");
+        MyRecordWriterHDFS myRecordWriter = new MyRecordWriterHDFS();
+        myRecordWriter.initialize(job);
         return myRecordWriter;
     }
 }
