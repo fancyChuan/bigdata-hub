@@ -239,3 +239,9 @@ join场景下map和reduce的工作：
 select id, a.pid, amount, pname
 from t_order a join t_product b on a.pid=b.pid
 ```
+
+##### Map Join
+使用场景：适用于一张表很小，另一张表很大。小表直接读到内存中
+
+优点：Map端缓存多张表，提前处理业务逻辑，这样增加map端业务，减少Reduce端数据的压力，尽可能小的减少数据倾斜
+
