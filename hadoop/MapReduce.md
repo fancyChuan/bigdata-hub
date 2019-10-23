@@ -245,3 +245,58 @@ from t_order a join t_product b on a.pid=b.pid
 
 优点：Map端缓存多张表，提前处理业务逻辑，这样增加map端业务，减少Reduce端数据的压力，尽可能小的减少数据倾斜
 
+一般10-15M以内的文件可以使用map，hive默认使用map join的文件大小是25M
+
+```
+具体办法：采用DistributedCache
+1）在Mapper的setup阶段，将文件读取到缓存集合中。
+2）在驱动函数中加载缓存。
+// 缓存普通文件到Task运行节点。
+job.addCacheFile(new URI("file://e:/cache/pd.txt"));
+```
+
+#### 3.8 计数器应用
+hadoop为每个作业维护若干个内置计数器以描述多项指标
+
+比如我们要统计日志中字段长度大于11的行数，可以在map执行：
+```
+protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            String[] items = value.toString().split(" ");
+            if (items.length > 11) {
+                context.write(value, NullWritable.get());
+                context.getCounter("ETL", "True").increment(1);
+            } else {
+                context.getCounter("ETL", "False").increment(1);
+            }
+        }
+```
+结果从MR运行的日志中可以看到如下信息
+```
+2019-10-24 00:26:11,156  INFO [main] (Job.java:1385) - Counters: 17
+	File System Counters
+		FILE: Number of bytes read=3040557
+		FILE: Number of bytes written=3277492
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+	Map-Reduce Framework
+		Map input records=14619
+		Map output records=13770
+		Input split bytes=124
+		Spilled Records=0
+		Failed Shuffles=0
+		Merged Map outputs=0
+		GC time elapsed (ms)=0
+		Total committed heap usage (bytes)=324534272
+	ETL
+		False=849
+		True=13770
+	File Input Format Counters 
+		Bytes Read=3040376
+	File Output Format Counters 
+		Bytes Written=2993323
+```
+
+简单版ETL [SimpleETLApp.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/counter/SimpleETLApp.java)
+
+复杂版ETL [SimpleETLApp.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/counter/SimpleETLApp.java)
