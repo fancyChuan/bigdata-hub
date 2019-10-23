@@ -218,3 +218,24 @@ OutputFormat是所有MR输出的基类，常用的有：
 - SequenceFileOutputFormat： 格式紧凑容易被压缩，常用将SequenceFileInputFormat的输出作为后续MR任务的输入
 
 自定义OutputFormat
+- 新建一个类继承FileOutputFormat并实现方法
+- 新建一个类继承RecordWriter并实现方法
+- Driver中设置 job.setOutputFormatClass()
+
+#### 3.7 join多种应用
+join场景下map和reduce的工作：
+- Map端
+    - 为来自不同表/文件的kv对打上标签以区分不同的来源
+    - 用连接字段作为key，其余部分和新加的标签作为value
+- Reduce端
+    - 以连接字段作为key的分组已经完成，需要将每个分组中那些来源于不同文件的记录分开
+    - 最后进行合并
+
+##### Reduce Join
+比如有两张表：
+- t_order: id、pid、amount
+- t_product：pid、pname
+```
+select id, a.pid, amount, pname
+from t_order a join t_product b on a.pid=b.pid
+```
