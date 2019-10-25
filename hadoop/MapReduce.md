@@ -300,3 +300,65 @@ protected void map(LongWritable key, Text value, Context context) throws IOExcep
 简单版ETL [SimpleETLApp.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/counter/SimpleETLApp.java)
 
 复杂版ETL [SimpleETLApp.java](https://github.com/fancychuan/bigdata-learn/tree/master/hadoop/src/main/java/mrapps/counter/SimpleETLApp.java)
+
+### 4. Hadoop数据压缩
+压缩是提高hadoop运行效率的一种优化策略，可以在MR的任意阶段开启
+> 采用压缩技术虽然减少了磁盘IO，但同时也增加了CPU运算的负担，所以需要使用得当，否则可能得不偿失
+
+采用压缩的基本原则：
+- 运算密集型job，少用压缩
+- IO密集型job，多用压缩
+
+MR支持的压缩编码
+
+压缩格式 | 是否hadoop自带| 算法 | 文件扩展名 | 是否可切分 | 换成压缩格式后，原来的程序是否需要修改
+--- | --- | --- | --- | ---| ---
+DEFLATE | 是，直接使用 | DEFLATE	|.deflate	|否	|和文本处理一样，不需要修改
+Gzip	|是，直接使用	|DEFLATE	|.gz	|否	|和文本处理一样，不需要修改
+bzip2	|是，直接使用	|bzip2	|.bz2	是	|和文本处理一样，不需要修改
+LZO	|否，需要安装	LZO	.lzo	|是	|需要建索引，还需要指定输入格式
+Snappy	|否，需要安装	|Snappy	|.snappy	|否	|和文本处理一样，不需要修改
+
+为了支持多种压缩/解压缩算法，Hadoop引入了编码/解码器
+
+压缩格式 | 对应的编码/解码器
+--- | ---
+DEFLATE	| org.apache.hadoop.io.compress.DefaultCodec
+gzip	| org.apache.hadoop.io.compress.GzipCodec
+bzip2	| org.apache.hadoop.io.compress.BZip2Codec
+LZO	| com.hadoop.compression.lzo.LzopCodec
+Snappy	| org.apache.hadoop.io.compress.SnappyCodec
+
+gzip、bzip2、LZO解压缩性能：
+
+压缩算法 | 原始文件大小 | 压缩文件大小 | 压缩速度 | 解压速度
+--- | --- | --- | --- | ---
+gzip | 8.3GB | 1.8GB | 17.5MB/s | 58MB/s
+bzip2 | 8.3GB | 1.1GB | 2.4MB/s | 9.5MB/s
+LZO | 8.3GB | 2.9GB | 49.3MB/s | 74.6MB/s
+> 官方说snappy的解压缩速度可以达到250MB/s
+ 
+- LZO：解压缩速度最快，但是压缩比最小即压缩后的文件大小最大
+    - hadoop中最流行的压缩格式，可以在linux下安装lzop命令。缺点是在应用中对lzo格式的文件需要一些特殊处理
+    - 应用场景：一个很大的文本文件，压缩之后还大于200M以上的可以考虑，单个文件越大，lzo优点越明显
+- bzip2：解压缩速度最慢，但是高压缩比
+    - 支持split，hadoop自带，缺点是解压缩速度慢
+    - 使用场景：
+        - 对速度要求不高，但需要较高压缩比的时候
+        - 或者输出之后的数据比较大，处理之后的数据需要压缩存档以减少磁盘空间并且以后使用比较少的情况。
+        - 或者对单个很大的文本文件想压缩以减少存储空间，同时有需要支持split，并且兼容之前程序的情况
+- gzip：解压缩速度中等，压缩比中等，hadoop支持，linux系统也自带
+    - 缺点：不支持split
+    - 应用场景：文件压缩之后在130以内（一个块大小内）都可以考虑用Gzip
+- snappy：解压缩速度很快，而且有合理的压缩率
+    - 缺点：不支持split，压缩率比gzip低，需要安装
+    - 使用场景：MR作业的map输出数据比较大的时候，作为map到reduce的中间数据的压缩格式。或者作为一个MR作业的输出和另一MR作业的输入
+
+MR中使用压缩的位置：
+
+![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/在MR中使用压缩的位置.png?raw=true)
+
+
+##### 压缩参数配置
+##### 压缩示例
+
