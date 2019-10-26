@@ -363,4 +363,24 @@ MR中使用压缩的位置：
 ##### 压缩示例
 CompressionCodec接口有两个方法分别用于压缩和解压缩：
 - 对输出流进行压缩：createOutputStream
-- 对输入流进行解压缩：
+- 对输入流进行解压缩：createInputStream
+
+输入输出的文件都是为压缩的文件，那么仍可以在map端或者reduce端使用压缩
+- map端
+```
+Configuration configuration = new Configuration();
+// 开启map端输出压缩
+configuration.setBoolean("mapreduce.map.output.compress", true);
+// 设置map端输出压缩方式
+configuration.setClass("mapreduce.map.output.compress.codec", BZip2Codec.class, CompressionCodec.class);
+Job job = Job.getInstance(configuration);
+```
+- reduce端
+```
+// 在Driver类中设置
+// 设置reduce端输出压缩开启
+FileOutputFormat.setCompressOutput(job, true);
+// 设置压缩的方式
+FileOutputFormat.setOutputCompressorClass(job, BZip2Codec.class); 
+```
+

@@ -17,7 +17,9 @@ import java.io.*;
 public class CompressDecompressApp {
     public static void main(String[] args) throws Exception {
         String filename = "hadoop/input/wordcount.txt";
-        String method = "org.apache.hadoop.io.compress.DefaultCodec";
+//        String method = "org.apache.hadoop.io.compress.DefaultCodec";
+//        String method = "org.apache.hadoop.io.compress.GzipCodec";
+        String method = "org.apache.hadoop.io.compress.BZip2Codec";
         String resultFile = compress(filename, method);
         decompress(resultFile);
     }
