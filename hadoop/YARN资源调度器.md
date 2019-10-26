@@ -21,3 +21,33 @@ YARN工作机制：
 作业提交过程之MapReduce
 
 ![image](img/作业提交之MR过程.png)
+
+调度策略（通过yarn.resourcemanager.scheduler.class配置）：
+- 先进先出调度：FIFO
+- 容量调度：Capacity Scheduler 默认的方式
+- 公平调度：Fair Scheduler
+
+![image](img/容量调度器.png)
+
+![image](img/公平调度器.png)
+
+
+开启推测执行任务机制
+- 发现拖后腿的任务，比如运行速度远慢于任务平均速度（可能硬件老化有bug等），为拖后腿的任务启动一个备份任务，谁先完成就有谁的结果
+- 前提条件：
+    - 每个Task只能有一个备份任务
+    - 当前Job已完成的task必须不小于5%
+    - 开启推测执行参数设置。mapred-site.xml文件中默认是打开的
+```
+<property>
+  	<name>mapreduce.map.speculative</name>
+  	<value>true</value>
+  	<description>If true, then multiple instances of some map tasks may be executed in parallel.</description>
+</property>
+<property>
+  	<name>mapreduce.reduce.speculative</name>
+  	<value>true</value>
+  	<description>If true, then multiple instances of some reduce tasks may be executed in parallel.</description>
+</property>
+
+```
