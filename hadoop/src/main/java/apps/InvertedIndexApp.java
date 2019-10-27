@@ -15,6 +15,9 @@ import java.io.IOException;
 
 /**
  * 实现倒排索引
+ *
+ * TODO：多job串联该怎么优雅的实现？这个地方是否可以JVM复用？
+ *      setJarByClass的时候选择同一个Driver类是否会有问题？
  */
 public class InvertedIndexApp {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
