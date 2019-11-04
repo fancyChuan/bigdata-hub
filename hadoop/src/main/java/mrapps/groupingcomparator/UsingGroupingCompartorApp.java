@@ -19,7 +19,8 @@ public class UsingGroupingCompartorApp {
         if (args.length == 0) {
             args = new String[]{"E:\\JavaWorkshop\\bigdata-learn\\hadoop\\input\\GroupingComparator.txt", "hadoop/target/group"};
         }
-        Job job = Job.getInstance(new Configuration());
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf);
 
         job.setGroupingComparatorClass(OrderComparator.class); // 这个地方使用GroupingComparator
 
