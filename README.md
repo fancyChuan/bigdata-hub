@@ -1,4 +1,5 @@
 ## bigdata-learn
+大数据相关的技术可以分为：传输、存储、计算三大方面
 
 ### pom相关
 1. 《hadoop权威指南》第4版使用的pom
@@ -7,11 +8,11 @@
 
 ### 学习项目
 - hadoop
-- zookeeper
+- hive
 - kafka
 - spark
 - hbase
-- hive
+- zookeeper
 
 
 ### 程序包下载
