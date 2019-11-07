@@ -1,6 +1,17 @@
 
 ### hive-site.xml
+- 命令行显示当前数据库
+```
+<property>
+	<name>hive.cli.print.header</name>
+	<value>true</value>
+</property>
+<property>
+	<name>hive.cli.print.current.db</name>
+	<value>true</value>
+</property>
 
+```
 - hive thrift服务
 ```xml
   <property>

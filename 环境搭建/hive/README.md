@@ -14,7 +14,7 @@ export HADOOP_HOME=/opt/module/hadoop-2.7.2
 export HIVE_CONF_DIR=/opt/module/hive/conf
 ```
 
-- hive-site.xml
+- hive-site.xml用户配置文件（默认的配置文件是hive-site.xml）
 ```xml
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -59,4 +59,9 @@ FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTa
 解决方法：
 ```
 mysql> alter database metastore character set latin1;
+```
+
+- hive-log4j.properties
+```
+hive.log.dir=/opt/module/hive/logs
 ```

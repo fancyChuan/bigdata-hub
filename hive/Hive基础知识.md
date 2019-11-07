@@ -28,9 +28,45 @@
 
 #### JDBC访问
 ```
+# 启动hiveserver2
+bin/hiveserver2
+
 # 启动beeline
 bin/beeline
 
 # 连接Hiveserver2
-> !connect jdbc:hive2://hadoop102:1000
+beeline> !connect jdbc:hive2://hadoop102:10000
+```
+#### Hive参数配置方式
+有三种配置方式
+- 配置文件方式：hive-site.xml，hive-default.xml
+- 命令行参数方式： 只对本次hive启动有效
+```
+bin/hive -hiveconf mapred.reduce.tasks=10;
+```
+- 参数声明方式
+```
+hive (default)> set mapred.reduce.tasks=100;
+# 查看参数配置情况
+hive (default)> set mapred.reduce.tasks=100;
+```
+
+#### Hive数据类型
+- 基本数据类型
+    - string，相当于数据库的varchar，理论上最大可以存储2GB字符数
+- 集合数据类型
+    - struct：类似于C语言的Struct
+    - map：类似于java的Map
+    - array：类似于java的Array
+```
+create table test(
+name string,
+friends array<string>,
+children map<string, int>,
+address struct<street:string, city:string>
+)
+row format delimited fields terminated by ','
+collection items terminated by '_'
+map keys terminated by ':'
+lines terminated by '\n';
 ```
