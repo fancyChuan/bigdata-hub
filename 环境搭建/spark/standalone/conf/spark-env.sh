@@ -70,3 +70,8 @@
 
 SPARK_MASTER_HOST=s01
 SPARK_MASTER_PORT=7077
+
+# 配置jobHistoryServer
+export SPARK_HISTORY_OPTS="-Dspark.history.ui.port=18080
+-Dspark.history.retainedApplications=30
+-Dspark.history.fs.logDirectory=hdfs://s01:9000/sparklogs"
