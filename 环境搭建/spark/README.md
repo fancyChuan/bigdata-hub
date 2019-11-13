@@ -18,6 +18,7 @@ bin/spark-submit \
 ```
 
 ### 2. standalone模式【独立部署】
+#### 2.1 基础部署
 构建一个由Master+Slave构成的Spark集群，Spark运行在集群中。
 ```
 # cd spark-2.3.3-bin-hadoop2.7/conf
@@ -68,7 +69,7 @@ bin/spark-shell \
 --executor-memory 1g \
 --total-executor-cores 2
 ```
-#### JobHistoryServer配置
+#### 2.2JobHistoryServer配置
 - 修改名称 ```mv spark-defaults.conf.template spark-defaults.conf```
 - 修改spark-default.conf文件，开启log
 ```
@@ -96,8 +97,70 @@ xsync spark-env.sh
 - 启动历史服务
 ```sbin/start-history-server.sh```
 
-### 3. 
+#### 2.3 HA配置
+- vim spark-env.sh
+```
+注释掉如下内容：
+#SPARK_MASTER_HOST=hadoop102
+#SPARK_MASTER_PORT=7077
+添加上如下内容：
+export SPARK_DAEMON_JAVA_OPTS="
+-Dspark.deploy.recoveryMode=ZOOKEEPER 
+-Dspark.deploy.zookeeper.url=hadoop102,hadoop103,hadoop104 
+-Dspark.deploy.zookeeper.dir=/spark"
+```
+- 分发方法
+- 启动
+```
+# 在hadoop102上启动所有节点（包括）
+sbin/start-all.sh
+# 在hadoop103上再单独启动一个master节点
+sbin/start-master.sh
+```
+使用
+```
+bin/spark-shell \
+--master spark://hadoop102:7077,hadoop103:7077 \
+--executor-memory 2g \
+--total-executor-cores 2
+```
 
+### 3. Yarn模式部署
+Spark客户端直接连接Yarn，不需要额外构建Spark集群。有yarn-client和yarn-cluster两种模式
+- yarn-client：Driver程序运行在客户端，适用于交互、调试，希望立即看到app的输出
+- yarn-cluster：Driver程序运行在由RM（ResourceManager）启动的AP（APPMaster）适用于生产环境。
+
+安装配置：
+- 修改yarn-site.xml，添加下面的配置
+```
+        <!--是否启动一个线程检查每个任务正使用的物理内存量，如果任务超出分配值，则直接将其杀掉，默认是true -->
+        <property>
+                <name>yarn.nodemanager.pmem-check-enabled</name>
+                <value>false</value>
+        </property>
+        <!--是否启动一个线程检查每个任务正使用的虚拟内存量，如果任务超出分配值，则直接将其杀掉，默认是true -->
+        <property>
+                <name>yarn.nodemanager.vmem-check-enabled</name>
+                <value>false</value>
+        </property>
+```
+- 修改spark-env.sh
+```
+YARN_CONF_DIR=/usr/local/hadoop/etc/hadoop
+```
+- 分发文件(不需要再启动spark的master和worker了，因为任务提交给了yarn)
+
+日志查看
+- 修改spark-defaults.conf，添加如下内容
+```
+spark.yarn.historyServer.address=hadoop102:18080
+spark.history.ui.port=18080
+```
+- 重启spark历史服务
+```
+sbin/stop-history-server.sh 
+sbin/start-history-server.sh
+```
 
 ### 4. python等跟spark结合的环境搭建
 
