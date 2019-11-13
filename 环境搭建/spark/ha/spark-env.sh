@@ -68,10 +68,11 @@
 # - MKL_NUM_THREADS=1        Disable multi-threading of Intel MKL
 # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
 
-SPARK_MASTER_HOST=s01
-SPARK_MASTER_PORT=7077
+# SPARK_MASTER_HOST=s01
+# SPARK_MASTER_PORT=7077
 
-# 配置jobHistoryServer
-export SPARK_HISTORY_OPTS="-Dspark.history.ui.port=18080
--Dspark.history.retainedApplications=30
--Dspark.history.fs.logDirectory=hdfs://s01:9000/sparklogs"
+# 添加上如下内容：
+export SPARK_DAEMON_JAVA_OPTS="
+-Dspark.deploy.recoveryMode=ZOOKEEPER
+-Dspark.deploy.zookeeper.url=s01,s02,s03
+-Dspark.deploy.zookeeper.dir=/spark"
