@@ -3,10 +3,15 @@
 spark用于处理结构化数据的一个模块，提供了除数据之外的额外信息，spark用这些元信息进行优化
 
 Datasets/DataFrame/RDD之间的区别于联系
-- RDD是最底层的抽象，其他两个都是基于RDD做了更高级的封装
-- DataFrame的概念来源于python的pandas，比RDD多了表头，也叫SchemaRDD，也会使用优化器Catalyst优化
-- Datasets是spark1.6版本以后提出，提供了强类型支持，并且会结果sparkSQL的优化器Catalyst优化。可以和java bean结合，在编译时能检查出其他两个在运行才会发现的异常
-- RDD转为DataFrame是不可逆的，而转为Datasets是可逆的
+> DataFrame是一个分布式数据容器
+- RDD是最底层的抽象，其他两个都是基于RDD做了更高级的封装，更加友好易用
+- DataFrame的概念来源于python的pandas，比RDD多了表头，也叫SchemaRDD
+    - 提升了执行效率、减少数据读取以及执行计划的优化，比如使用了优化器Catalyst优化（比如filter下推、裁剪等）
+    - 跟hive类型，也支持嵌套数据结构（struct、array、map）
+- Datasets是spark1.6版本以后提出，提供了强类型支持，是DataFrame的拓展（DataFrame只知道字段不知道字段的类型），是spark最新的数据抽象。
+    - 也会经过优化器Catalyst优化
+    - 可以和java bean结合，在编译时就能检查出其他两个在运行才会发现的异常（因为不仅知道字段，还知道字段的类型）
+- RDD转为DataFrame是不可逆的，而转为Datasets是可逆的。DataFrame是Dataset的特例 DataFrame = Dataset[Row] Row就是数据结构信息
 ```
 // 创建Datasets并指定java bean
 Encoder<Employee> employeeEncoder = Encoders.bean(Employee.class);
@@ -28,11 +33,29 @@ RDD与Datasets在序列化上的区别：
 
 Encoder 动态生成代码以便spark各种操作，并在执行计划中做优化？？Encoder也有点像是在指定Datasets中字段的类型，只不过不能使用传统的比如String，而是要用优化过的Encoders.String()
 
-SparkSQL支持两种方法将RDDs转为Datasets：
-- 利用反射推测出Schema信息
-- 指定Schema信息
-    - 当java bean无法被使用时，需要指定，比如RDD的元素是字符串
-    - 使用DataTypes创建Schema信息
+#### Datasets/DataFrame/RDD相互转换
+- RDD转为Dataset：
+    - 利用反射获取Schema信息
+    - 指定Schema信息
+        - 当java bean无法被使用时，需要指定，比如RDD的元素是字符串
+        - 使用DataTypes创建Schema信息
+- RDD转DataFrame  
+```
+testDF = rdd.toDF("col1", "col2")
+```
+- Dataset转DataFrame
+```
+testDF = testDS.toDF
+```
+- DataFrame转Dataset
+```
+testDS = testDF.as[Sechma]
+```
+- DataFrame/Dataset转RDD
+```
+val rdd1 = testDF.rdd
+val rdd2 = testDS.rdd
+```
 
 
 #### 聚合操作
