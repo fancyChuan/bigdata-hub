@@ -3,7 +3,7 @@ package cn.fancychuan.scala.quickstart
 import org.apache.flink.api.scala.{AggregateDataSet, DataSet, ExecutionEnvironment, _}
 
 /**
-  * Wordcount应用
+  * 批处理Wordcount应用
   *
   * flink应用的4个步骤：
   * 1. 创建环境env
