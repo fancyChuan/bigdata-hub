@@ -16,6 +16,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <flink.version>1.7.0</flink.version>
   </properties>
 
   <dependencies>
@@ -25,15 +26,49 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-clients_2.11</artifactId>
+      <version>${flink.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!--scala用的-->
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-scala_2.11</artifactId>
-      <version>1.7.0</version>
+      <version>${flink.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-streaming-scala_2.11</artifactId>
-      <version>1.7.0</version>
+      <version>${flink.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!--java用的-->
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-java</artifactId>
+      <version>${flink.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-streaming-java_2.11</artifactId>
+      <version>${flink.version}</version>
+    </dependency>
+    <!--日志-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.5</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
     </dependency>
   </dependencies>
 

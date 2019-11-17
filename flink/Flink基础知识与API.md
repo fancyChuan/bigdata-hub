@@ -12,3 +12,4 @@ Flink的重要特点；
 - 支持exactly-once语义：有且仅执行一次
 - 支持事件时间（EventTime）
 
+
