@@ -2,6 +2,8 @@ package cn.fancychuan.scala.quickstart
 
 import org.apache.flink.api.scala.{AggregateDataSet, DataSet, ExecutionEnvironment, _}
 
+import org.apache.flink.api.scala._
+
 /**
   * 批处理Wordcount应用
   *
