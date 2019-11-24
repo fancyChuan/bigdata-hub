@@ -1,4 +1,30 @@
 
+- 两个重要的组件
+    - 服务端Server ： Cloudera Manager 的核心。主要用于管理 web server 和应用逻辑。它用于安装软件，配置，开始 和停止服务，以及管理服务运行的集群
+    - 代理agent ：安装在每台主机上。它负责启动和停止的进程，部署配置，触发安装和监控主机。
+
+- cdh启动组件原理
+```
+# 比如启动namenode
+python2.6 /usr/local/appserver/cm-5.10.2/lib64/cmf/agent/build/env/bin/cmf-redactor /usr/local/appserver/cm-5.10.2/lib64/cmf/service/hive/hive.sh hiveserver2
+```
+主要是用Python执行cmf-redactor，其代码如下
+```
+#!/usr/bin/env python2.6
+
+import os; activate_this=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'activate_this.py'); 
+execfile(activate_this, dict(__file__=activate_this)); del os, activate_this
+# 上面两步应该是激活python环境的
+# EASY-INSTALL-ENTRY-SCRIPT: 'cmf==5.10.2','console_scripts','cmf-redactor'
+__requires__ = 'cmf==5.10.2'
+import sys
+from pkg_resources import load_entry_point
+
+sys.exit(
+   load_entry_point('cmf==5.10.2', 'console_scripts', 'cmf-redactor')()
+)
+```
+
 
 - 相关目录 
 ```
