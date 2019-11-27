@@ -1,7 +1,11 @@
 
-- 两个重要的组件
-    - 服务端Server ： Cloudera Manager 的核心。主要用于管理 web server 和应用逻辑。它用于安装软件，配置，开始 和停止服务，以及管理服务运行的集群
-    - 代理agent ：安装在每台主机上。它负责启动和停止的进程，部署配置，触发安装和监控主机。
+- Cloudera Manager的组件
+    - Server：负责软件安装、配置，启动和停止服务，管理服务运行的群集。
+    - Agent：安装在每台主机上。负责启动和停止的过程，配置，监控主机。
+    - Management Service：由一组执行各种监控，警报和报告功能角色的服务。
+    - Database：存储配置和监视信息。
+    - Cloudera Repository：软件由Cloudera 管理分布存储库。（有点类似Maven的中心仓库）
+    - Clients：是用于与服务器进行交互的接口（API和Admin Console）
 
 - cdh启动组件原理
 ```
@@ -23,6 +27,21 @@ from pkg_resources import load_entry_point
 sys.exit(
    load_entry_point('cmf==5.10.2', 'console_scripts', 'cmf-redactor')()
 )
+```
+- CDH安装
+```
+# 1. 安装依赖
+yum -y install chkconfig python bind-utilspsmisclibxsltzlibsqlitecyrus-sasl-plain cyrus-sasl-gssapi fuse fuse-libs redhat-lsbhttpdmod_ssl
+# 2. 创建数据库 
+# 集群监控数据库
+create database amon DEFAULT CHARSET utf8 COLLATE utf8_general_ci; 
+create database hive DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+create database oozie DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+create database hue DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+# 3. 上传离线包并解压
+tar -zxvf /opt/software/cloudera-manager-el6-cm5.12.1_x86_64.tar.gz -C /opt/module/cloudera-manager/
+# 3. 创建用户
+useradd --system --home=/opt/module/cloudera-manager/cm-5.12.1/run/cloudera-scm-server --no-create-home --shell=/bin/false --comment "Cloudera SCM User" cloudera-scm
 ```
 
 
