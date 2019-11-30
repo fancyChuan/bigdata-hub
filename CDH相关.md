@@ -40,8 +40,9 @@ create database oozie DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 create database hue DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 # 3. 上传离线包并解压
 tar -zxvf /opt/software/cloudera-manager-el6-cm5.12.1_x86_64.tar.gz -C /opt/module/cloudera-manager/
-# 3. 创建用户
+# 3. 创建用户 --home指定用户登入的主目录，系统默认为/home/<用户名> --no-create-home不创建主目录
 useradd --system --home=/opt/module/cloudera-manager/cm-5.12.1/run/cloudera-scm-server --no-create-home --shell=/bin/false --comment "Cloudera SCM User" cloudera-scm
+# 4. 
 ```
 
 
