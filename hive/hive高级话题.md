@@ -36,3 +36,19 @@ SHOW LOCKS <TABLE_NAME> PARTITION (<PARTITION_DESC>);
 SHOW LOCKS <TABLE_NAME> PARTITION (<PARTITION_DESC>) extended;
 ```
 
+- 自定义权限校验
+    - hive支持多种权限校验的方式，比如NONE,NOSASL, KERBEROS, LDAP, PAM ,CUSTOM等等
+    - CUSTOM则是自定义权限校验，实现步骤如下：
+        - 开发一个类，实现org.apache.hive.service.auth.PasswdAuthenticationProvider接口，并重写Authenticate方法
+        - 将自定义的类达成jar包分发到集群的hive/lib目录下
+        - 在配置文件中开启自定义权限校验，并配置hive.server2.custom.authentication.clas指向自定义的权限校验类
+```
+<property>
+    <name>hive.server2.authentication</name>
+    <value>CUSTOM</value>
+</property>
+<property>
+    <name>hive.server2.custom.authentication.class</name>
+    <value>cn.fancychuan.hive.auth.CustomHiveServer2Auth</value>
+</property>
+```
