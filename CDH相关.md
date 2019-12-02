@@ -44,8 +44,16 @@ tar -zxvf /opt/software/cloudera-manager-el6-cm5.12.1_x86_64.tar.gz -C /opt/modu
 useradd --system --home=/opt/module/cloudera-manager/cm-5.12.1/run/cloudera-scm-server --no-create-home --shell=/bin/false --comment "Cloudera SCM User" cloudera-scm
 # 4. 
 ```
-
-
+- CDH新建集群后的配置
+    - DataNode NameNode的目录、HDFS检查点目录、nodemanager本地目录
+    - hive仓库目录 /user/hive/warehouse，元数据服务hive metastore端口 9083
+    - 警报：邮件服务主机名、用户名、邮件服务器密码、收件人、自定义警报脚本
+    - host monitor存储目录firehose.storage.base.directory=/var/lib/cloudera-host-monitor
+    - server monitor存储目录/var/lib/cloudera-service-monitor=/var/lib/cloudera-service-monitor
+    - shareLib根目录 oozie.service.WorkflowAppService.system.libpath=/user/oozie
+    - oozie服务器数据目录/var/lib/oozie/data
+    - zookeeper数据目录/var/lib/zookeeper 事务日志目录/var/lib/zookeeper
+    
 - 相关目录 
 ```
 /var/log/cloudera-scm-installer : 安装日志目录。
