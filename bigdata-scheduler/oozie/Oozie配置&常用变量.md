@@ -1,4 +1,30 @@
-## Oozie配置
+### oozie常用变量
+
+常量表示形式 | 含义说明
+--- | ---
+${coord:minutes(int n)|返回日期时间：从一开始，周期执行n分钟
+${coord:hours(int n)|返回日期时间：从一开始，周期执行n * 60分钟
+${coord:days(int n)|返回日期时间：从一开始，周期执行n * 24 * 60分钟
+${coord:months(int n)|返回日期时间：从一开始，周期执行n * M * 24 * 60分钟（M表示一个月的天数）
+${coord:endOfDays(int n)|返回日期时间：从当天的最晚时间（即下一天）开始，周期执行n * 24 * 60分钟
+${coord:endOfMonths(1)|返回日期时间：从当月的最晚时间开始（即下个月初），周期执行n * 24 * 60分钟
+${coord:current(int n)|返回日期时间：从一个Coordinator动作（Action）创建时开始计算，第n个dataset实例执行时间
+${coord:dataIn(String name)|在输入事件（input-events）中，解析dataset实例包含的所有的URI
+${coord:dataOut(String name)|在输出事件（output-events）中，解析dataset实例包含的所有的URI
+${coord:offset(int n, String timeUnit)|表示时间偏移，如果一个Coordinator动作创建时间为T，n为正数表示向时刻T之后偏移，n为负数向向时刻T之前偏移，timeUnit表示时间单位（选项有MINUTE、HOUR、DAY、MONTH、YEAR）
+${coord:hoursInDay(int n)|指定的第n天的小时数，n>0表示向后数第n天的小时数，n=0表示当天小时数，n<0表示向前数第n天的小时数
+${coord:daysInMonth(int n)|指定的第n个月的天数，n>0表示向后数第n个月的天数，n=0表示当月的天数，n<0表示向前数第n个月的天数
+${coord:tzOffset()|ataset对应的时区与Coordinator Job的时区所差的分钟数
+${coord:latest(int n)|最近以来，当前可以用的第n个dataset实例
+${coord:future(int n, int limit)|当前时间之后的dataset实例，n>=0，当n=0时表示立即可用的dataset实例，limit表示dataset实例的个数
+${coord:nominalTime()|nominal时间等于Coordinator Job启动时间，加上多个Coordinator Job的频率所得到的日期时间。例如：start=”2009-01-01T24:00Z”，end=”2009-12-31T24:00Z”，frequency=”${coord:days(1)}”，frequency=”${coord:days(1)}，则nominal时间为：2009-01-02T00:00Z、2009-01-03T00:00Z、2009-01-04T00:00Z、…、2010-01-01T00:00Z
+${coord:actualTime()|Coordinator动作的实际创建时间。例如：start=”2011-05-01T24:00Z”，end=”2011-12-31T24:00Z”，frequency=”${coord:days(1)}”，则实际时间为：2011-05-01，2011-05-02，2011-05-03，…，2011-12-31
+${coord:user()|启动当前Coordinator Job的用户名称
+${coord:dateOffset(String baseDate, int instance, String timeUnit)|计算新的日期时间的公式：newDate = baseDate + instance * timeUnit，如：baseDate=’2009-01-01T00:00Z’，instance=’2′，timeUnit=’MONTH’，则计算得到的新的日期时间为’2009-03-01T00:00Z’。
+${coord:formatTime(String timeStamp, String format)|格式化时间字符串，format指定模式
+
+
+### Oozie配置
 
 [oozie重要配置详解（生产）](https://blog.csdn.net/weixin_39478115/article/details/78879082)
 
