@@ -18,8 +18,20 @@
 
 <configuration>
     <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+
+    <!--指定Hadoop辅助名称节点主机配置 -->
+    <property>
         <name>dfs.namenode.secondary.http-address</name>
-        <value>s03:50090</value>
+        <value>hadoop102:50090</value>
+    </property>
+
+    <!-- share edits dir 指定journalNode在本地磁盘存放数据的位置 -->
+    <property>
+        <name>dfs.journalnode.edits.dir</name>
+        <value>/data/hadoop/journal</value>
     </property>
 
 </configuration>

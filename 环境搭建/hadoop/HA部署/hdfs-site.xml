@@ -30,25 +30,25 @@
     <!-- Namenode rpc address -->
     <property>
         <name>dfs.namenode.rpc-address.ns1.nn1</name>
-        <value>s01:8020</value>
+        <value>hadoop101:8020</value>
     </property>
     <property>
         <name>dfs.namenode.rpc-address.ns1.nn2</name>
-        <value>s02:8020</value>
+        <value>hadoop102:8020</value>
     </property>
     <!-- Namenode http web address -->
     <property>
         <name>dfs.namenode.http-address.ns1.nn1</name>
-        <value>s01:50070</value>
+        <value>hadoop101:50070</value>
     </property>
     <property>
         <name>dfs.namenode.http-address.ns1.nn2</name>
-        <value>s02:50070</value>
+        <value>hadoop102:50070</value>
     </property>
     <!-- share edits address -->
     <property>
         <name>dfs.namenode.shared.edits.dir</name>
-        <value>qjournal://s01:8485;s02:8485;s03:8485/ns1</value>
+        <value>qjournal://hadoop101:8485;hadoop102:8485;hadoop103:8485/ns1</value>
     </property>  
     <!-- share edits dir 指定journalNode在本地磁盘存放数据的位置 -->
     <property>

@@ -17,7 +17,7 @@
 <!-- Site specific YARN configuration properties -->
     <property>
         <name>yarn.resourcemanager.hostname</name>
-        <value>s02</value>
+        <value>hadoop101</value>
     </property>
     <property>
         <name>yarn.nodemanager.aux-services</name>

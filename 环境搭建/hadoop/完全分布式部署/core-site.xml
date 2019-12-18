@@ -19,11 +19,11 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://s01:8020</value>
+        <value>hdfs://hadoop101:8020</value>
     </property>
     <property>
         <name>hadoop.tmp.dir</name>
-        <value>/opt/app/hadoop-2.5.0/data/tmp</value>
+        <value>/data/hadoop/tmp</value>
     </property>
     <property>
         <name>fs.trash.interval</name>
