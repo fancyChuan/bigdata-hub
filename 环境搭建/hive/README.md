@@ -1,5 +1,19 @@
 ## Hive搭建
 
+
+使用1.2.1版本，2.0版本以后可能会不支持MR引擎，更多的是使用spark
+
+基本配置：[hive](https://github.com/fancyChuan/bigdata-learn/tree/master/环境搭建/hive)
+
+启动步骤
+```
+# 启动metastore服务在后台运行
+nohup hive --service metastore &
+# 启动hiveserver2
+nohup hive --service hiveserver2 &
+# 启动hive cli或者beeline
+```
+
 #### 1. mysql安装
 
 
@@ -65,3 +79,5 @@ mysql> alter database metastore character set latin1;
 ```
 hive.log.dir=/opt/module/hive/logs
 ```
+
+
