@@ -1,6 +1,5 @@
 ## Hive搭建
 
-
 使用1.2.1版本，2.0版本以后可能会不支持MR引擎，更多的是使用spark
 
 基本配置：[hive](https://github.com/fancyChuan/bigdata-learn/tree/master/环境搭建/hive)
@@ -15,7 +14,11 @@ nohup hive --service hiveserver2 &
 ```
 
 #### 1. mysql安装
+卸载mysql和MariaDB
 
+安装libaio依赖
+
+安装服务端和客户端
 
 #### 2. Hive配置
 解压：tar -zxvf apache-hive-1.2.1-bin.tar.gz
@@ -24,8 +27,8 @@ nohup hive --service hiveserver2 &
 主要配置HADOOP_HOME和HIVE_CONF_DIR这两
 > mv hive-env.sh.template hive-env.sh
 ```
-export HADOOP_HOME=/opt/module/hadoop-2.7.2
-export HIVE_CONF_DIR=/opt/module/hive/conf
+export HADOOP_HOME=/usr/local/hadoop
+export HIVE_CONF_DIR=/usr/local/hive/conf
 ```
 
 - hive-site.xml用户配置文件（默认的配置文件是hive-site.xml）
