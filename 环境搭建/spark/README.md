@@ -26,15 +26,15 @@ bin/spark-submit \
 mv slaves.template slaves
 vim slaves
 ---------------
-s01
-s02
-s03
+hadoop101
+hadoop102
+hadoop103
 ---------------
 
-# 修改spark-env.sh 把s01配置为master
+# 修改spark-env.sh 把hadoop101配置为master
 vim spark-env.sh
 ---------------
-SPARK_MASTER_HOST=s01
+SPARK_MASTER_HOST=hadoop101
 SPARK_MASTER_PORT=7077
 ---------------
 
@@ -55,7 +55,7 @@ sbin/start-all.sh
 ```
 bin/spark-submit \
 --class org.apache.spark.examples.SparkPi \
---master spark://s01:7077 \
+--master spark://hadoop101:7077 \
 --executor-memory 1G \
 --total-executor-cores 2 \
 ./examples/jars/spark-examples_2.11-2.3.3.jar \
@@ -74,7 +74,7 @@ bin/spark-shell \
 - 修改spark-default.conf文件，开启log
 ```
 spark.eventLog.enabled           true
-spark.eventLog.dir               hdfs://s01:9000/sparklogs
+spark.eventLog.dir               hdfs://hadoop101:9000/sparklogs
 ```
 > 在HDFS上需要存在 /sparklogs 这个目录。另外要使用NameNode的rpc端口，注意修改成实际的端口 
 > TODO：如果是高可用的NameNode，该如何适配？？
@@ -82,7 +82,7 @@ spark.eventLog.dir               hdfs://s01:9000/sparklogs
 ```
 export SPARK_HISTORY_OPTS="-Dspark.history.ui.port=18080 
 -Dspark.history.retainedApplications=30 
--Dspark.history.fs.logDirectory=hdfs://s01:9000/sparklogs"
+-Dspark.history.fs.logDirectory=hdfs://hadoop101:9000/sparklogs"
 ```
 > 参数说明
 > - spark.eventLog.dir：Application在运行过程中所有的信息均记录在该属性指定的路径下； 
@@ -106,7 +106,7 @@ xsync spark-env.sh
 添加上如下内容：
 export SPARK_DAEMON_JAVA_OPTS="
 -Dspark.deploy.recoveryMode=ZOOKEEPER 
--Dspark.deploy.zookeeper.url=hadoop102,hadoop103,hadoop104 
+-Dspark.deploy.zookeeper.url=hadoop101,hadoop102,hadoop103
 -Dspark.deploy.zookeeper.dir=/spark"
 ```
 - 分发方法
