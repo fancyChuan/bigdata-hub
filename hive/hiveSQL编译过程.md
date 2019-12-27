@@ -13,6 +13,30 @@ select dealid, count(distinct uid) num from order group by dealid;
 select dealid, count(distinct uid), count(distinct date) from order group by dealid;
 ```
 
+复杂SQL的执行过程
+```
+select COALESCE(T.date_day,T2.shijian) AS shijian
+          , COALESCE(T1.user_id,T2.user_id) AS user_id
+          , NVL(T1.money,0) AS money
+          , NVL(T2.total,0) AS total 
+FROM (SELECT DISTINCT TO_DATE(date_day) AS date_day FROM common_db.tb_common_calendar where date_day >='2012-07-20' and date_day <=current_date) T 
+  LEFT JOIN (
+        SELECT user_id
+         , FROM_UNIXTIME(CAST(addtime AS BIGINT), 'yyyy-MM-dd') AS shijian
+         , SUM(NVL(money,0)) AS money
+        FROM ods_touna.dw_account_recharge a
+        WHERE status = 1 AND exists (SELECT 1 FROM app_db.tn_trust_user b WHERE total_collection>0 AND b.user_id=a.user_id)
+        GROUP BY user_id,FROM_UNIXTIME(CAST(addtime AS BIGINT), 'yyyy-MM-dd')
+  ) T1 ON T.date_day = T1.shijian
+  FULL JOIN (
+      SELECT user_id
+       , FROM_UNIXTIME(success_time, 'yyyy-MM-dd') AS shijian
+       , SUM(NVL(total,0)) AS total
+      FROM ods_touna.dw_account_cash a
+      WHERE status = 6 AND exists (SELECT 1 FROM app_db.tn_trust_user b WHERE total_collection>0 AND b.user_id=a.user_id)
+      GROUP BY user_id,FROM_UNIXTIME(success_time, 'yyyy-MM-dd') 
+  )T2 ON T1.date_day = T2.shijian AND T1.user_id = T2.user_id
+```
 
 ### SQL转为MR的过程
 整个编译过程分为6步
