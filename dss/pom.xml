@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>bigdata-learn</artifactId>
+        <groupId>cn.fancychuan</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>dss</artifactId>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.webank.wedatasphere.linkis/linkis-ujes-client -->
+        <dependency>
+            <groupId>com.webank.wedatasphere.linkis</groupId>
+            <artifactId>linkis-ujes-client</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+    </dependencies>
+
+</project>
