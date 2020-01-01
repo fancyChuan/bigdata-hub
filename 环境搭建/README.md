@@ -18,24 +18,28 @@ hive | | hiveserver2 | metastore
 - 所有的框架都需要做一个软链接到/usr/local/下。比如 ln -s /opt/app/hive-1.2.1 /usr/local/hive
 - /etc/profile的内容可以如下：
 ```
-# java
+# java scala
 export JAVA_HOME=/usr/local/jdk
-export PATH=$PATH:$JAVA_HOME/bin
+export SCALA_HOME=/usr/local/scala
+export PATH=$PATH:$JAVA_HOME/bin:$SCALA_HOME/bin
+
+# build
+export GRADLE_HOME=/usr/local/gradle
+export M2_HOME=/usr/local/maven
+export PATH=$PATH:$M2_HOME/bin:$GRADLE_HOME/bin
 
 # bigdata
-export M2_HOME=/usr/local/maven
-export SCALA_HOME=/usr/local/scala
 export ZOOKEEPER_HOME=/usr/local/zookeeper
 export HADOOP_HOME=/usr/local/hadoop
 export HIVE_HOME=/usr/local/hive
 export HBASE_HOME=/usr/local/hbase
 export FLUME_HOME=/usr/local/flume
 export KAFKA_HOME=/usr/local/kafka
+export SPARK_HOME=/usr/local/spark
 
-export PATH=$PATH:$M2_HOME/bin:$SCALA_HOME/bin
 export PATH=$PATH:$ZOOKEEPER_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 export PATH=$PATH:$FLUME_HOME/bin:$KAFKA_HOME/bin
-export PATH=$PATH:$HIVE_HOME/bin:$HBASE_HOME/bin
+export PATH=$PATH:$HIVE_HOME/bin:$HBASE_HOME/bin:$SPARK_HOME/bin
 ```
 
 
