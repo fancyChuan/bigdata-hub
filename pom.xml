@@ -12,6 +12,7 @@
         <module>elasticsearch</module>
         <module>bigdata-scheduler/dolphinscheduler</module>
         <module>bigdata-scheduler/oozie</module>
+        <module>bigdata-scheduler/azkaban</module>
         <module>flink</module>
         <module>hadoop</module>
         <module>hive</module>
