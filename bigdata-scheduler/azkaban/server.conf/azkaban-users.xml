@@ -1,0 +1,8 @@
+<azkaban-users>
+	<user username="azkaban" password="azkaban" roles="admin" groups="azkaban" />
+	<user username="metrics" password="metrics" roles="metrics"/>
+	<user username="admin" password="admin" roles="admin,metrics"/>
+
+	<role name="admin" permissions="ADMIN" />
+	<role name="metrics" permissions="METRICS"/>
+</azkaban-users>
