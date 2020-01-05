@@ -1,0 +1,3 @@
+# first job
+type=command
+command=echo 'this is my first job'

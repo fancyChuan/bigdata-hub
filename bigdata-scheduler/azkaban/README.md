@@ -44,3 +44,7 @@
   275  xcall ls /usr/local
   276  xcall ls -l /usr/local
 ```
+
+### 实战案例
+- 1.单一job
+- 2.多个job

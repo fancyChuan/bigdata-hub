@@ -1,0 +1,3 @@
+type=command
+command=echo "from local: 3nd"
+dependencies=second1,second2
