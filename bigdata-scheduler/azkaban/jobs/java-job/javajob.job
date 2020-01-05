@@ -1,0 +1,4 @@
+#azkabanJava.job
+type=javaprocess
+java.class=cn.fancychuan.demojava.JavaJobApp
+classpath=./azkaban-1.0-SNAPSHOT.jar
