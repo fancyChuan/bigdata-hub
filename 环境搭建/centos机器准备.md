@@ -35,7 +35,7 @@ wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-
 yum makecache
 
 # 3.安装必要的安装包
-yum install -y net-tools wget vim-enhanced links unzip gcc gcc-c++ lrzsz rsync 
+yum install -y net-tools wget vim-enhanced links zip unzip gcc gcc-c++ lrzsz rsync
 
 # 4. 关闭防火墙并不允许开机启动
 systemctl stop firewalld
@@ -59,6 +59,17 @@ java -version
 ```
 
 集群安装相关操作
+
+配置免密登录：
+```
+分别以root和appuser的用户执行下面的命令
+ssh-keygen -t rsa
+
+ssh-copy-id hadoop101
+ssh-copy-id hadoop102
+ssh-copy-id hadoop103
+```
+
 
 准备两个sh脚本
 - 文件目录同步分发。用于从hadoop101分发到其他机器
