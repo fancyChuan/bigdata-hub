@@ -11,10 +11,15 @@ Ambari的功能
 ### 版本
 Ambari2.6.
 
-文档
+资料地址
 - 官网所有文档： https://docs.cloudera.com/HDPDocuments/
-- Ambari文档：https://docs.cloudera.com/HDPDocuments/Ambari/Ambari-2.6.2.2/index.html
-- HDP文档：https://docs.cloudera.com/HDPDocuments/HDPforCloud/HDPforCloud-2.6.5/index.html
+- Ambari下载地址：https://docs.cloudera.com/HDPDocuments/Ambari-2.6.2.2/bk_ambari-installation/content/ambari_repositories.html
+- HDP下载地址：https://docs.cloudera.com/HDPDocuments/Ambari-2.6.2.2/bk_ambari-installation/content/hdp_stack_repositories.html
+
+这里选择的版本是centos7+ambari2.6.2.2+hdp2.6.5.0
+- ambari下载地址: [ambari2.6.2.2](http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.6.2.2/ambari-2.6.2.2-centos7.tar.gz)
+- hdp下载地址: [HDP-2.6.5.0](http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/2.6.5.0/HDP-2.6.5.0-centos7-rpm.tar.gz)
+- hdp-utils下载地址：[HDP-UTILS](http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.22/repos/centos7/HDP-UTILS-1.1.0.22-centos7.tar.gz)
 
 
 ### 安装步骤
