@@ -73,6 +73,8 @@ ssh-copy-id hadoop103
 
 准备两个sh脚本
 - 文件目录同步分发。用于从hadoop101分发到其他机器
+    - vim /usr/bin/xsync
+    - chmod +x /usr/bin/xsync 
 ```
 # 1 检查参数
 pcount=$#
@@ -96,6 +98,8 @@ for((host=102;host<104;host++));do
 done
 ```
 - 批量执行命令脚本
+    - vim /usr/bin/xcall
+    - chmod +x /usr/bin/xcall
 ```
 #!/bin/bash --login
 pcount=$#
