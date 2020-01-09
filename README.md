@@ -13,16 +13,24 @@
 - spark
 - hbase
 - zookeeper
+- 环境搭建
+    - apache版本搭建
+    - CDH集群搭建
+    - HDP集群搭建
+- 大数据建设
 
 
 ### 程序包下载
 - Apache版本： [http://archive.apache.org/dist/](http://archive.apache.org/dist/)
-- CDH单个版本： [http://archive.cloudera.com/cdh5/cdh/5/](http://archive.cloudera.com/cdh5/cdh/5/)
-- CDH集成版本： [http://archive.cloudera.com/cm5/cm/5/](http://archive.cloudera.com/cm5/cm/5/)
-- CDH其他下载： [http://archive.cloudera.com/cm5/](http://archive.cloudera.com/cm5/)
+- CDH5单个版本： [http://archive.cloudera.com/cdh5/cdh/5/](http://archive.cloudera.com/cdh5/cdh/5/)
+- CDH5离线包： [https://archive.cloudera.com/cdh5/parcels/](https://archive.cloudera.com/cdh5/parcels/)
+- CDH6： https://archive.cloudera.com/cdh6/
+- CM6：  https://archive.cloudera.com/cm6/
+
 
 - 清华Apache镜像： [https://mirrors.tuna.tsinghua.edu.cn/apache/](https://mirrors.tuna.tsinghua.edu.cn/apache/)
 
 
 ### 学习资料
 - 《spark快速大数据分析(learning-spark)》: [https://github.com/databricks/learning-spark](https://github.com/databricks/learning-spark)
+
