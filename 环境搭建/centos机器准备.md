@@ -18,7 +18,7 @@ useradd appuser
 passwd appuser
 vim /etc/sudoers
 ============= 添加下面内容 ===============
-atguigu    ALL=(ALL)       NOPASSWD:ALL
+appuser    ALL=(ALL)       NOPASSWD:ALL
 ============= 保存时wq!强制保存 ==========
 
 # 1. 修改静态IP
