@@ -40,19 +40,21 @@ mv /opt/cloudera/parcel-repo/CDH-5.13.3-1.cdh5.13.3.p0.2-el7.parcel.sha1 /opt/cl
 # 4. 【以root用户操作】每台机器上创建用户cloudera-scm
 useradd --system --home=/opt/cm-5.13.3/run/cloudera-scm-server --no-create-home --shell=/bin/false --comment "Cloudera SCM User" cloudera-scm
 ##  --home指定用户登入的主目录，系统默认为/home/<用户名> --no-create-home不创建主目录 --shell=/bin/false最严格的非登录用户
-# 5. 将cm-5.13.3和cloudera两个目录授权给cloudera-scm用户
-chown -R cloudera-scm:cloudera-scm /opt/cm-5.13.3
-chown -R cloudera-scm:cloudera-scm /opt/cloudera 
-# 6. 【以root用户操作】修改cm agent，制定其cm server为cdh101。
+
+# 5. 【以root用户操作】修改cm agent，制定其cm server为cdh101。
 vim /opt/cm-5.13.3/etc/cloudera-scm-agent/config.ini 
 修改server_host 为  server_host=cdh101
 之后分发到其他的两台机器上
 xsync /opt/cm-5.13.3
 xsync /opt/cloudera
 
+# 6. 将cm-5.13.3和cloudera两个目录授权给cloudera-scm用户
+chown -R cloudera-scm:cloudera-scm /opt/cm-5.13.3
+chown -R cloudera-scm:cloudera-scm /opt/cloudera 
+
 # 7. 配置cm数据库
 - 拷贝mysql连接jar包到 /usr/share/java/，注意需要改名为 mysql-connector-java.jar
-cp /opt/software/mysql-connector-java-5.1.47.jar /usr/share/java/mysql-connector-java-5.1.47.jar
+cp /opt/software/mysql-connector-java-5.1.47.jar /usr/share/java/
 mv /usr/share/java/mysql-connector-java-5.1.47.jar /usr/share/java/mysql-connector-java.jar
 - 安装mysql的compact包
 - 初始化cm数据库
@@ -69,18 +71,6 @@ xcall /opt/cm-5.13.3/etc/init.d/cloudera-scm-agent start
 # 开机禁止启用透明大页面压缩，避免可能会导致的重大性能问题
 echo never > /sys/kernel/mm/transparent_hugepage/defrag
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
-```
-
-> 在启动过程中遇到启动文件没有权限，比如：
-```
-cp: cannot open ‘/opt/cloudera/parcels/CDH-5.13.3-1.cdh5.13.3.p0.2/lib/sqoop2/../../etc/sqoop2/tomcat-conf.dist/conf/server.xml’ for reading: Permission denied
-....
-WARNING: Can't load server.xml from /var/lib/sqoop2/tomcat-deployment/conf/server.xml
-Jan 21, 2020 5:44:46 PM org.apache.catalina.startup.Catalina start
-SEVERE: Cannot start server. Server instance is not configured.
-
-# 解决方法：
-xcall chmod -R +r /opt/cloudera/parcels/CDH-5.13.3-1.cdh5.13.3.p0.2
 ```
 
 
