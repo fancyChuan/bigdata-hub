@@ -23,8 +23,9 @@ spark-shell --master local[*]
 spark-shell --master yarn
 这个时候在yarn上会产生一个常驻yarn application。查看4040端口会跳转到yarn的8088界面。
 即 http://hadoop101:4040 重定向到 http://hadoop101:8088/proxy/application_1581008052261_0001/
-# 3. 其他
-spark://host:port, mesos://host:port, yarn, k8s://https://host:port, or local (Default: local[*]).
+# 3.standalone模式
+spark-shell --master spark://host:port, 
+# 4.其他mesos://host:port, yarn, k8s://https://host:port, or local (Default: local[*]).
 ```
 
 ![image](img/spark-shell运行在yarn上.png)

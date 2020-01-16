@@ -6,6 +6,7 @@
 
 spark开发
 - 搭建学习环境
+- [spark-shell的使用](spark-shell的实践.md)
 - [SparkCore(RDD编程)](SparkCore-RDD编程.md)
 - SparkSQL
 - 结构化流StructedStreaming
