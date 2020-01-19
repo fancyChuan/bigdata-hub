@@ -1,4 +1,5 @@
 ## Spark环境搭建
+spark有三种运行模式
 
 ### 1. Local模式【本地部署】
 解压后直接使用
@@ -18,11 +19,12 @@ bin/spark-submit \
 ```
 
 ### 2. standalone模式【独立部署】
+构建一个由master+slaves组成的集群
 #### 2.1 基础部署
 构建一个由Master+Slave构成的Spark集群，Spark运行在集群中。
 ```
 # cd spark-2.3.3-bin-hadoop2.7/conf
-# 修改slaves文件
+# 修改1： slaves文件
 mv slaves.template slaves
 vim slaves
 ---------------
@@ -31,7 +33,7 @@ hadoop102
 hadoop103
 ---------------
 
-# 修改spark-env.sh 把hadoop101配置为master
+# 修改2： spark-env.sh 把hadoop101配置为master
 vim spark-env.sh
 ---------------
 SPARK_MASTER_HOST=hadoop101
@@ -164,4 +166,4 @@ sbin/start-history-server.sh
 
 ### 4. python等跟spark结合的环境搭建
 
-[spark学习环境搭建.md](../../spark/spark学习环境搭建.md)
+[spark学习环境搭建.md](../../spark/spark学习环境搭建(windows).md)
