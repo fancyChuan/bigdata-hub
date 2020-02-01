@@ -35,7 +35,17 @@
 <final>true</final>
 </property>
 ```
-
+- 配置Hadoop守护进程环境变量
+    - Java HOME目录
+    - 多种Hadoop日志文件的存储地址
+    - DN、NN、RM以及其他hadoop守护进程的JVM选项.一般使用 xxxx_xxx_OPTS 参数来配置
+```
+# 比如设置守护进程的内存大小为4g
+YARN_RESOURCEMANAGER_OPTS = -Xmx4g
+HADOOP_NAMENODE_OPTS = -Xmx4g
+HADOOP_DATANODE_OPTS = -Xmx4g
+HADOOP_SECONDARYNAMENODE_OPTS = -Xmx4g
+```
 
 
 
