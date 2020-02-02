@@ -45,8 +45,42 @@ YARN_RESOURCEMANAGER_OPTS = -Xmx4g
 HADOOP_NAMENODE_OPTS = -Xmx4g
 HADOOP_DATANODE_OPTS = -Xmx4g
 HADOOP_SECONDARYNAMENODE_OPTS = -Xmx4g
+# 也有直接设置的。比如设置堆栈大小 
+YARN_HEAPSIZE=500 
+YARN_RESOURSEMANAGER_HEAPSIZE=500
+YARN_NODEMANAGER_HEAPSIZE=500
 ```
-
+> 堆内存在CDH中通过 heapsize 搜索到相关配置项也可以修改
+```
+# 集群比较小的时候（比如在笔记本虚拟机上运行）最好把守护进程的堆内存调小，堆内存默认为1G，可以调为500M
+HADOOP_HEAPSIZE=500     // hadoop-env.sh
+YARN_HEAPSIZE=500       // yarn-env.sh
+HADOOP_JOB_HISTORYSERVER_HEAPSIZE // mapred-env.sh
+```
+- core-site.xml文件 hadoop 的核心属性
+```xml
+<configuration>
+    <property>
+        <!--执行文件系统的类型以及NameNode的主机和端口信息-->
+        <name>fs.defaultFS</name>
+        <value>hdfs://hadoop101:8020</value> <!--比如这里就是文件类型为HDFS-->
+    </property>
+    <property>
+        <!--默认值是 dr.who-->
+        <name>hadoop.http.staticuser.user</name>
+        <value>hdfs</value>
+</property>
+    <property>
+        <!--指定了本地文件系统和HDFS的基本临时目录，hadoop的很多配置都是用这个参数的路径作为基础路径-->
+        <name>hadoop.tmp.dir</name>
+        <value>/data/hadoop/tmp</value>
+    </property>
+    <property>
+        <name>fs.trash.interval</name>
+        <value>1440</value><!--表示1440分钟也就是1天，一天过后回收站的数据会被完全删除-->
+    </property>
+</configuration>
+```
 
 
 
