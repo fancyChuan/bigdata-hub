@@ -81,6 +81,23 @@ HADOOP_JOB_HISTORYSERVER_HEAPSIZE // mapred-env.sh
     </property>
 </configuration>
 ```
-
+- mapred.xml
+```
+1. mapreduce.frame.name = local、yarn默认值是local
+2. mapreduce.job.reduces
+每个作业reduce的数量
+```
+- yarn-site.xml
+```
+1. yarn.nodemanager.aux-services=mapreduce_shuffle
+MR容器从map任务到reduce任务需要执行shuffle操作。而shuffle是一个辅助服务，非NM的一部分，必须要显式设置。这个参数可以包含其他辅助服务，以让yarn支持不同的计算框架
+2. yarn.nodemanager.aux-services.mapreduce.shuffle.class=org.apache.hadoop.mapred.ShuffleHandler
+这个参数和上一个联动。mapreduce_shuffle表示要寻找mapreduce.shuffle的类，也就是org.apache.hadoop.mapred.ShuffleHandler
+3. yarn.nodemanager.resource.memory-mb
+yarn可以在每个节点上消耗的总内存。也就是NodeManger能够使用的内存
+4. yarn.scheduler.minimum-allocation-mb
+每个容器最小使用的内存。也就是yarn.nodemanager.resource.memory-mb/yarn.scheduler.minimum-allocation-mb得到一个节点上最多运行的容器数（每个容器运行单个map或reduce任务）
+5. 
+```
 
 
