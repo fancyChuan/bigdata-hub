@@ -99,5 +99,7 @@ yarn可以在每个节点上消耗的总内存。也就是NodeManger能够使用
 每个容器最小使用的内存。也就是yarn.nodemanager.resource.memory-mb/yarn.scheduler.minimum-allocation-mb得到一个节点上最多运行的容器数（每个容器运行单个map或reduce任务）
 5. 
 ```
+- hdfs-site.xml
+
 
 
