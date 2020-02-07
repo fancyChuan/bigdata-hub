@@ -44,7 +44,7 @@ java接口
 HDFS对数据的一致性和安全性要求高。
 
 #### 5.1 NN和2NN工作机制
-SecondaryNameNode：专门用于FsImage和Edits的合并
+SecondaryNameNode：专门用于FsImage和Edits的合并。也被称为检查节点（为NN执行检查服务）
 - 元信息需要在内存里也需要在磁盘中备份：FsImage
 - 同步更新FsImage效率过低，引入Edits（只追加，效率高）。每当元数据有变化的时候，修改内存中的元数据并追加到Edits中
 - 长时间使用Edits会导致文件过大，需要定期合并，故映入2ndNameNode
@@ -55,7 +55,7 @@ SecondaryNameNode：专门用于FsImage和Edits的合并
 
 ![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/NameNode工作机制.png?raw=true)
 
-先更新文件、在更新内存。为了安全性考虑。不如更新了内存，然后断电，那么数据就丢失了
+先更新文件、再更新内存。为了安全性考虑。如果更新了内存，然后断电，那么数据就丢失了
 
 #### 5.2 FsImage和Edits的解析
 #### 5.3 checkpoint时间设置
@@ -256,7 +256,7 @@ scp -r root@hadoop103:/user/hadoop/hello.txt  hello.txt		// 拉 pull
 scp -r root@hadoop103:/user/hadoop/hello.txt root@hadoop104:/user/hadoop 
 
 # 2．采用distcp命令实现两个Hadoop集群之间的递归数据复制
-bin/hadoop distcp hdfs://haoop102:9000/user/hadoop/hello.txt hdfs://hadoop103:9000/user/hadoop/hello.txt
+bin/hadoop distcp hdfs://hadoop102:9000/user/hadoop/hello.txt hdfs://hadoop103:9000/user/hadoop/hello.txt
 ```
 #### 7.2 小文件存档
 - HDFS存储小文件的弊端（实际工作中，应该尽量避免使用HDFS处理小文件）
@@ -288,6 +288,7 @@ hadoop fs -cp har:/// user/hadoop/output/input.har/*    /user/hadoop
 
 #### 8.2 HDFS-HA自动故障转移工作机制
 自动故障转移为HDFS部署增加了两个新组件：ZooKeeper和ZKFailoverController（ZKFC）进程
+> zk服务的背后意义是使得分布式应用程序不必实现分布式和高可靠性、组管理和存在协议等
 
 HA的自动故障转移依赖于ZooKeeper的以下功能：
 - 1）故障检测：集群中的每个NameNode在ZooKeeper中维护了一个持久会话，如果机器崩溃，ZooKeeper中的会话将终止，ZooKeeper通知另一个NameNode需要触发故障转移。
