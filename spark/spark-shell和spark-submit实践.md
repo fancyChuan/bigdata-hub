@@ -130,7 +130,7 @@ spark-submit的一些常见标记[options]
 
 标记 | 描述
 --- | ---
---master | 表示要连接的集群管理器。这个标记可接收的选项如下
+--master | 表示要连接的集群管理器。当new SparkConf().setMaster() 设置了以后，这个参数就没什么用了
 --deploy-mode | 选择在本地（客户端“client”）启动驱动器程序，还是在集群中的一台工作节点机器（集群“cluster”）上启动。在客户端模式下，spark-submit 会将驱动器程序运行在spark-submit 被调用的这台机器上。在集群模式下，驱动器程序会被传输并执行于集群的一个工作节点上。默认是本地模式
 --class | 运行Java 或Scala 程序时应用的主类
 --name | 应用的显示名，会显示在Spark 的网页用户界面中

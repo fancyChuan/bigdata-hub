@@ -1,5 +1,5 @@
 ## RDD编程
-某些Scala 代码无法在Java 里调用，特别是那些使用了隐式类型转换、默认参数和某些Scala 反射机制的代码
+
 
 JavaSparkContext是SparkContext的子类，针对java的SparkContext版本
 
@@ -14,9 +14,6 @@ SQLContext sqlContext = spark.sqlContext();
 SparkContext sc = spark.sparkContext();
 ```
 
-pyspark
-- 使用javaAPI构建任务，数据使用原生python处理并在JVM里实现缓存cache和移动shuffle
-- python驱动程序的SparkContext通过py4j启动JVM并创建一个JavaSparkContext对象
 
 ### 1. RDD基础
 - 什么是RDD
