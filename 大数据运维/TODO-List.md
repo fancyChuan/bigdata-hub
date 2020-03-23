@@ -23,4 +23,15 @@ Closing: 0: jdbc:hive2://hadoop02:10000/default
 
 ```
 - 没有MR任务的时候HDFS IO为什么也很高
-- 
+- 集群数据量不是特别大，CPU的资源不是能很好利用的时候是不是可以把HDFS的块将为64M，这样能提高并发量。该证明测试性能和差别呢？
+- HDFS的备份数是不是对性能也有影响呢？比如一份数据都在一个节点上，就会导致要么发生网络传输，要么就在一台机器上跑完。
+- 为什么文件在本地文件系统，通过load命令始终不成功？总是报找不到文件？
+
+- 频繁的清理buff/cache，会不会对大数据的任务产生影响？
+```
+*/60 * * * * sh /root/clean_cache.sh
+# clean_cache.sh 内容如下
+echo 1 > /proc/sys/vm/drop_caches;
+echo 2 > /proc/sys/vm/drop_caches;
+echo 3 > /proc/sys/vm/drop_caches;
+```
