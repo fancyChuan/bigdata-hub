@@ -22,16 +22,22 @@ SparkContext sc = spark.sparkContext();
     - 具有数据流模型的特点：自动容错、位置感知性调度和可伸缩性
     - 允许执行多个查询时显式的把工作集缓存在内存中
 - RDD属性
-    - 一组分区（Partition），即数据集的基本组成单位;
+    - 一组分区（Partition），即数据集的基本组成单位。这是逻辑上的分区，一个分区可能包含多个数据块
     - 一个计算每个分区的函数;
     - RDD之间的依赖关系;
     - 一个Partitioner，即RDD的分片函数;
     - 一个列表，存储存取每个Partition的优先位置（preferred location）
 > 移动数据不如移动计算！【首选位置、优先位置】即：通过优先位置把任务优先分配过去，尽量避免网络IO
 - 特点
-    - 只读，对RDD的操作只能通过RDD转换算子进行
-    - 一个RDD包含了从其他RDD衍生所必需的信息，RDD之间存在依赖
-    - RDD的执行是按照血缘关系延时计算的（可以通过持久化切断血缘）
+    - 分区
+    - 只读：对RDD的操作只能通过RDD转换算子进行
+    - 依赖：一个RDD包含了从其他RDD衍生所必需的信息，RDD之间存在依赖。
+        - 窄依赖：子RDD的分区与父RDD的分区一一对应
+        - 宽依赖：子RDD的分区与父RDD的每个分区都有关，是多对多的关系
+    - 缓存：RDD的执行是按照血缘关系延时计算的（可以通过持久化切断血缘）
+    - checkpoint
+
+![image](img/宽依赖窄依赖.png)
 
 #### 1.1 创建RDD
 有两种方式：1. 读取外部数据集 2. 在驱动器程序中对一个集合进行并行化
@@ -40,8 +46,9 @@ SparkContext sc = spark.sparkContext();
 sc.parallelize(["hello", "spark"])
 # java
 JavaRDD<String> lines = sc.parallelize(Arrays.asList("hello", "spark"))
-# scala
+# scala 还有一个makeRDD函数
 val x = sc.parallelize(List("hello", "spark-shell"))
+val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 ``` 
 #### 1.2  RDD操作
 转化(transformation)操作
@@ -49,17 +56,18 @@ val x = sc.parallelize(List("hello", "spark-shell"))
 - 可以操作任意数量的输入RDD，比如rdd1.union(rdd2)
 - Spark会使用谱系图（lineage graph）来记录不同RDD之间的关系
 
-函数 | 说明 | 举例
---- | --- | ---
-filter | 过滤出符合条件的元素 
-map | 对每个元素执行传入的方法，一对一 | 求平方
-flatMap | 对每个元素执行传入的方法，一对多 | 把字符串切分为单词
-distinct | 去重，开销很大，需要通过网络把所有数据进行混洗
-union | 并集，合并前有重复的元素合并后也有 | rdd1.union(rdd2)
-intersection | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗 | 
-subtract | 差集，有需要混洗 | 
-cartesian | 笛卡尔积，在考虑所有组合的时候有用 |
-sample  | 采样 | 参见 Main.testSample()
+类型 | 函数 | 说明 | 举例
+--- | --- | --- | ---
+Value类型 | map | 对每个元素执行传入的方法，一对一 | rdd.map(_ * 2) // 所有元素乘以2
+Value类型 | flatMap | 对每个元素执行传入的方法，一对多 | 把字符串切分为单词
+
+Value类型 | filter | 过滤出符合条件的元素 
+Value类型 | distinct | 去重，开销很大，需要通过网络把所有数据进行混洗
+双Value类型 | union | 并集，合并前有重复的元素合并后也有 | rdd1.union(rdd2)
+Value类型 | intersection | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗 | 
+Value类型 | subtract | 差集，有需要混洗 | 
+Value类型 | cartesian | 笛卡尔积，在考虑所有组合的时候有用 |
+Value类型 | sample  | 采样 | 参见 Main.testSample()
 
 行动(action)操作
 - 触发实际计算（一个action会触发一个job），向驱动器程序返回结果或者把结果写入外部系统

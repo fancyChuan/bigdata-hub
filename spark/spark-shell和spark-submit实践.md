@@ -148,7 +148,7 @@ spark://host:port | 连接到指定端口的Spark 独立集群上。默认情况
 mesos://host:port | 连接到指定端口的Mesos 集群上。默认情况下Mesos 主节点监听5050 端口
 yarn | 连接到一个YARN集群。当在YARN 上运行时，需要设置环境变量HADOOP_CONF_DIR 指向Hadoop 配置目录，以获取集群信息
 local |  运行本地模式，使用单核
-local[N] | 运行本地模式，使用N个核心
+local[N] | 运行本地模式，使用N个核心（即运行N个worker线程）
 local[*] | 运行本地模式，使用尽可能多的核心
 
 

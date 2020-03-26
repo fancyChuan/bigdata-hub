@@ -7,6 +7,7 @@ import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.junit.Test;
 import scala.Tuple2;
 
 import java.util.Arrays;
@@ -44,7 +45,8 @@ public class Main {
     /**
      * 3. 测试转化函数
      */
-    public static void testTransformation() {
+    @Test
+    public void testTransformation() {
 //        SparkConf conf = new SparkConf().setMaster("local").setAppName("helloSpark");
 //        JavaSparkContext sc = new JavaSparkContext(conf);
         JavaRDD<String> inputRDD = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md");
@@ -189,15 +191,15 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        testWordCount();
-        testHelloSpark();
-        testTransformation();
-        testPassFunction();
-        testSample();
-        testAction();
-        testConvertAndMean();
-        testPairRDD();
-        testPartition();
-        testDomainPartitioner();
+//        testWordCount();
+//        testHelloSpark();
+//        testTransformation();
+//        testPassFunction();
+//        testSample();
+//        testAction();
+//        testConvertAndMean();
+//        testPairRDD();
+//        testPartition();
+//        testDomainPartitioner();
     }
 }
