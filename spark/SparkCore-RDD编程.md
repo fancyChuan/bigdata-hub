@@ -58,7 +58,9 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 
 类型 | 函数 | 说明 | 举例
 --- | --- | --- | ---
-Value类型 | map | 对每个元素执行传入的方法，一对一 | rdd.map(_ * 2) // 所有元素乘以2
+Value类型 | map(func) | 对每个元素执行传入的方法，一对一 | rdd.map(_ * 2) // 所有元素乘以2
+Value类型 | mapPartition(func) | func函数处理一整个分区的数据。即有n个分区，就调用func函数n次。 
+Value类型 | mapPartitionWithIndex(func) |  
 Value类型 | flatMap | 对每个元素执行传入的方法，一对多 | 把字符串切分为单词
 
 Value类型 | filter | 过滤出符合条件的元素 

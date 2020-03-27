@@ -52,6 +52,8 @@ public class Main {
         JavaRDD<String> inputRDD = sc.textFile("E:\\JavaWorkshop\\bigdata-learn\\spark\\src\\main\\resources\\testfile.md");
         JavaRDD<String> scala = inputRDD.filter(line -> line.contains("Scala"));
         JavaRDD<String> merge = scala.union(inputRDD.filter(line -> line.contains("Python")));
+        JavaRDD<Integer> lineWordcount = merge.map(line -> line.split(" ").length);
+
         // 下面是行动函数
         System.out.println(merge.count());
         System.out.println(merge.collect());
