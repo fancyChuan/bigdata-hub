@@ -80,3 +80,7 @@ java ... -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps ...
     - 尝试通过设置 -XX:+UseG1GC垃圾回收器为G1。对于大的Executor堆，通过使用-XX:G!HeapRegionSize去增大G1的对内存，显得尤为重要
     - 如果从HDFS读数据，解压缩块的大小通常为块大小的2-3倍。如果我们希望有3或4个任务的工作空间，而HDFS块为128MB，那么估计Eden的大小为4*3*128MB 
     - 监控垃圾回收的频率和时间如何随心设置的变化而变化
+    
+    
+### 参考资料
+1. [spark排错和调优](https://blog.csdn.net/lsshlsw/article/details/49155087)
