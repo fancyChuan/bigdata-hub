@@ -21,6 +21,7 @@
         <module>spark</module>
         <module>zookeeper</module>
         <module>dss</module>
+        <module>kylin</module>
     </modules>
 
     <properties>
