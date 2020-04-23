@@ -1,5 +1,7 @@
 ## YARN资源调度
 
+> map和reduce容器通常使用的内存范围为1-4GB
+
 YARN架构：
 
 ![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/YARN架构.png?raw=true)
