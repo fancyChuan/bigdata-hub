@@ -10,13 +10,11 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.Function2;
 import org.junit.Test;
 import scala.Tuple2;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Main {
@@ -54,26 +52,33 @@ public class Main {
     }
 
     /**
-     * 3. 测试转化函数
+     * 3. 测试转化函数：map() mapPartitions()
      */
     @Test
     public void testTransformation() {
-//        JavaRDD<String> scala = inputRDD.filter(line -> line.contains("Scala"));
-//        JavaRDD<String> merge = scala.union(inputRDD.filter(line -> line.contains("Python")));
-//        JavaRDD<Integer> lineWordcount = merge.map(line -> line.split(" ").length);
-//        lineWordcount.mapPartitions(new FlatMapFunction<Iterator<Integer>, Object>() {
-//            @Override
-//            public Iterator<Object> call(Iterator<Integer> integerIterator) throws Exception {
-//
-//                return null;
-//            }
-//        });
+        JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 4, 6, 10, 30, 60, 90, 100, 400), 2);
+        JavaRDD<Integer> mapRdd = rdd.map(item -> item * 2);
+        // 不适用匿名函数实现mapPartitions
+        JavaRDD<Integer> mapPtsRdd = rdd.mapPartitions(new FlatMapFunction<Iterator<Integer>, Integer>() {
+            @Override
+            public Iterator<Integer> call(Iterator<Integer> integerIterator) throws Exception {
+                ArrayList<Integer> result = new ArrayList<>();
+                while (integerIterator.hasNext()) {
+                    Integer next = integerIterator.next();
+                    result.add(next * 3);
+                }
+                return result.iterator();
+            }
+        });
+        // 使用匿名函数实现
+        JavaRDD<Integer> mapPtsRdd2 = mapRdd.mapPartitions(iterator -> {
+            ArrayList<Integer> result = new ArrayList<>();
+            iterator.forEachRemaining(item -> result.add(item * 4));
+            return result.iterator();
+        });
 
-        // 下面是行动函数
-//        System.out.println(merge.count());
-//        System.out.println(merge.collect());
-//        System.out.println(merge.take(2));
-//        System.out.println(merge.first());
+
+
     }
 
     /**
@@ -207,5 +212,8 @@ public class Main {
         });
     }
 
-
+    public static void main(String[] args) {
+        Main main = new Main();
+        main.testGenRdd();
+    }
 }
