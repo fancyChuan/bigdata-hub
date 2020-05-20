@@ -100,7 +100,8 @@ public class Main implements Serializable { // TODO：如何避免主类也需�
         mapPartIndexRDD1.collect().forEach(System.out::println);
         System.out.println("==============");
         mapPartIndexRDD2.collect().forEach(System.out::println);
-
+        // glom算子
+        JavaRDD<List<Integer>> glomRDD = rdd.glom();
 
     }
 
