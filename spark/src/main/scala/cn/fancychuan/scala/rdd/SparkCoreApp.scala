@@ -15,8 +15,9 @@ object SparkCoreApp {
         val sc = new SparkContext(conf)
 
         // makeRDD的底层实现就是parallelize，传入的第一个参数要求是Seq需要有顺序，那么Array和List都可以
-        val rdd1: RDD[Int] = sc.makeRDD(Array(1,2,3,4,5,6,7,8,9,10,12,13,14), 3)
-        val rdd2: RDD[Int] = sc.makeRDD(List(1,2,3,4,5,6))
+        // val rdd2: RDD[Int] = sc.makeRDD(List(1,2,3,4,5,6)) // 默认是
+        val rdd1: RDD[Int] = sc.makeRDD(Array(1,2,3,4,5,6,7,8,9,10,12,13,14), 3) // 有三个分区
+        val rdd2: RDD[Int] = sc.makeRDD(List(1,2,3,4,5,6)) // 默认是1个分区
 
         // 读取文件时，传递的第二个参数是最小分区数，但实际上的分区数不一定是这个，跟hadoop的切片规则有关
         val rdd3: RDD[String] = sc.textFile("spark/data/testTextFile.txt", 2)
@@ -34,6 +35,15 @@ object SparkCoreApp {
             }
         }
         mapPartIndexRDD.collect().foreach(println)
+
+        // glom算子
+        val glomRDD: RDD[Array[Int]] = rdd1.glom()
+        glomRDD.collect().foreach(items => println(items.mkString(",")))
+        // groupBy算子
+        val groupByRDD1: RDD[(Int, Iterable[Int])] = rdd1.groupBy(_ % 2) // 多个分区的rdd使用groupBy
+        val groupByRDD2: RDD[(Int, Iterable[Int])] = rdd2.groupBy(_ % 2) // 只有分区的rdd使用groupBy
+
+
     }
 
 }

@@ -66,7 +66,8 @@ Value类型 | map(func) | 对每个元素执行传入的方法，一对一 | rdd
 Value类型 | mapPartition(func) | func函数处理一整个分区的数据。即有n个分区，就调用func函数n次。 
 Value类型 | mapPartitionWithIndex(func) | 与mapPartitions类似，只是输入参数多了一个分区号
 Value类型 | flatMap | 对每个元素执行传入的方法，一对多 | 把字符串切分为单词
-
+Value类型 | glom  | 将分区中的所有元素组成一个列表
+Value类型 | groupBy | 分组，按照传入函数的`返回值`进行分组
 Value类型 | filter | 过滤出符合条件的元素 
 Value类型 | distinct | 去重，开销很大，需要通过网络把所有数据进行混洗
 双Value类型 | union | 并集，合并前有重复的元素合并后也有 | rdd1.union(rdd2)
