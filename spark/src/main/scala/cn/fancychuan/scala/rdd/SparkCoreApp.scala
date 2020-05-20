@@ -27,13 +27,12 @@ object SparkCoreApp {
         val mapRDD: RDD[Int] = rdd1.map(x => x * 2) // 也可以写成 rdd1.map(_*2) 因为只用到一个变量x
         // mapPartition算子，减少了发送到执行器的交互次数。但是数据较多的时候容易内容溢出
         val mapPartRDD: RDD[Int] = rdd1.mapPartitions( items => items.map(_*3))
-        val mapPartIndexRDD: RDD[String] = rdd1.mapPartitionsWithIndex {
+        // mapPartitionsWithIndex算子
+        val mapPartIndexRDD: RDD[String] = rdd1.mapPartitionsWithIndex { // TODO：为什么这里用大括号，而且下一行用case？模式匹配？
             case (index, items) => {
                 items.map(_ + "分区号：" + index)
             }
         }
-
-
         mapPartIndexRDD.collect().foreach(println)
     }
 

@@ -31,7 +31,7 @@ RDD 体现了装饰者模式，将数据处理的逻辑进行封装
     - RDD之间的依赖关系;
     - 一个Partitioner，即RDD的分片函数;
     - 一个列表，存储存取每个Partition的优先位置（preferred location）
-> 移动数据不如移动计算！【首选位置、优先位置】即：通过优先位置把任务优先分配过去，尽量避免网络IO
+> 移动数据不如移动计算！【首选位置、优先位置】即：通过优先位置把任务优先分配过去，尽量避免网络IO。进程本地化->节点本地化->机架本地化
 - 特点
     - 分区：这是逻辑上的概念，每个分区的数据是抽象存在的。（分区应该是记录着数据的起始位置）
     - 只读：对RDD的操作只能通过RDD转换算子进行
@@ -64,7 +64,7 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 --- | --- | --- | ---
 Value类型 | map(func) | 对每个元素执行传入的方法，一对一 | rdd.map(_ * 2) // 所有元素乘以2
 Value类型 | mapPartition(func) | func函数处理一整个分区的数据。即有n个分区，就调用func函数n次。 
-Value类型 | mapPartitionWithIndex(func) |  
+Value类型 | mapPartitionWithIndex(func) | 与mapPartitions类似，只是输入参数多了一个分区号
 Value类型 | flatMap | 对每个元素执行传入的方法，一对多 | 把字符串切分为单词
 
 Value类型 | filter | 过滤出符合条件的元素 
