@@ -14,10 +14,11 @@ import org.apache.spark.api.java.function.Function2;
 import org.junit.Test;
 import scala.Tuple2;
 
+import java.io.Serializable;
 import java.util.*;
 
 
-public class Main {
+public class Main implements Serializable { // TODO：如何避免主类也需要序列化？
     /**
      * 实例化一个sc并将集合并行化
      * 使用的是 JavaSparkContext 而不是 SparkContext
@@ -52,13 +53,17 @@ public class Main {
     }
 
     /**
-     * 3. 测试转化函数：map() mapPartitions()
+     * 3. 测试转化函数：map() mapPartitions() mapPartitionsWithIndex()
+     * mapPartitionsWithIndex
+     *  1> 在Java中，只能使用mapPartitionsWithIndex(func, rea) 这个方法 todo:第二个参数的作用是什么
+     *  2> 而在Scala中可以使用mapPartitionsWithIndex(func)
+     *  TODO：为什么Scala可以有两个方法，而在Java中只能用一个方法，Java和Scala的配合差异在什么地方
      */
     @Test
-    public void testTransformation() {
-        JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 4, 6, 10, 30, 60, 90, 100, 400), 2);
+    public void testTransformation() { // todo: 为什么这个函数的运行会要求Main这个类是可序列化的，否则会报Task not serializable的错误？
+        JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 4, 6, 10, 30, 60, 90, 100, 400), 3);
         JavaRDD<Integer> mapRdd = rdd.map(item -> item * 2);
-        // 不适用匿名函数实现mapPartitions
+        // 不使用匿名函数实现mapPartitions
         JavaRDD<Integer> mapPtsRdd = rdd.mapPartitions(new FlatMapFunction<Iterator<Integer>, Integer>() {
             @Override
             public Iterator<Integer> call(Iterator<Integer> integerIterator) throws Exception {
@@ -71,12 +76,30 @@ public class Main {
             }
         });
         // 使用匿名函数实现
-        JavaRDD<Integer> mapPtsRdd2 = mapRdd.mapPartitions(iterator -> {
+        JavaRDD<Integer> mapPtsRdd2 = rdd.mapPartitions(iterator -> {
             ArrayList<Integer> result = new ArrayList<>();
             iterator.forEachRemaining(item -> result.add(item * 4));
             return result.iterator();
         });
+        // 使用lambda表达式实现mapPartitionsWithIndex
+        JavaRDD<String> mapPartIndexRDD1 = rdd.mapPartitionsWithIndex((index, items) -> {
+            LinkedList<String> result = new LinkedList<>();
+            items.forEachRemaining(item -> result.add(item + ", 分区号为：" + index));
+            return result.iterator();
+        }, false);
+        // 不使用lambda表达式
+        JavaRDD<String> mapPartIndexRDD2 = rdd.mapPartitionsWithIndex(new Function2<Integer, Iterator<Integer>, Iterator<String>>() {
+            @Override
+            public Iterator<String> call(Integer index, Iterator<Integer> items) throws Exception {
+                LinkedList<String> result = new LinkedList<>();
+                items.forEachRemaining(item -> result.add(item + ", 分区号为：" + index));
+                return result.iterator();
+            }
+        }, true);
 
+        mapPartIndexRDD1.collect().forEach(System.out::println);
+        System.out.println("==============");
+        mapPartIndexRDD2.collect().forEach(System.out::println);
 
 
     }
