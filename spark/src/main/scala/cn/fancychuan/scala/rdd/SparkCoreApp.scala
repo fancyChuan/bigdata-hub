@@ -15,9 +15,13 @@ object SparkCoreApp {
         val sc = new SparkContext(conf)
 
         // makeRDD的底层实现就是parallelize，传入的第一个参数要求是Seq需要有顺序，那么Array和List都可以
-        // val rdd2: RDD[Int] = sc.makeRDD(List(1,2,3,4,5,6)) // 默认是
+        val rdd0: RDD[Int] = sc.makeRDD(List(1,2,3,4,5,6)) // 在local模式中，默认分区数是使用的内核数与2相对的较大值。比如local[4]就是4与2相比，取较大值4，由此默认分区就是4
         val rdd1: RDD[Int] = sc.makeRDD(Array(1,2,3,4,5,6,7,8,9,10,12,13,14), 3) // 有三个分区
-        val rdd2: RDD[Int] = sc.makeRDD(List(1,2,3,4,5,6)) // 默认是1个分区
+        val rdd2: RDD[Int] = sc.makeRDD(List(1,2,3,4,5,6), 1) // 指定了分区数
+
+        rdd0.saveAsTextFile("spark/target/rdd0")
+        rdd1.saveAsTextFile("spark/target/rdd1")
+        rdd2.saveAsTextFile("spark/target/rdd2")
 
         // 读取文件时，传递的第二个参数是最小分区数，但实际上的分区数不一定是这个，跟hadoop的切片规则有关
         val rdd3: RDD[String] = sc.textFile("spark/data/testTextFile.txt", 2)
@@ -38,6 +42,7 @@ object SparkCoreApp {
 
         // glom算子
         val glomRDD: RDD[Array[Int]] = rdd1.glom()
+        glomRDD.saveAsTextFile("spark/target/glom")
         glomRDD.collect().foreach(items => println(items.mkString(",")))
         // groupBy算子
         val groupByRDD1: RDD[(Int, Iterable[Int])] = rdd1.groupBy(_ % 2) // 多个分区的rdd使用groupBy
