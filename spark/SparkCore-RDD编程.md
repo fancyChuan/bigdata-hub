@@ -70,6 +70,8 @@ Value类型 | glom  | 将分区中的所有元素组成一个列表
 Value类型 | groupBy | 分组，按照传入函数的`返回值`进行分组,分组后的结果，还是按照原来的分区数进行存储
 Value类型 | filter | 过滤出符合条件的元素 
 Value类型 | distinct | 去重，开销很大，需要通过网络把所有数据进行混洗
+Value类型 | coalesce | 缩减分区数，用于大数据集过滤后，提高小数据集的执行效率
+Value类型 | repartition | 根据分区数，重新通过网络随机洗牌所有数据    
 双Value类型 | union | 并集，合并前有重复的元素合并后也有 | rdd1.union(rdd2)
 Value类型 | intersection | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗 | 
 Value类型 | subtract | 差集，有需要混洗 | 

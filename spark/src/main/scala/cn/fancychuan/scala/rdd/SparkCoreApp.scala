@@ -51,6 +51,18 @@ object SparkCoreApp {
         //groupByRDD1.saveAsTextFile("spark/target/groupby1") // rdd1是3个分区，groupByRDD1也是三个分区
         //groupByRDD2.saveAsTextFile("spark/target/groupby2") // TODO：那groupby的网络分发细节是怎么样的？
 
+        // sample(withReplacement, fraction, seed)
+        val sampleRDD: RDD[Int] = rdd1.sample(true, 0.4)
+        // distinct([numPartitions]))  将去重的数据重新放到numPartitions个分区中（顺序打乱重组，也就是发生了shuffle）
+        val distinctRDD: RDD[Int] = rdd1.distinct(2) // rdd1是3个分区，执行之后，distinctRDD是2个分区
+        // distinctRDD.saveAsTextFile("spark/target/distinct")
+
+        // coalesce(numPartitions)缩减分区数，用于大数据集过滤后，提高小数据集的执行效率
+        // coalesce重新分区，可以选择是否进行shuffle过程
+        val coalRDD: RDD[Int] = rdd1.coalesce(2) // 指定的分区数如果大于父RDD的话是不生效的
+        println(coalRDD.partitions.size)
+        // repartition实际上是调用的coalesce，默认是进行shuffle的
+        rdd1.repartition(2) // 重新分区
     }
 
 }
