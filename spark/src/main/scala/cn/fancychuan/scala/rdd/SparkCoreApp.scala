@@ -19,9 +19,9 @@ object SparkCoreApp {
         val rdd1: RDD[Int] = sc.makeRDD(Array(1,2,3,4,5,6,7,8,9,10,12,13,14), 3) // 有三个分区
         val rdd2: RDD[Int] = sc.makeRDD(List(1,2,3,4,5,6), 1) // 指定了分区数
 
-        rdd0.saveAsTextFile("spark/target/rdd0")
-        rdd1.saveAsTextFile("spark/target/rdd1")
-        rdd2.saveAsTextFile("spark/target/rdd2")
+//        rdd0.saveAsTextFile("spark/target/rdd0")
+//        rdd1.saveAsTextFile("spark/target/rdd1")
+//        rdd2.saveAsTextFile("spark/target/rdd2")
 
         // 读取文件时，传递的第二个参数是最小分区数，但实际上的分区数不一定是这个，跟hadoop的切片规则有关
         val rdd3: RDD[String] = sc.textFile("spark/data/testTextFile.txt", 2)
@@ -42,12 +42,14 @@ object SparkCoreApp {
 
         // glom算子
         val glomRDD: RDD[Array[Int]] = rdd1.glom()
-        glomRDD.saveAsTextFile("spark/target/glom")
         glomRDD.collect().foreach(items => println(items.mkString(",")))
         // groupBy算子
-        val groupByRDD1: RDD[(Int, Iterable[Int])] = rdd1.groupBy(_ % 2) // 多个分区的rdd使用groupBy
-        val groupByRDD2: RDD[(Int, Iterable[Int])] = rdd2.groupBy(_ % 2) // 只有分区的rdd使用groupBy
-
+        val groupByRDD1: RDD[(Int, Iterable[Int])] = rdd1.groupBy(_ % 4) // 拥有3个分区的rdd使用groupBy
+        val groupByRDD2: RDD[(Int, Iterable[Int])] = rdd2.groupBy(_ % 2) // 只有1个分区的rdd使用groupBy
+        groupByRDD1.collect().foreach(println)
+        groupByRDD2.collect().foreach(println)
+        //groupByRDD1.saveAsTextFile("spark/target/groupby1") // rdd1是3个分区，groupByRDD1也是三个分区
+        //groupByRDD2.saveAsTextFile("spark/target/groupby2") // TODO：那groupby的网络分发细节是怎么样的？
 
     }
 
