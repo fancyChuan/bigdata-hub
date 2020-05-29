@@ -19,31 +19,6 @@ Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应�
     - 同一个消费者组不能同时消费同一个分区，可以消费不同的分区
 > 消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个消费者消费；消费者组之间互不影响。所有的消费者都属于某个消费者组，即消费者组是逻辑上的一个订阅者
 
-#### 常用命令
-```
-# 1. 启动broker
-bin/kafka-server-start.sh config/server.properties
-
-# 2.1 创建topic
-bin/kafka-topics.sh --create --replication-factor 1 --partitions 1 --topic test --zookeeper s00:2181/kafka
-# 2.2 查看当前所有topic
-bin/kafka-topics.sh --list --zookeeper s00:2181/kafka
-# 2.3 删除topic
-bin/kafka-topics.sh --delete --zookeeper s00:2181 --topic test
-# 2.4 查看topic描述
-bin/kafka-topics.sh --topic test --describe --zookeeper s00:2181/kafka
-
-# 3. 新建consumer
-bin/kafka-console-consumer.sh --zookeeper s00:2181/kafka --topic test
-# 3.1 新建消费组成员，需要在config/consumer.properties中配置消费者组id
-bin/kafka-console-consumer.sh --zookeeper s00:2181/kafka --topic test --consumer.config config/consumer.properties
-# 4. 新建producer 
-bin/kafka-console-producer.sh --broker-list s00:9092 --topic test
-```
-注意：
-1. --zookeeper s00:2181/kafka 需要些实际使用的znode，如果是 s00:2181 那么就是根znode
-2. 单机模式下--replication-factor只能为1，--partitions 可以为1或者2
-> TODO: 为什么先启动producer然后产生的消息在consumer启动后会收不到？
 
 ### Kafka工作流程分析
 #### 1. Kafka生产过程分析
