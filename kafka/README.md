@@ -1,16 +1,23 @@
 ## Kafka
+Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应用于大数据实时处理领域
+> 消息队列的两种模式：
+> 1.点对点模式（1对1）：消费了之后删除
+> 2.发布订阅模式（1对多）：数据会存储起来一般过段时间才会删除
 
 #### 概念
-- broker：每个kafka实例server，多个broker组成kafka集群
-- topic: 类似于表，kafka对消息保存时依据topic父类
-    - partition，分区，相当于文件夹。理论上partition数越多，吞吐率越高。（但也不能太大，否则broker宕机时重新恢复很慢）。做负载均衡用
-    - replication，副本
-- producer
+- broker：每个kafka实例server，多个broker组成kafka集群，一个broker可以容纳多个topic
+- topic: 类似于表，kafka对消息保存时依据topic父类。也可以理解为就是一个队列
+- partition：分区，相当于文件夹，一个分区是一个有序的队列
+> 理论上partition数越多，吞吐率越高。（但也不能太大，否则broker宕机时重新恢复很慢）。做负载均衡用
+- replication：副本，保证节点挂了数据也不丢失。一个topic的每个分区都有若干个副本，一个leader和若干个follower
+    - leader：每个分区多个副本的主。生产者发送数据的时候发送到leader，消费者消费的时候也是到leader去获取数据
+    - follower：每个分区多个副本的从。主要从leader同步数据，leader故障时，follower接替工作
+- producer：生产者，向broker发送数据
 - consumer
+    - 从broker消费数据
     - consumer group 消费组，也需要用zookeeper管理：用来实现一个topic消息的广播和单播
     - 同一个消费者组不能同时消费同一个分区，可以消费不同的分区
-- leader
-- follower
+> 消费者组内每个消费者负责消费不同分区的数据，一个分区只能由一个消费者消费；消费者组之间互不影响。所有的消费者都属于某个消费者组，即消费者组是逻辑上的一个订阅者
 
 #### 单机部署
 ```
