@@ -39,4 +39,5 @@ conn.close()
 
 #### 参考资料
 - [Windows下安装sasl - 简书](https://www.jianshu.com/p/c67657db5a93)
+- [Windows下使用Python3连接Hive](https://www.aitolearn.com/article/9a06a8e1ff5e4252aa2373eb3cc4fed8)
 - [python连接hive （安装impyla）的采坑之旅](https://www.cnblogs.com/free-easy0000/p/9638982.html)
