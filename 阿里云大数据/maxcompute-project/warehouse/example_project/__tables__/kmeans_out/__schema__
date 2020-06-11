@@ -1,0 +1,3 @@
+project=example_project
+table=kmeans_out
+columns=dim1:DOUBLE,dim2:DOUBLE

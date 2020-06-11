@@ -1,0 +1,3 @@
+project=example_project
+table=pagerank_in
+columns=vertex:STRING,des_1:STRING,des_2:STRING

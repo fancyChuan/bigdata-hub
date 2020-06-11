@@ -1,0 +1,3 @@
+project=example_project
+table=sssp_out
+columns=v:BIGINT,l:BIGINT
