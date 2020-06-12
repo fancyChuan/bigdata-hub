@@ -1,3 +1,0 @@
-project=example_project
-table=sssp_in
-columns=v:BIGINT,es:STRING

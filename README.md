@@ -7,6 +7,7 @@
 - hadoop-pom
 
 ### 学习项目
+- [aliyun-bigdata](./aliyun-bigdata)：阿里云大数据（包括DataWorks、MaxCompute等）
 - hadoop
 - hive
 - kafka
