@@ -1,0 +1,3 @@
+project=example_project
+table=rs_out
+columns=word:STRING,cnt:BIGINT

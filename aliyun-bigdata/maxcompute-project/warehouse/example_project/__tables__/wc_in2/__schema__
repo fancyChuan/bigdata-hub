@@ -1,0 +1,5 @@
+project=example_project
+table=wc_in2
+columns=cola:STRING,colb:STRING,colc:STRING
+partitions=p1:STRING,p2:STRING
+
