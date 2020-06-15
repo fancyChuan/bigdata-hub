@@ -7,6 +7,7 @@ import com.aliyun.odps.OdpsException;
 import com.aliyun.odps.Resource;
 import com.aliyun.odps.account.Account;
 import com.aliyun.odps.account.AliyunAccount;
+import org.apache.hadoop.fs.aliyun.tempresource.HadoopTempResourceFileSystem;
 import org.apache.spark.SparkContext;
 import org.apache.spark.SparkFiles;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -14,6 +15,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.rdd.RDD;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
@@ -39,6 +41,7 @@ public class ReadResourceDemo {
 //            System.out.println(resource.getName());
 //            System.out.println(resource.getCreatedTime());
 //        }
+        new HadoopTempResourceFileSystem();
 
         SparkSession spark = SparkSession.builder()
                 .appName("readResourceWC")
@@ -48,19 +51,17 @@ public class ReadResourceDemo {
         String fileName = args[0];
 
         System.out.println("===========================");
-        File f1 = new File(fileName);
-        System.out.println("默认file:" + f1.getAbsolutePath());
-        System.out.println("读取长度：" + readFromLocalFile(f1.getAbsolutePath()).length());
+        System.out.println(System.getenv("SPARK_YARN_STAGING_DIR"));
+        Dataset<String> rddx = spark.read().textFile(System.getenv("SPARK_YARN_STAGING_DIR") + '/' + fileName);
+        System.out.println(rddx.collect());
+        File dir = new File("./");
+        String targetFile = "file://" + dir.getCanonicalPath() + "/" + fileName;
+        System.out.println(targetFile);
+        System.out.println("[==========]length：" + readFromLocalFile(targetFile).length());
 
-        File f2 = new File("file://./" + fileName);
-        System.out.println("相对路径：" + f2.getAbsolutePath());
-        System.out.println("读取长度：" + readFromLocalFile(f1.getAbsolutePath()).length());
-        System.out.println("===========================");
-        String absPath = SparkFiles.get(fileName);
-        System.out.println("绝对路径" + absPath);
-        JavaRDD<String> linesRDD = sc.textFile(absPath);
-        System.out.println(linesRDD.collect());
-        System.out.println("============================");
+        JavaRDD<String> rdd = sc.textFile(targetFile);
+        System.out.println(rdd);
+
     }
 
     public static String readFromLocalFile(String path) throws IOException {
