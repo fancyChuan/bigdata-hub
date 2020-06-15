@@ -8,18 +8,24 @@ import com.aliyun.odps.Resource;
 import com.aliyun.odps.account.Account;
 import com.aliyun.odps.account.AliyunAccount;
 import org.apache.spark.SparkContext;
+import org.apache.spark.SparkFiles;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.SparkSession;
 import scala.Tuple2;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class ReadResourceDemo {
-    public static void main(String[] args) throws OdpsException {
+    public static void main(String[] args) throws OdpsException, IOException {
 //        Account account = new AliyunAccount("orLPPOJCZqIohWjV", "7IiWCRgX4jK73VzAGLvnDrCU4m1Knx");
 //        Odps odps = new Odps(account);
 //        String endPoint = "http://service.odps.aliyun.com/api";
@@ -35,15 +41,38 @@ public class ReadResourceDemo {
 //        }
 
         SparkSession spark = SparkSession.builder()
-                .appName("readResource WC").master("local[4]")
+                .appName("readResourceWC")
                 .getOrCreate();
         JavaSparkContext sc = JavaSparkContext.fromSparkContext(spark.sparkContext());
 
-        JavaRDD<String> linesRDD = sc.textFile("umkt_config.txt", 2);
-        JavaRDD<String> wordsRDD = linesRDD.flatMap(line -> Arrays.asList(line.split(" ")).iterator());
-        JavaPairRDD<String, Integer> result = wordsRDD.mapToPair(one -> new Tuple2<>(one, 1)).reduceByKey((cnt1, cnt2) -> cnt1 + cnt2);
-        for (Tuple2<String, Integer> stringIntegerTuple2 : result.collect()) {
-            System.out.println(stringIntegerTuple2);
+        String fileName = args[0];
+
+        System.out.println("===========================");
+        File f1 = new File(fileName);
+        System.out.println("默认file:" + f1.getAbsolutePath());
+        System.out.println("读取长度：" + readFromLocalFile(f1.getAbsolutePath()).length());
+
+        File f2 = new File("file://./" + fileName);
+        System.out.println("相对路径：" + f2.getAbsolutePath());
+        System.out.println("读取长度：" + readFromLocalFile(f1.getAbsolutePath()).length());
+        System.out.println("===========================");
+        String absPath = SparkFiles.get(fileName);
+        System.out.println("绝对路径" + absPath);
+        JavaRDD<String> linesRDD = sc.textFile(absPath);
+        System.out.println(linesRDD.collect());
+        System.out.println("============================");
+    }
+
+    public static String readFromLocalFile(String path) throws IOException {
+        StringBuilder sqls = new StringBuilder();
+
+        int hasRead = 0;
+        byte[] bytes = new byte[1024];
+        FileInputStream inputStream = new FileInputStream(path);
+        while ((hasRead = inputStream.read(bytes))>0) {
+            String part = new String(bytes, 0, hasRead);
+            sqls.append(part);
         }
+        return sqls.toString();
     }
 }
