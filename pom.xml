@@ -22,6 +22,7 @@
         <module>zookeeper</module>
         <module>dss</module>
         <module>kylin</module>
+        <module>hbase</module>
     </modules>
 
     <properties>
