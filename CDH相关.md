@@ -59,8 +59,24 @@ sys.exit(
    Zookeeper数据目录dataDir: /var/lib/zookeeper  
    事务日志目录dataLogDir: /var/lib/zookeeper
 ```
-
+- CM运行的服务相关的目录
+```
+# 每个节点上运行的服务（角色）都是由agent控制的，由此下面的目录记录着由该agent管理的角色的配置情况
+/opt/cm-5.13.3/run/cloudera-scm-agent/process/
+# 启动ES所需要的信息，包括启动脚本、JVM配置文本等 
+/opt/cm-5.13.3/run/cloudera-scm-agent/process/1417-elasticsearch-ES_NODE
+# 启动脚本/命令  待研究脚本的原理、细节
+exec /opt/cm-5.13.3/run/cloudera-scm-agent/process/1417-elasticsearch-ES_NODE/scripts/control.sh start
+```
 
 【常用网址】
 1. [cdh各组件版本信息](https://www.cloudera.com/documentation/enterprise/release-notes/topics/cdh_vd_cdh_package_tarball_516.html)
 2. [cdh各组件maven信息](https://www.cloudera.com/documentation/enterprise/release-notes/topics/cdh_vd_cdh5_maven_repo.html)
+
+
+
+### CDH深入
+通过cm启动elasticsearch
+```
+
+```
