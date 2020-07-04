@@ -57,3 +57,4 @@ FROM (SELECT DISTINCT TO_DATE(date_day) AS date_day FROM common_db.tb_common_cal
 ### 参考资料
 1. [使用Hive API分析HQL的执行计划、Job数量和表的血缘关系 – lxw的大数据田地](http://lxw1234.com/archives/2015/09/476.htm)
 2. [【美团技术分享】sql语句转换成mapreduce - Mr.Ming2 - 博客园](https://www.cnblogs.com/Dhouse/p/7132476.html)
+3. [HiveSQL编译过程详解_逸卿的专栏-CSDN博客](https://blog.csdn.net/u010102540/article/details/38337439)
