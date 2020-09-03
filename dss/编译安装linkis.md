@@ -45,4 +45,9 @@ export PYSPARK_ALLOW_INSECURE_GATEWAY=1  # Pyspark必须加的参数
 xcall sudo yum install -y telnet expect dos2unix
 
 
-检查spark的时候会报错。用的是spark-submit -version的命令。而部署在
+检查spark的时候会报错。用的是spark-submit -version的命令。会通过SPARK_HOME去寻找命令
+
+无法在hdfs上创建用户的错误：因为部署是用的appuser，而hdfs:///wedatasphere是hdfs:supergroup这个用户的，需要授权。
+```
+sudo -u hdfs hdfs dfs -chown -R appuser:appuser /wedatasphere
+```
