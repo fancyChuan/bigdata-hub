@@ -51,6 +51,8 @@ total 8
 
 注意：安装部署了之后再启动elasticsearch服务的时候会报错文件句柄太少的错误
 ```
+报错：-bash: ulimit: open files: cannot modify limit: Operation not permitted
+
 max file descriptors [65535] for elasticsearch process is too low
 ```
 
