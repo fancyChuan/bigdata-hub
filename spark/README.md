@@ -22,6 +22,7 @@ spark开发
 - 《Machine Learning with Spark 2nd》 蔡立宇译
     - 中文名《spark机器学习 第2版》
     - [github地址](https://github.com/PacktPublishing/Machine-Learning-with-Spark-Second-Edition)
+- 《Spark SQL入门与实践指南》纪涵
 - 《Spark海量数据处理：技术详解与平台实战》范东来著
 
 #### Spark2.0
@@ -77,4 +78,7 @@ spark3.x大杀器：Hydrogen项目
 - Spark面临两大挑战：数据交换与执行模型
 - Hydrogen项目的关键词是融合，数据交换从数据边界的层面进行了融合，而执行引擎在执行逻辑上将两种不同的分布式计算理念进行了融合
 
+
+
+Spark 2.3以后开始支持Spark on Kubernetes运行模式
 
