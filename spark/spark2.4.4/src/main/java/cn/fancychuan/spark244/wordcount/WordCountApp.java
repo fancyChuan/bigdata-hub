@@ -13,9 +13,9 @@ public class WordCountApp {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            args = new String [] {"spark/data/wordcount.txt", "spark/target/wordcount"};
+            args = new String [] {"spark/data/wordcount.txt", "spark/spark2.4.4/target/wordcount"};
         }
-        SparkConf sparkConf = new SparkConf().setAppName("wordcount-java");
+        SparkConf sparkConf = new SparkConf().setAppName("wordcount-java").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         JavaRDD<String> wordsRDD = sc.textFile(args[0]).flatMap(line -> Arrays.asList(line.split(" ")).iterator());
         JavaPairRDD<String, Long> resultRDD = wordsRDD.mapToPair(word -> new Tuple2<>(word, 1L)).reduceByKey((x, y) -> x + y);

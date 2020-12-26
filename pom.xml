@@ -23,6 +23,7 @@
         <module>dss</module>
         <module>kylin</module>
         <module>hbase</module>
+        <module>sqoop</module>
     </modules>
 
     <properties>

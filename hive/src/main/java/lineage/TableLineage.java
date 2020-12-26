@@ -78,7 +78,7 @@ public class TableLineage implements NodeProcessor {
         return sql;
     }
 
-    public void getLineageInfo(String query) throws ParseException, SemanticException, IOException {
+    public void getLineageInfo(String query) throws ParseException, SemanticException, IOException, InterruptedException {
         query = dealWithSql(query);
         ParseDriver parseDriver = new ParseDriver();
         try {
@@ -105,12 +105,15 @@ public class TableLineage implements NodeProcessor {
             topNodes.add(tree);
             graphWalker.startWalking(topNodes, null);
         } catch (Exception e) {
-            System.out.println("======================== 解析SQL出错 ===========================");
+            System.out.println("======================== 解析SQL出错start ===========================");
             e.printStackTrace();
+            System.out.println(query);
+            Thread.sleep(1000);
+            System.out.println("======================== 解析SQL出错end ===========================");
         }
     }
 
-    public static void main(String[] args) throws SemanticException, ParseException, IOException {
+    public static void main(String[] args) throws SemanticException, ParseException, IOException, InterruptedException {
         // String query = "create TABLE test.customer_kpi as SELECT base.datekey,base.clienttype, count(distinct base.userid) buyer_count FROM ( SELECT p.datekey datekey, p.userid userid, c.clienttype FROM detail.usersequence_client c JOIN fact.orderpayment p ON p.orderid = c.orderid JOIN default.user du ON du.userid = p.userid WHERE p.datekey = 20131118 ) base GROUP BY base.datekey, base.clienttype";
         // String query = "with q1 as ( select key from src where key = '5'), q2 as ( select key from with1 a inner join with2 b on a.id = b.id) insert overwrite table temp.dt_mobile_play_d_tmp2 partition(dt='2018-07-17') select * from q1 cross join q2";
         // String query = "insert into qc.tables_lins_cnt partition(dt='2016-09-15') select a.x from (select x from cc group by x) a left  join yy b on a.id = b.id left join (select * from zz where id=1) c on c.id=b.id";

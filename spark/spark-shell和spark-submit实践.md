@@ -137,8 +137,11 @@ spark-submit的一些常见标记[options]
 --jars | 需要上传并放到应用的CLASSPATH 中的JAR 包的列表。如果应用依赖于少量第三方的JAR包，可以把它们放在这个参数里【jar包依赖】
 --files | 需要放到应用工作目录中的文件的列表。这个参数一般用来放需要分发到各节点的数据文件【比如csv映射关系表】
 --py-files | 需要添加到PYTHONPATH 中的文件的列表。其中可以包含.py、.egg 以及.zip 文件。【python依赖】
---executor-memory | 执行器进程使用的内存量，以字节为单位。可以使用后缀指定更大的单位，比如“512m”（512 MB）或“15g”（15 GB）
 --driver-memory | 驱动器进程使用的内存量，以字节为单位。可以使用后缀指定更大的单位，比如“512m”（512 MB）或“15g”（15 GB）
+--driver-cores | driver使用的虚拟核核数（虚拟核代表了资源管理者对物理资源的抽象，而非特指1个物理核）
+--executor-memory | 指executor的JVM堆大小，比如“512m”（512 MB）或“15g”（15 GB）
+--executor-cores | executor使用的虚拟核数量
+--num-executors | executor的数量，决定作业的并行程度
 
 > -- master指示要连接的集群，可以接受的值
 
