@@ -16,3 +16,4 @@ set hive.vectorized.execution.reduce.groupby.enabled=false;
 ```
 > 不禁用可能会到来报错：java.lang.ArrayIndexOutOfBoundsException: 28
 
+- 配置hive支持update、delete操作
