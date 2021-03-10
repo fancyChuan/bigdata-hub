@@ -7,7 +7,6 @@ import com.aliyun.odps.OdpsException;
 import com.aliyun.odps.Resource;
 import com.aliyun.odps.account.Account;
 import com.aliyun.odps.account.AliyunAccount;
-import org.apache.hadoop.fs.aliyun.tempresource.HadoopTempResourceFileSystem;
 import org.apache.spark.SparkContext;
 import org.apache.spark.SparkFiles;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -41,7 +40,6 @@ public class ReadResourceDemo {
 //            System.out.println(resource.getName());
 //            System.out.println(resource.getCreatedTime());
 //        }
-        new HadoopTempResourceFileSystem();
 
         SparkSession spark = SparkSession.builder()
                 .appName("readResourceWC")

@@ -39,3 +39,8 @@ setproject odps.sql.type.system.odps2=true; -- 项目级别
 官方文档：
 - [数据类型版本说明](https://help.aliyun.com/document_detail/27821.html)
 - [组件与数据类型的兼容情况](https://help.aliyun.com/document_detail/159538.html)
+
+
+和hive在使用上的区别：
+- unixtime('','yyyyMMdd') 这个hive返回null，但是MaxCompute上回报错
+- 
