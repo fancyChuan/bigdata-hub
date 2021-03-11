@@ -30,3 +30,12 @@ Flink的特点和优势
 
 流式计算框架的对比
  
+
+
+#### Flink应用
+- [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
+ 
+
+1. 是什么
+2. 什么时候用
+3. 怎么用
