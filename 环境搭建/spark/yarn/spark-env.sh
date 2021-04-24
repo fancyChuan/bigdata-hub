@@ -74,6 +74,6 @@
 ## 配置jobHistoryServer
 export SPARK_HISTORY_OPTS="-Dspark.history.ui.port=18080
 -Dspark.history.retainedApplications=30
--Dspark.history.fs.logDirectory=hdfs://s02:8020/sparklogs"
+-Dspark.history.fs.logDirectory=hdfs://hadoop102:8020/sparklogs"
 
 YARN_CONF_DIR=/usr/local/hadoop/etc/hadoop

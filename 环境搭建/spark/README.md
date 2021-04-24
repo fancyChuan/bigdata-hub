@@ -4,17 +4,17 @@ spark有三种运行模式
 ### 1. Local模式【本地部署】
 解压后直接使用
 ```
-tar -zxvf spark-2.3.3-bin-hadoop2.7.tgz
+tar -zxvf spark-2.4.4-bin-hadoop2.7.tgz
 ```
 求PI的案例
 ```
-# cd spark-2.3.3-bin-hadoop2.7
+# cd spark-2.4.4-bin-hadoop2.7
 
 bin/spark-submit \
 --class org.apache.spark.examples.SparkPi \
 --executor-memory 1G \
 --total-executor-cores 2 \
-./examples/jars/spark-examples_2.11-2.3.3.jar \
+./examples/jars/spark-examples_2.11-2.4.4.jar \
 100
 ```
 
@@ -23,7 +23,7 @@ bin/spark-submit \
 #### 2.1 基础部署
 构建一个由Master+Slave构成的Spark集群，Spark运行在集群中。
 ```
-# cd spark-2.3.3-bin-hadoop2.7/conf
+# cd spark-2.4.4-bin-hadoop2.7/conf
 # 修改1： slaves文件
 mv slaves.template slaves
 vim slaves
@@ -41,7 +41,7 @@ SPARK_MASTER_PORT=7077
 ---------------
 
 # 分发spark包到其他机器上
-xsync /opt/app/spark-2.3.3-bin-hadoop2.7
+xsync /opt/app/spark-2.4.4-bin-hadoop2.7
 
 # 配置java环境
 vim sbin/spark-config.sh
@@ -60,7 +60,7 @@ bin/spark-submit \
 --master spark://hadoop101:7077 \
 --executor-memory 1G \
 --total-executor-cores 2 \
-./examples/jars/spark-examples_2.11-2.3.3.jar \
+./examples/jars/spark-examples_2.11-2.4.4.jar \
 100
 
 ```
