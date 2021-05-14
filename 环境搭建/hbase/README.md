@@ -1,6 +1,8 @@
 ## HBase环境搭建
 
-使用1.3.1版本，1.0版本以后，web端口从60010改为16010
+**安装前置条件：安装好hadoop以及zookeeper，并正常启动**
+
+> 使用1.3.1版本，1.0版本以后，web端口从60010改为16010
 
 基本配置：[hbase](https://github.com/fancyChuan/bigdata-learn/tree/master/环境搭建/hbase)
 
