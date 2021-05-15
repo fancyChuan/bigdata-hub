@@ -70,3 +70,46 @@ HBase的缺点
 
 
 #### HBase存储机制
+hbase的数据是存在HDFS上的，存储位置为：
+```
+库       /hbase/data/库名
+表       /hbase/data/库名/表名
+region  /hbase/data/库名/表名/region名
+列族     /hbase/data/库名/表名/region名/列族名
+数据     以文件的形式存在 /hbase/data/库名/表名/region名/列族名/ 下
+```
+其中region名是一串数字
+
+
+#### HBase的使用
+> hbase shell不支持中文
+##### scan命令
+scan命令可以按照rowkey的字典顺序来遍历指定的表的数据。
+- scan ‘表名’：默认当前表的所有列族。
+- scan ‘表名’,{COLUMNS=> [‘列族:列名’],…} ： 遍历表的指定列
+- scan '表名', { STARTROW => '起始行键', ENDROW => '结束行键' }：指定rowkey范围。如果不指定，则会从表的开头一直显示到表的结尾。区间为左闭右开。
+- scan '表名', { LIMIT => 行数量}： 指定返回的行的数量
+- scan '表名', {VERSIONS => 版本数}：返回cell的多个版本
+- scan '表名', { TIMERANGE => [最小时间戳, 最大时间戳]}：指定时间戳范围
+		注意：此区间是一个左闭右开的区间，因此返回的结果包含最小时间戳的记录，但是不包含最大时间戳记录
+- scan '表名', { RAW => true, VERSIONS => 版本数}
+	显示原始单元格记录，在Hbase中，被删掉的记录在HBase被删除掉的记录并不会立即从磁盘上清除，而是先被打上墓碑标记，然后等待下次major compaction的时候再被删除掉。注意RAW参数必须和VERSIONS一起使用，但是不能和COLUMNS参数一起使用。
+- scan '表名', { FILTER => "过滤器"} and|or { FILTER => "过滤器"}: 使用过滤器扫描
+
+##### put命令
+- put可以新增记录还可以为记录设置属性。
+- put '表名', '行键', '列名', '值'
+- put '表名', '行键', '列名', '值',时间戳
+- put '表名', '行键', '列名', '值', { '属性名' => '属性值'}
+- put '表名', '行键', '列名', '值',时间戳, { '属性名' =>'属性值'}
+
+##### get命令
+get是一种特殊的scan命令，支持scan的大部分属性，如COLUMNS，TIMERANGE，VERSIONS，FILTER
+
+##### delete命令
+删除某rowkey的全部数据：
+```HBase(main):016:0> deleteall 'student','1001'```
+删除某rowkey的某一列数据：
+```HBase(main):017:0> delete 'student','1002','info:sex'```
+
+> 表只有enable，才能做表的更改
