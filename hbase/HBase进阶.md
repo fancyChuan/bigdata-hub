@@ -3,6 +3,15 @@
 #### 1.RegionServer 架构
 ![image](images/RegionServer架构.png)
 
+> WAL也是存在HDFS上的
+
+查看HFile的命令
+```
+bin/hbase org.apache.hadoop.hbase.io.hfile.HFile -p -f hdfs://hadoop101:8020/hbase/data/库名/表名/Region名/列族名/HFile文件名
+例如：
+bin/hbase org.apache.hadoop.hbase.io.hfile.HFile -p -f hdfs://hadoop101:8020/hbase/data/default/student/1a306733d6aae21dd75e7c84d867ae2d/info/f0c0115f486c4297815c8ed011b66c72
+```
+
 #### 2.写流程
 ![image](images/HBase写流程.png)
 
@@ -12,7 +21,9 @@
 > 第4步：分别在Block Cache（读缓存），MemStore和Store File（HFile）中查询目标数据，并将查到的所有数据进行合并。此处所有数据是指同一条数据的不同版本（time stamp）或者不同的类型（Put/Delete）
 
 #### 4.MemStore Flush
-MemStore存在的意义是在写入HDFS前，将其中的数据整理有序
+MemStore存在的意义是在写入HDFS前，将其中的数据整理有序（排序）
+
+![image](images/MemStore的Flush机制.png)
 
 MemStore刷写时机
 - 当单个memstore的大小达到了
@@ -53,4 +64,23 @@ HBase每间隔一段时间都会进行一次合并（Compaction），合并的�
 #### 6.Region Split
 默认情况下，每个Table起初只有一个Region，随着数据的不断写入，Region会自动进行拆分。刚拆分时，两个子Region都位于当前的Region Server，但处于负载均衡的考虑，HMaster有可能会将某个Region转移给其他的Region Server
 
+HBase0.94版本之后的切分策略默认使用 IncreasingToUpperBoundRegionSplitPolicy 策略切分region，配置项是
+```
+hbase.regionserver.region.split.policy
+```
+
 Region Split时机
+![image](images/Region的Split机制.png)
+
+具体表现为：
+- tableRegionsCount在0和100之间，则为
+  	initialSize（默认为2*128） *  tableRegionsCount^3
+```
+例如：
+  第一次split：1^3 * 256 = 256MB 
+  第二次split：2^3 * 256 = 2048MB 
+  第三次split：3^3 * 256 = 6912MB 
+  第四次split：4^3 * 256 = 16384MB > 10GB
+因此取较小的值10GB，后面每次split的size都是10GB了
+```
+- tableRegionsCount超过100个，则超过10GB才会切分region

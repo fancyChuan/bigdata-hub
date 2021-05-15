@@ -78,7 +78,6 @@ region  /hbase/data/库名/表名/region名
 列族     /hbase/data/库名/表名/region名/列族名
 数据     以文件的形式存在 /hbase/data/库名/表名/region名/列族名/ 下
 ```
-其中region名是一串数字
 
 
 #### HBase的使用
@@ -113,3 +112,47 @@ get是一种特殊的scan命令，支持scan的大部分属性，如COLUMNS，TI
 ```HBase(main):017:0> delete 'student','1002','info:sex'```
 
 > 表只有enable，才能做表的更改
+
+
+### 关于VERSIONS
+每个不同时间戳的cell就是一个版本，时间戳就是版本
+
+- 列族的VERSIONS：表示数据从MemStore刷新到StoreFile的时候最多保留多少个版本。如下所示，student的info列族的VERSIONS就是1
+```
+hbase(main):108:0> describe 'student'
+Table student is ENABLED                                                                                                                                                                  
+student                                                                                                                                                                                   
+COLUMN FAMILIES DESCRIPTION                                                                                                                                                               
+{NAME => 'allinfo', BLOOMFILTER => 'ROW', VERSIONS => '1', IN_MEMORY => 'false', KEEP_DELETED_CELLS => 'FALSE', DATA_BLOCK_ENCODING => 'NONE', TTL => 'FOREVER', COMPRESSION => 'NONE', MI
+N_VERSIONS => '0', BLOCKCACHE => 'true', BLOCKSIZE => '65536', REPLICATION_SCOPE => '0'}                                                                                                  
+{NAME => 'info', BLOOMFILTER => 'ROW', VERSIONS => '1', IN_MEMORY => 'false', KEEP_DELETED_CELLS => 'FALSE', DATA_BLOCK_ENCODING => 'NONE', TTL => 'FOREVER', COMPRESSION => 'NONE', MIN_V
+ERSIONS => '0', BLOCKCACHE => 'true', BLOCKSIZE => '65536', REPLICATION_SCOPE => '0'}                                                                                                     
+2 row(s) in 0.0130 seconds
+
+# 将info列族的VERSIONS修改为3
+hbase(main):109:0> alter 'student',{NAME=>'info',VERSIONS=>3}
+Updating all regions with the new schema...
+0/1 regions updated.
+1/1 regions updated.
+Done.
+0 row(s) in 2.9670 seconds
+
+hbase(main):110:0> describe 'student'
+Table student is ENABLED                                                                                                                                                                  
+student                                                                                                                                                                                   
+COLUMN FAMILIES DESCRIPTION                                                                                                                                                               
+{NAME => 'allinfo', BLOOMFILTER => 'ROW', VERSIONS => '1', IN_MEMORY => 'false', KEEP_DELETED_CELLS => 'FALSE', DATA_BLOCK_ENCODING => 'NONE', TTL => 'FOREVER', COMPRESSION => 'NONE', MI
+N_VERSIONS => '0', BLOCKCACHE => 'true', BLOCKSIZE => '65536', REPLICATION_SCOPE => '0'}                                                                                                  
+{NAME => 'info', BLOOMFILTER => 'ROW', VERSIONS => '3', IN_MEMORY => 'false', KEEP_DELETED_CELLS => 'FALSE', DATA_BLOCK_ENCODING => 'NONE', TTL => 'FOREVER', COMPRESSION => 'NONE', MIN_V
+ERSIONS => '0', BLOCKCACHE => 'true', BLOCKSIZE => '65536', REPLICATION_SCOPE => '0'}                                                                                                     
+2 row(s) in 0.0220 seconds
+```
+- 修改之后，MemStore进行flush操作的时候，最多会有三个最新版本的数据会flush到StoreFile中
+- 执行scan命令的时候指定查询的版本号，表示最多显示多少个版本的数值，这些数值的来源有：StoreFile以及MemStore
+```
+scan 'student', {RAW=>true, VERSIONS=>10}
+# 结果是，最多有3个来源于StoreFile，其余最多7个版本来源于MemStore
+```
+> 每put一次就会在MemStore新增一个版本的数据
+
+
