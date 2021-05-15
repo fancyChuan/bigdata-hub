@@ -33,19 +33,19 @@ hbase.hregion.memstore.flush.size（默认值128M）
 其所在region的所有memstore都会刷写。
 - 当memstore的大小达到了
 ```
-* hbase.hregion.memstore.flush.size（默认值128M）
-* hbase.hregion.memstore.block.multiplier（默认值4）
+hbase.hregion.memstore.flush.size（默认值128M） * hbase.hregion.memstore.block.multiplier（默认值4）
 ```
-时，会阻止继续往该memstore写数据。
-- 当region server中memstore的总大小达到java_heapsize
+也就是128*4=512M时，会阻止继续往该memstore写数据。
+- 当region server中memstore的总大小达到
 ```
-hbase.regionserver.global.memstore.size（默认值0.4）
-hbase.regionserver.global.memstore.size.lower.limit（默认值0.95）
+java_heapsize
+* hbase.regionserver.global.memstore.size（默认值0.4）
+* hbase.regionserver.global.memstore.size.lower.limit（默认值0.95）
 ```
-region会按照其所有memstore的大小顺序（由大到小）依次进行刷写。直到region server中所有memstore的总大小减小到上述值以下。
-- 当region server中memstore的总大小达到java_heapsize
-```hbase.regionserver.global.memstore.size（默认值0.4）```
-时，会阻止继续往所有的memstore写数据
+也就是达到堆内存的0.4*0.95倍时，region会按照其所有memstore的大小顺序（由大到小）依次进行刷写。直到region server中所有memstore的总大小减小到上述值以下。
+- 当region server中memstore的总大小达到
+```java_heapsize * hbase.regionserver.global.memstore.size（默认值0.4）```
+也就是达到堆内存的0.4倍时，会阻止继续往所有的memstore写数据
 - 到达自动刷写的时间，也会触发memstore flush。自动刷新的时间间隔由该属性进行配置
 ```
 hbase.regionserver.optionalcacheflushinterval（默认1小时）
@@ -61,6 +61,13 @@ HBase每间隔一段时间都会进行一次合并（Compaction），合并的�
 - major compaction
 > 把多个HFile合并成1个HFile，在这个过程中，一旦检测到有被打上墓碑标记的记录，在合并的过程中就忽略这条记录，也就会清理掉过期和删除的数据
 
+```
+hbase(main):112:0> compact 'student'
+0 row(s) in 0.0480 seconds
+
+hbase(main):113:0> major_compact 'student'
+0 row(s) in 0.0270 seconds
+```
 #### 6.Region Split
 默认情况下，每个Table起初只有一个Region，随着数据的不断写入，Region会自动进行拆分。刚拆分时，两个子Region都位于当前的Region Server，但处于负载均衡的考虑，HMaster有可能会将某个Region转移给其他的Region Server
 
@@ -83,4 +90,18 @@ Region Split时机
   第四次split：4^3 * 256 = 16384MB > 10GB
 因此取较小的值10GB，后面每次split的size都是10GB了
 ```
-- tableRegionsCount超过100个，则超过10GB才会切分region
+- tableRegionsCount=0或者超过100个，则超过10GB才会切分region
+
+手动切分：
+```
+# 用法
+Examples:
+    split 'tableName'
+    split 'namespace:tableName'
+    split 'regionName' # format: 'tableName,startKey,id'
+    split 'tableName', 'splitKey'
+    split 'regionName', 'splitKey'
+# 以rowkey=1005作为切分点
+hbase(main):127:0* split 'student','1005'
+0 row(s) in 0.0370 seconds
+```
