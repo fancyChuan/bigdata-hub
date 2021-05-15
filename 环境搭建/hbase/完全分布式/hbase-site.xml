@@ -25,13 +25,13 @@
         <name>hbase.rootdir</name>
         <value>hdfs://hadoop101:8020/hbase</value>
     </property>
-
+    <!-- 以分布式的方式启动hbase，默认是单机模式 -->
     <property>
         <name>hbase.cluster.distributed</name>
         <value>true</value>
     </property>
 
-    <!-- 0.98后的新变动，之前版本没有.port,默认端口为60000 -->
+    <!-- 0.98后的新变动，之前的版本默认端口为60000，现在为16000 -->
     <property>
         <name>hbase.master.port</name>
         <value>16000</value>
