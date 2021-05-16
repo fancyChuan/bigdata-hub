@@ -22,12 +22,12 @@ xcall sudo ln -s /opt/app/hbase-1.3.1 /usr/local/hbase
 ```
 
 #### 1.1 修改配置文件
-1）HBase-env.sh修改内容
+1）hbase-env.sh修改内容
 ```
 export JAVA_HOME=/usr/local/jdk
 export HBASE_MANAGES_ZK=false
 ```
-2）HBase-site.xml修改内容
+2）hbase-site.xml修改内容
 ```
 <configuration>
     <property>
