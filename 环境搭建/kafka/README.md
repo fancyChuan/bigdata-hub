@@ -60,6 +60,7 @@ xsync kafka_2.11-0.11.0.2
 - 4.分别在三台机器上启动kafka
 ```
 xcall /usr/local/kafka/bin/kafka-server-start.sh -daemon /usr/local/kafka/config/server.properties
+xcall /usr/local/kafka/bin/kafka-server-stop.sh stop
 ```
 - 5.关闭kafka
 ```
