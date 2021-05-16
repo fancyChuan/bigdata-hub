@@ -29,6 +29,12 @@
         <name>javax.jdo.option.ConnectionPassword</name>
         <value>123456</value>
     </property>
+    <!-- 不加下面这项配置，那么可以不用启动metastore，启动hiveserver2即可 -->
+    <!--    <property>-->
+    <!--        <name>hive.metastore.uris</name>-->
+    <!--        <value>thrift://hadoop101:9083</value>-->
+    <!--        <description>IP address (or fully-qualified domain name) and port of the metastore host</description>-->
+    <!--    </property>-->
 
     <!--hiveserver2配置-->
     <property>

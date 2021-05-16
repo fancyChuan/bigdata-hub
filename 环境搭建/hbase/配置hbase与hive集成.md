@@ -1,8 +1,14 @@
 ## 配置hbase与hive集成
+兼容情况：
+- hive0.90与hbase0.92是兼容的，早期的hive版本与hbase0.89/0.90兼容。
+- hive1.x与hbase0.98.x或则更低版本是兼容的。
+- hive2.x与hbase1.x及比hbase1.x更高版本兼容。
 
 #### 0. 重新编译依赖包
 注意：hbase1.3.1与hive1.2.1版本不兼容，因此需要对**hive-hbase-handler-1.2.1.jar**重新编译，
-编译过程参考：[Hive-1.2.1集成HBase-1.3.1不兼容问题](https://blog.csdn.net/qq_31024823/article/details/86701768)
+编译过程参考：
+- [Hive-1.2.1集成HBase-1.3.1不兼容问题](https://blog.csdn.net/qq_31024823/article/details/86701768)
+- [Hive整合Hbase详解](https://blog.csdn.net/linxiyimeng007/article/details/80969151)
 
 将编译后的hive-hbase-handler-1.2.1.jar 替换掉 /usr/local/hive/lib/hive-hbase-handler-1.2.1.jar
 
