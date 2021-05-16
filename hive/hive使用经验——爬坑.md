@@ -25,4 +25,16 @@ Hive 1.1.0上执行的，JIRA上说2.0.0修复了ORC表模式修改的问题
 TODO：源码上是怎么导致的？
 
 
+#### 3. 关于metastore生效的问题
+```
+<property>
+  <name>hive.metastore.uris</name>
+  <value>thrift://hadoop101:9083</valu>
+</property>
+```
+- 服务端通过```hive --service metastore```启动metastore服务，默认在9083端口
+- 如果所在机器的hive-site.xml上没有上面面的配置，那么启动hiveserver2的时候就不会去连接metastore，这个时候hiveserver2进程内部会自己维护metastore相关的功能
+
+也就是说：在没有配置metastore的thrift链接的时候，hiveserver2自己就会充当metastore的角色，自己完成与元数据的交互
+
 

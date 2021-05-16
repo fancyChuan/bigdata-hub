@@ -32,37 +32,36 @@ export HIVE_CONF_DIR=/usr/local/hive/conf
 ```
 
 - hive-site.xml用户配置文件（默认的配置文件是hive-site.xml）
-```xml
-<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
-<configuration>
-	<property>
-	  <name>javax.jdo.option.ConnectionURL</name>
-	  <value>jdbc:mysql://hadoop102:3306/metastore?createDatabaseIfNotExist=true</value>
-	  <!--使用下面这个配置设置了编码，但还是需要数据库的编码类型为latin1，否则还是会无法建表-->
-	  <!--<value>jdbc:mysql://s03:3306/metastore?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>-->
-	  <description>JDBC connect string for a JDBC metastore</description>
-	</property>
-
-	<property>
-	  <name>javax.jdo.option.ConnectionDriverName</name>
-	  <value>com.mysql.jdbc.Driver</value>
-	  <description>Driver class name for a JDBC metastore</description>
-	</property>
-
-	<property>
-	  <name>javax.jdo.option.ConnectionUserName</name>
-	  <value>root</value>
-	  <description>username to use against metastore database</description>
-	</property>
-
-	<property>
-	  <name>javax.jdo.option.ConnectionPassword</name>
-	  <value>123456</value>
-	  <description>password to use against metastore database</description>
-	</property>
-</configuration>
 ```
+    <!-- metastore config -->
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:mysql://hphost:3306/metastore?createDatabaseIfNotExist=true</value>
+        <!--使用下面这个配置设置了编码，但还是需要数据库的编码类型为latin1，否则还是会无法建表-->
+	    <!--<value>jdbc:mysql://s03:3306/metastore?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>-->
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.jdbc.Driver</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>root</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>123456</value>
+    </property>
+    <!-- 不加下面这项配置，那么可以不用启动metastore，启动hiveserver2即可 -->
+    <!--    <property>-->
+    <!--        <name>hive.metastore.uris</name>-->
+    <!--        <value>thrift://hadoop101:9083</value>-->
+    <!--        <description>IP address (or fully-qualified domain name) and port of the metastore host</description>-->
+    <!--    </property>-->
+
+```
+> 重点关注下
+
 这里配置mysql数据库的时候会有个坑。如果通过bin/hive启动hive的时候报如下的错误，那么很大可能就是数据库的编码不一致。我们用mysql很多默认是utf-8，而hive则需要是latin1，虽然感觉很不应该。
 
 ```
