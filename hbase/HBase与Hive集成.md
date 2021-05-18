@@ -6,7 +6,7 @@
 有两种方式：
 - hbase表不存在，在hive创建管理表
 ```
-CREATE TABLE dw.hive_hbase_emp_table_space1 (
+CREATE TABLE dw.hive_hbase_emp_table (
 empno int,
 ename string,
 job string,
@@ -24,6 +24,8 @@ insert into dw.hive_hbase_emp_table values
 (1005, 'zhangsan', 'java', 235)
 ;
 ```
+> 貌似创建管理表无法指定namespace？似乎只能在HBase的default命名空间上
+
 
 - hbase表存在，在hive中创建外部表
 ```
