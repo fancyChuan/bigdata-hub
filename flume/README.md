@@ -27,14 +27,7 @@ agent options:
   --conf-file,-f <file>     specify a config file (required if -z missing)
 ```
 
-启动第1个agent
-```
-bin/flume-ng agent \
--c conf \
--n a1 \
--f conf/a1.conf \
--Dflume.root.logger=DEBUG,console
-```
+
 
 启动第2个agent
 ```
