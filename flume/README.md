@@ -1,7 +1,7 @@
 ## Flume
 flume各发行版本和文档: [http://flume.apache.org/releases/index.html](http://flume.apache.org/releases/index.html)
 
-#### Flume基础架构
+### 1.Flume基础架构
 ![iamge](images/Flume基础架构.png)
 
 - Flume-ng只有一个agent的节点
@@ -45,4 +45,36 @@ agent options:
   --zkBasePath,-p <path>    specify the base path in ZooKeeper for agent configs
 ```
 
+### 2.常用Source
+#### 2.1 Avro Source
+Avro Source通过监听Avro端口接收外部Avro客户端流事件（event）
+> 支持Avro协议，接收RPC事件请求
+
+关键参数：
+- type：类型名称avro。
+- bind：绑定的IP。
+- port：监听的端口。
+- threads:（重要）接收请求的线程数。
+> 当需要接收多个avro客户端的数据流时要设置合适的线程数，否则会造成avro客户端数据流积压
+
+#### 2.2 Kafka Source
+
+
+
+
+### 3. Flume进阶
+#### 3.1 Flume事务
+![image](images/Flume事务.png)
+
+#### 3.2 Flume Agent内部原理
+![image](images/FlumeAgent内部原理.png)
+
+ChannelSelector：作用就是选出Event将要被发往哪个Channel
+- Replicating（复制）：将同一个Event发往所有的Channel
+- Multiplexing（多路复用）：根据相应的原则，将不同的Event发往不同的Channel
+
+SinkProcessor共有三种类型，分别是：
+- DefaultSinkProcessor：对应的是单个的Sink
+- LoadBalancingSinkProcessor：对应的是Sink Group，实现负载均衡功能
+- FailoverSinkProcessor：对应的是Sink Group，实现故障转移功能
 
