@@ -21,3 +21,11 @@ hive需要修改主机名的地方：
 - metastore的数据库主机
 - hive元数据库的SDS表和DBS表
 
+
+#### 源码分析distcp
+
+1. [distcp流程分析](https://blog.csdn.net/answer100answer/article/details/102710311)
+2. [Hadoop集群间文件拷贝](https://yampery.github.io/2019/01/29/distcp/)
+
+
+
