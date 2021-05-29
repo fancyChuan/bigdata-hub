@@ -170,3 +170,37 @@ bin/flume-ng agent \
 -f /home/appuser/forlearn/flumejob/flume-selector-multiplexing-agent1.conf \
 -Dflume.root.logger=DEBUG,console
 ```
+> 在这个案例中agent3会拿不到任何数据
+
+#### 7. sink组
+单个source-channel，多个sink的场景，需要使用sink组
+
+##### 7.1 负载均衡
+- agent1监听端口，然后通过channel传给sink组，sink组采用load_balance处理器：[flume-sinkgroup-balance-agent1.conf](conf/flume-sinkgroup-balance-agent1.conf)
+- agent2从avro中读取信息打印到控制台：[flume-sinkgroup-balance-agent2.conf](conf/flume-sinkgroup-balance-agent2.conf)
+- agent3同agent2：[flume-sinkgroup-balance-agent3.conf](conf/flume-sinkgroup-balance-agent3.conf)
+
+启动命令
+```
+# 在hadoop102上启动agent2和agent3
+bin/flume-ng agent \
+-n agent2 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-sinkgroup-balance-agent2.conf \
+-Dflume.root.logger=DEBUG,console
+
+bin/flume-ng agent \
+-n agent3 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-sinkgroup-balance-agent3.conf \
+-Dflume.root.logger=DEBUG,console
+
+# 在hadoop101上启动agent1
+bin/flume-ng agent \
+-n agent1 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-sinkgroup-balance-agent1.conf \
+-Dflume.root.logger=DEBUG,console
+```
+
+##### 7.2 故障转移

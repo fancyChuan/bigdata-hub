@@ -118,6 +118,15 @@ selector.optional：定义可选Channel，多个可选Channel之间用空格隔�
 ![image](images/Flume复制和多路复用.png)
 
 ##### 3.3.3 负载均衡和故障转移
+Flume为了进一步提高整个系统的容错能力和稳定性，提供了负载均衡和故障转移功能
+
+实现这两个功能首先需要设置Sink组，同一个Sink组内有多个子Sink，不同的Sink之间可以配置成负载均衡或者故障转移
 
 ![image](images/Flume负载均衡和故障转移.png)
+
+负载均衡：
+- processor.type：设置负载均衡类型failover。
+- processor.backoff：在负载均衡的情况下需要将值设置为true，如果在系统运行过程中执行的Sink失败，会将失败的Sink放进黑名单中，为黑名单中的Sink设置驻留时间，黑名单中的Sink将不会再继续接收数据。当驻留时间超时，黑名单中的sink仍然无法提供服务，为了防止长时间等待黑名单中的Sink造成阻塞影响系统正常运行，黑名单驻留时间将以指数倍增加，默认值false。
+- processor.selector.maxTimeOut：失败sink在黑名单中的驻留时间，默认值为30000ms。
+- processor.selector：负载均衡选择算法，可以使用轮询“round_robin”、随机“random”或者继承AbstractSinkSelector类的自定义负载均衡实现类。
 
