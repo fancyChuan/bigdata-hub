@@ -56,3 +56,13 @@ bin/flume-ng agent \
 -f /home/appuser/forlearn/flumejob/flume-dir-hdfs.conf \
 -Dflume.root.logger=DEBUG,console
 ```
+
+#### 4. 使用taildir来实时监控目录下多个文件
+
+```
+bin/flume-ng agent \
+-c conf \
+-n a3 \
+-f /home/appuser/forlearn/flumejob/flume-taildir-hdfs.conf \
+-Dflume.root.logger=DEBUG,console
+```

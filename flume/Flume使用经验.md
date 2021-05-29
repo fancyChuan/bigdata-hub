@@ -1,5 +1,7 @@
 ## Flume使用经验
 
+> flume-ng运行时，是会动态刷新agent配置文件的，也就是说修改了conf，可以不用重启flume-ng
+
 ### 1. Source
 ####（1）Taildir Source相比Exec Source、Spooling Directory Source的优势
 - TailDir Source：断点续传、多目录。Flume1.6以前需要自己自定义Source记录每次读取文件位置，实现断点续传。

@@ -67,8 +67,18 @@ Avro Source通过监听Avro端口接收外部Avro客户端流事件（event）
 
 #### 2.2 Kafka Source
 
+#### 2.3 Exec
+Exec source适用于监控一个实时追加的文件，但不能保证数据不丢失
 
 
+#### 2.4 spooldir
+Spooldir Source能够保证数据不丢失，且能够实现断点续传，但延迟较高，不能实时监控
+
+
+#### 2.5 taildir
+Taildir Source维护了一个json格式的position File，其会定期的往position File中更新每个文件读取到的最新的位置，因此能够实现断点续传
+
+和exec以及spooldir相比，Taildir Source既能够实现断点续传，又可以保证数据不丢失，还能够进行实时监控
 
 ### 3. Flume进阶
 #### 3.1 Flume事务
