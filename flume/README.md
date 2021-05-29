@@ -1,6 +1,14 @@
 ## Flume
 flume各发行版本和文档: [http://flume.apache.org/releases/index.html](http://flume.apache.org/releases/index.html)
 
+Flume是Cloudera提供的一个高可用的，高可靠的，分布式的海量日志采集、聚合和传输的系统。Flume基于**流式架构**，灵活简单
+
+优点：
+- 可以和任何存储进程集成
+- 有缓存功能，在输出速率小于输入速率时会进行缓存
+- 事务基于channel，确保消息被可靠传送（并不是exactly once，可能会重复）
+
+
 ### 1.Flume基础架构
 ![iamge](images/Flume基础架构.png)
 
