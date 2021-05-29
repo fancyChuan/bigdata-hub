@@ -109,15 +109,15 @@ SinkProcessor共有三种类型，分别是：
 
 ##### 3.3.2 复制和多路复用
 使用的是```a1.sources.r1.selector.type```这个配置：默认是replicating，可以设置为multiplexing
-- replicating
-- multiplexing
+- replicating：一个Source以复制的方式将一个Event同时写入到多个Channel中
+- multiplexing：复用Channel选择器需要和拦截器配合使用，根据Event的头信息中不同键值数据来判断Event应该被写入哪个Channel中
 
 selector.optional：定义可选Channel，多个可选Channel之间用空格隔开
 > 可选的channel发生异常是，不会抛出。而必选的channel发生异常时会中断传输，抛出异常
 
 ![image](images/Flume复制和多路复用.png)
 
-- 负载均衡和故障转移
+##### 3.3.3 负载均衡和故障转移
 
 ![image](images/Flume负载均衡和故障转移.png)
 

@@ -100,6 +100,7 @@ bin/flume-ng agent \
 
 ![image](images/单数据源多出口案例.png)
 
+##### 6.1使用默认的选择器：复制
 - agent1监控日志，将信息复制给agent2和agent3：[flume-selector-replicating-agent1.conf](flume-selector-replicating-agent1.conf)
 - agent2负责从avro中读取信息，然后写入hdfs：[flume-selector-replicating-agent2.conf](flume-selector-replicating-agent2.conf)
 - agent3负责从avro中读取信息，然后写入本地文件：[flume-selector-replicating-agent3.conf](flume-selector-replicating-agent3.conf)
@@ -138,4 +139,34 @@ total 72
 -rw-rw-r-- 1 appuser appuser     0 May 29 23:36 1622302484716-4
 -rw-rw-r-- 1 appuser appuser     0 May 29 23:36 1622302484716-5
 -rw-rw-r-- 1 appuser appuser     0 May 29 23:37 1622302634781-1
+```
+
+##### 6.2 使用multiplexing
+- agent1监控端口：[flume-selector-multiplexing-agent1.conf](conf/flume-selector-multiplexing-agent1.conf)
+    - 使用拦截器加上静态信息：wherefrom:bigdata
+    - 通过多路选择器判断event需要发往哪个目标channel
+- agent2负责从avro中读取信息，然后写入hdfs：[flume-selector-multiplexing-agent2.conf](flume-selector-multiplexing-agent2.conf)
+- agent3负责从avro中读取信息，然后写入本地文件：[flume-selector-multiplexing-agent3.conf](flume-selector-multiplexing-agent3.conf)
+
+启动命令
+```
+# 在hadoop102上启动agent2和agent3
+bin/flume-ng agent \
+-n agent2 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-selector-multiplexing-agent2.conf \
+-Dflume.root.logger=DEBUG,console
+
+bin/flume-ng agent \
+-n agent3 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-selector-multiplexing-agent3.conf \
+-Dflume.root.logger=DEBUG,console
+
+# 在hadoop101上启动agent1
+bin/flume-ng agent \
+-n agent1 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-selector-multiplexing-agent1.conf \
+-Dflume.root.logger=DEBUG,console
 ```
