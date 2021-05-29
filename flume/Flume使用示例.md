@@ -18,6 +18,8 @@ bin/flume-ng agent \
 
 
 #### 2.实时读取本地文件到HDFS
+> 使用exec source来执行 tail -f
+
 前提条件：需要能够写数据到HDFS，因此需要hadoop的jar包，需要把以下的jar包放到flume的lib下，如果集群已经安装好了hadoop，那就不需要
 ```
 commons-configuration-1.6.jar
@@ -27,6 +29,8 @@ hadoop-hdfs-2.7.2.jar
 commons-io-2.4.jar
 htrace-core-3.1.0-incubating.jar
 ```
+
+[flume-file-hdfs.conf](conf/flume-file-hdfs.conf)
 
 启动命令：
 ```
@@ -41,13 +45,14 @@ bin/flume-ng agent \
 > 要支持这种形式，需要在Event的header中有Timestamp，所以需要配置：
 > hdfs.useLocalTimeStamp = true 
 
-#### 3.
+#### 3. 实时读取整个目录下的文件到HDFS
+> 使用 spooldir source
 
 启动第3个agent：使用tail -f 不够稳定，严重依赖tail命令。改为：监控特定目录收集日志
 ```
 bin/flume-ng agent \
 -c conf \
 -n a3 \
--f conf/flume-app.conf \
+-f /home/appuser/forlearn/flumejob/flume-dir-hdfs.conf \
 -Dflume.root.logger=DEBUG,console
 ```
