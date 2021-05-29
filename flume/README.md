@@ -74,11 +74,15 @@ Exec source适用于监控一个实时追加的文件，但不能保证数据不
 #### 2.4 spooldir
 Spooldir Source能够保证数据不丢失，且能够实现断点续传，但延迟较高，不能实时监控
 
+缺点是不支持老文件新增数据的收集，并且不能够对嵌套文件夹递归监听
 
 #### 2.5 taildir
 Taildir Source维护了一个json格式的position File，其会定期的往position File中更新每个文件读取到的最新的位置，因此能够实现断点续传
 
 和exec以及spooldir相比，Taildir Source既能够实现断点续传，又可以保证数据不丢失，还能够进行实时监控
+
+#### 2.6 file_roll
+将event存储到本地文件系统
 
 ### 3. Flume进阶
 #### 3.1 Flume事务
@@ -98,12 +102,18 @@ SinkProcessor共有三种类型，分别是：
 
 
 #### 3.3 Flume拓扑结构
-- 简单串联
+##### 3.3.1 简单串联
 > 此模式不建议桥接过多的flume数量， flume数量过多不仅会影响传输速率，而且一旦传输过程中某个节点flume宕机，会影响整个传输系统
 
 ![image](images/Flume串联.png)
 
-- 复制和多路复用
+##### 3.3.2 复制和多路复用
+使用的是```a1.sources.r1.selector.type```这个配置：默认是replicating，可以设置为multiplexing
+- replicating
+- multiplexing
+
+selector.optional：定义可选Channel，多个可选Channel之间用空格隔开
+> 可选的channel发生异常是，不会抛出。而必选的channel发生异常时会中断传输，抛出异常
 
 ![image](images/Flume复制和多路复用.png)
 

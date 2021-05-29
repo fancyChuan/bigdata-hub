@@ -95,3 +95,47 @@ bin/flume-ng agent \
 -f /home/appuser/forlearn/flumejob/flume-chuanlian-agent1.conf \
 -Dflume.root.logger=DEBUG,console
 ```
+
+#### 6.单数据源多出口案例（选择器）
+
+![image](images/单数据源多出口案例.png)
+
+- agent1监控日志，将信息复制给agent2和agent3：[flume-selector-replicating-agent1.conf](flume-selector-replicating-agent1.conf)
+- agent2负责从avro中读取信息，然后写入hdfs：[flume-selector-replicating-agent2.conf](flume-selector-replicating-agent2.conf)
+- agent3负责从avro中读取信息，然后写入本地文件：[flume-selector-replicating-agent3.conf](flume-selector-replicating-agent3.conf)
+
+启动命令
+```
+# 在hadoop102上启动agent2和agent3
+bin/flume-ng agent \
+-n agent2 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-selector-replicating-agent2.conf \
+-Dflume.root.logger=DEBUG,console
+
+bin/flume-ng agent \
+-n agent3 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-selector-replicating-agent3.conf \
+-Dflume.root.logger=DEBUG,console
+
+# 在hadoop101上启动agent1
+bin/flume-ng agent \
+-n agent1 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-selector-replicating-agent1.conf \
+-Dflume.root.logger=DEBUG,console
+```
+结果在hadoop102的/home/appuser/forlearn/flumejob/selector目录下可以看到如下文件：
+```
+[appuser@hadoop102 selector]$ pwd
+/home/appuser/forlearn/flumejob/selector
+[appuser@hadoop102 selector]$ ll
+total 72
+-rw-rw-r-- 1 appuser appuser   862 May 29 23:35 1622302484716-1
+-rw-rw-r-- 1 appuser appuser     0 May 29 23:35 1622302484716-2
+-rw-rw-r-- 1 appuser appuser  6419 May 29 23:35 1622302484716-3
+-rw-rw-r-- 1 appuser appuser     0 May 29 23:36 1622302484716-4
+-rw-rw-r-- 1 appuser appuser     0 May 29 23:36 1622302484716-5
+-rw-rw-r-- 1 appuser appuser     0 May 29 23:37 1622302634781-1
+```
