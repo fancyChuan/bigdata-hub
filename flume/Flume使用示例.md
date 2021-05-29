@@ -48,6 +48,8 @@ bin/flume-ng agent \
 #### 3. 实时读取整个目录下的文件到HDFS
 > 使用 spooldir source
 
+[flume-dir-hdfs.conf](conf/flume-dir-hdfs.conf)
+
 启动第3个agent：使用tail -f 不够稳定，严重依赖tail命令。改为：监控特定目录收集日志
 ```
 bin/flume-ng agent \
@@ -59,10 +61,37 @@ bin/flume-ng agent \
 
 #### 4. 使用taildir来实时监控目录下多个文件
 
+[flume-taildir-hdfs.conf](conf/flume-taildir-hdfs.conf)
+
 ```
 bin/flume-ng agent \
 -c conf \
 -n a3 \
 -f /home/appuser/forlearn/flumejob/flume-taildir-hdfs.conf \
+-Dflume.root.logger=DEBUG,console
+```
+
+#### 5. 串联
+监听hadoop101上面的44444端口，并通过AvroSink传到hadoop102的AvroSource，然后输出到控制台
+
+配置如下：
+- [flume-chuanlian-agent1.conf](conf/flume-chuanlian-agent1.conf)
+- [flume-chuanlian-agent2.conf](conf/flume-chuanlian-agent2.conf)
+
+启动命令（注意启动顺序）
+```
+# hadoop102上先启动avro source
+bin/flume-ng agent \
+-n agent2 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-chuanlian-agent2.conf \
+-Dflume.root.logger=DEBUG,console
+
+
+# hadoop101再启动avro sink
+bin/flume-ng agent \
+-n agent1 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-chuanlian-agent1.conf \
 -Dflume.root.logger=DEBUG,console
 ```

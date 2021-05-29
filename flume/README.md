@@ -96,3 +96,18 @@ SinkProcessor共有三种类型，分别是：
 - LoadBalancingSinkProcessor：对应的是Sink Group，实现负载均衡功能
 - FailoverSinkProcessor：对应的是Sink Group，实现故障转移功能
 
+
+#### 3.3 Flume拓扑结构
+- 简单串联
+> 此模式不建议桥接过多的flume数量， flume数量过多不仅会影响传输速率，而且一旦传输过程中某个节点flume宕机，会影响整个传输系统
+
+![image](images/Flume串联.png)
+
+- 复制和多路复用
+
+![image](images/Flume复制和多路复用.png)
+
+- 负载均衡和故障转移
+
+![image](images/Flume负载均衡和故障转移.png)
+
