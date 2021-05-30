@@ -88,6 +88,19 @@ Taildir Source维护了一个json格式的position File，其会定期的往posi
 #### 3.1 Flume事务
 ![image](images/Flume事务.png)
 
+各配置的数量关系
+- batchSize：source和sink都可以配置这个参数
+    - 对于source来说是一次性发往channel的event数量（存在channel的putList容器中）
+    - 对于sink来说则是每次从channel批量取出多少到sink（从channel的takeList容器从取）
+- transactionCapacity：配置putList和takeList的大小，也就是一次事务提交的量
+- capacity：配置的是channel中存储event的容量，doCommit()发往的目的地
+> 关系：batchSize <= transactionCapacity <= capacity
+```
+a1.channels.c1.type = memory    # 表示channel类型是memory内存型
+a1.channels.c1.capacity = 10000 # 表示总容量是10000个event
+a1.channels.c1.transactionCapacity = 1000 # 表示收到1000个event的时候再去提交事务
+```
+
 #### 3.2 Flume Agent内部原理
 ![image](images/FlumeAgent内部原理.png)
 

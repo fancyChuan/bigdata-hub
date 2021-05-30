@@ -301,6 +301,11 @@ bin/flume-ng agent \
 - 自定义Sink：[MySink.java](src/main/java/cn/fancychuan/flume/MySink.java)
 - 自定义Interceptor：[CustomInterceptor.java](src/main/java/cn/fancychuan/flume/CustomInterceptor.java)
 
+整体结构如下图：
+
+![image](images/自定义Source-Sink-Interceptor.png)
+
+配置文件：[flume-self-source-sink-interceptor.conf](conf/flume-self-source-sink-interceptor.conf)
 
 启动命令
 ```
@@ -309,4 +314,26 @@ bin/flume-ng agent \
 -c /usr/local/flume/conf/ \
 -f /home/appuser/forlearn/flumejob/flume-self-source-sink-interceptor.conf \
 -Dflume.root.logger=DEBUG,console
+```
+部分结果如下：
+```
+# 自定义Sink的效果
+2021-05-30 21:59:17,289 (SinkRunner-PollingRunner-DefaultSinkProcessor) [DEBUG - org.apache.flume.SinkRunner$PollingRunner.run(SinkRunner.java:141)] Polling sink runner starting
+2021-05-30 21:59:17,289 (SinkRunner-PollingRunner-DefaultSinkProcessor) [DEBUG - org.apache.flume.sink.RollingFileSink.process(RollingFileSink.java:173)] Opening output stream for file /home/appuser/forlearn/flumejob/self/1622383157237-1
+2021-05-30 21:59:20,287 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - cn.fancychuan.flume.MySink.process(MySink.java:32)] preflume:bigdata1:postflume
+2021-05-30 21:59:26,288 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - cn.fancychuan.flume.MySink.process(MySink.java:32)] preflume:bigdata3:postflume
+2021-05-30 21:59:32,290 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - cn.fancychuan.flume.MySink.process(MySink.java:32)] preflume:bigdata5:postflume
+2021-05-30 21:59:38,293 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - cn.fancychuan.flume.MySink.process(MySink.java:32)] preflume:bigdata7:postflume
+2021-05-30 21:59:44,297 (SinkRunner-PollingRunner-DefaultSinkProcessor) [INFO - cn.fancychuan.flume.MySink.process(MySink.java:32)] preflume:bigdata9:postflume
+2021-05-30 21:59:47,286 (conf-file-poller-0) [DEBUG - org.apache.flume.node.PollingPropertiesFileConfigurationProvider$FileWatcherRunnable.run(PollingPropertiesFileConfigurationProvider.java:127)] Checking file:/home/appuser/forlearn/flumejob/flume-self-source-sink-interceptor.conf for changes
+2021-05-30 21:59:47,286 (rollingFileSink-roller-15-0) [DEBUG - org.apache.flume.sink.RollingFileSink$1.run(RollingFileSink.java:133)] Marking time to rotate file /home/appuser/forlearn/flumejob/self/1622383157237-1
+
+# 自定义Interceptor之后存到本地文件的效果
+[appuser@hadoop101 self]$ pwd
+/home/appuser/forlearn/flumejob/self
+[appuser@hadoop101 self]$ cat 1622383157237-1 
+2bigdata
+4bigdata
+6bigdata
+8bigdata
 ```
