@@ -125,8 +125,12 @@ Flume为了进一步提高整个系统的容错能力和稳定性，提供了负
 ![image](images/Flume负载均衡和故障转移.png)
 
 负载均衡：
-- processor.type：设置负载均衡类型failover。
+- processor.type：设置负载均衡类型 load_balance
 - processor.backoff：在负载均衡的情况下需要将值设置为true，如果在系统运行过程中执行的Sink失败，会将失败的Sink放进黑名单中，为黑名单中的Sink设置驻留时间，黑名单中的Sink将不会再继续接收数据。当驻留时间超时，黑名单中的sink仍然无法提供服务，为了防止长时间等待黑名单中的Sink造成阻塞影响系统正常运行，黑名单驻留时间将以指数倍增加，默认值false。
 - processor.selector.maxTimeOut：失败sink在黑名单中的驻留时间，默认值为30000ms。
 - processor.selector：负载均衡选择算法，可以使用轮询“round_robin”、随机“random”或者继承AbstractSinkSelector类的自定义负载均衡实现类。
 
+故障转移：
+- processor.type：设置故障转移类型“failover”。
+- processor.priority.<sinkName>：指定Sink组内各子Sink的优先级别，优先级从高到低，数值越大优先级越高。
+- processor.maxpenalty：等待失败的Sink恢复的最长时间，默认值30000毫秒。

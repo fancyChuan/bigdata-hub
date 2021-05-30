@@ -204,3 +204,62 @@ bin/flume-ng agent \
 ```
 
 ##### 7.2 故障转移
+![image](images/故障转移.png)
+
+- agent1监听端口，然后通过channel传给sink组，sink组采用failover处理器进行故障转移：[flume-sinkgroup-failover-agent1.conf](conf/flume-sinkgroup-failover-agent1.conf)
+- agent2使用[flume-sinkgroup-balance-agent2.conf](conf/flume-sinkgroup-balance-agent2.conf)
+- agent3使用[flume-sinkgroup-balance-agent2.conf](conf/flume-sinkgroup-balance-agent3.conf)
+
+启动命令
+```
+# 在hadoop102上启动agent2和agent3
+bin/flume-ng agent \
+-n agent2 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-sinkgroup-balance-agent2.conf \
+-Dflume.root.logger=DEBUG,console
+
+bin/flume-ng agent \
+-n agent3 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-sinkgroup-balance-agent3.conf \
+-Dflume.root.logger=DEBUG,console
+
+# 在hadoop101上启动agent1
+bin/flume-ng agent \
+-n agent1 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-sinkgroup-failover-agent1.conf \
+-Dflume.root.logger=DEBUG,console
+```
+实践结果：
+- 因为k2（也就是agent3）的优先级比较高，由此event优先发给k2，k1处于闲置状态
+- agent3退出之后，agent2接手，也就是k1接手
+- 如果在规定时间内，k2恢复了，也就是agent3恢复了，event会继续发给k2
+```
+# k2崩溃退出
+2021-05-30 08:57:35,860 (SinkRunner-PollingRunner-FailoverSinkProcessor) [DEBUG - org.apache.flume.sink.AbstractRpcSink.destroyConnection(AbstractRpcSink.java:247)] Rpc sink k2 closing Rpc client: NettyAvroRpcClient { host: hadoop102, port: 4142 }
+2021-05-30 08:57:35,865 (SinkRunner-PollingRunner-FailoverSinkProcessor) [WARN - org.apache.flume.sink.FailoverSinkProcessor.process(FailoverSinkProcessor.java:188)] Sink k2 failed and has been sent to failover list
+org.apache.flume.EventDeliveryException: Failed to send events
+        at org.apache.flume.sink.AbstractRpcSink.process(AbstractRpcSink.java:389)
+        at org.apache.flume.sink.FailoverSinkProcessor.process(FailoverSinkProcessor.java:185)
+        at org.apache.flume.SinkRunner$PollingRunner.run(SinkRunner.java:145)
+        at java.lang.Thread.run(Thread.java:748)
+Caused by: org.apache.flume.EventDeliveryException: NettyAvroRpcClient { host: hadoop102, port: 4142 }: Failed to send batch
+        at org.apache.flume.api.NettyAvroRpcClient.appendBatch(NettyAvroRpcClient.java:314)
+        at org.apache.flume.sink.AbstractRpcSink.process(AbstractRpcSink.java:373)
+
+
+# k2恢复
+2021-05-30 08:58:26,725 (SinkRunner-PollingRunner-FailoverSinkProcessor) [INFO - org.apache.flume.sink.AbstractRpcSink.createConnection(AbstractRpcSink.java:205)] Rpc sink k2: Building RpcClient with hostname: hadoop102, port: 4142
+2021-05-30 08:58:26,725 (SinkRunner-PollingRunner-FailoverSinkProcessor) [INFO - org.apache.flume.sink.AvroSink.initializeRpcClient(AvroSink.java:126)] Attempting to create Avro Rpc client.
+2021-05-30 08:58:26,725 (SinkRunner-PollingRunner-FailoverSinkProcessor) [DEBUG - org.apache.flume.api.NettyAvroRpcClient.configure(NettyAvroRpcClient.java:498)] Batch size string = null
+2021-05-30 08:58:26,725 (SinkRunner-PollingRunner-FailoverSinkProcessor) [WARN - org.apache.flume.api.NettyAvroRpcClient.configure(NettyAvroRpcClient.java:634)] Using default maxIOWorkers
+2021-05-30 08:58:26,733 (SinkRunner-PollingRunner-FailoverSinkProcessor) [DEBUG - org.apache.flume.sink.FailoverSinkProcessor$FailedSink.incFails(FailoverSinkProcessor.java:101)] Sink k2 failed again, new refresh is at 1622336316733, current time 1622336306733
+2021-05-30 08:58:42,739 (SinkRunner-PollingRunner-FailoverSinkProcessor) [INFO - org.apache.flume.sink.AbstractRpcSink.createConnection(AbstractRpcSink.java:205)] Rpc sink k2: Building RpcClient with hostname: hadoop102, port: 4142
+2021-05-30 08:58:42,739 (SinkRunner-PollingRunner-FailoverSinkProcessor) [INFO - org.apache.flume.sink.AvroSink.initializeRpcClient(AvroSink.java:126)] Attempting to create Avro Rpc client.
+2021-05-30 08:58:42,740 (SinkRunner-PollingRunner-FailoverSinkProcessor) [DEBUG - org.apache.flume.api.NettyAvroRpcClient.configure(NettyAvroRpcClient.java:498)] Batch size string = null
+2021-05-30 08:58:42,742 (SinkRunner-PollingRunner-FailoverSinkProcessor) [WARN - org.apache.flume.api.NettyAvroRpcClient.configure(NettyAvroRpcClient.java:634)] Using default maxIOWorkers
+2021-05-30 08:58:42,751 (SinkRunner-PollingRunner-FailoverSinkProcessor) [DEBUG - org.apache.flume.sink.AbstractRpcSink.createConnection(AbstractRpcSink.java:230)] Rpc sink k2: Created RpcClient: NettyAvroRpcClient { host: hadoop102, port: 4142 }
+2021-05-30 08:58:52,016 (SinkRunner-PollingRunner-FailoverSinkProcessor) [DEBUG - org.apache.flume.sink.FailoverSinkProcessor.process(FailoverSinkProcessor.java:169)] Sink k2 was recovered from the fail list
+```
