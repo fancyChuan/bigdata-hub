@@ -150,3 +150,29 @@ Flume为了进一步提高整个系统的容错能力和稳定性，提供了负
 
 ##### 3.3.4 多数据源融合
 ![iamge](images/Flume聚合.png)
+
+
+### 4. Flume监控
+监控的内容：
+- channel当前的容量，以及已经使用了多少容量
+- source向channel中put成功了多少event
+- sink从channel中take成功了多少event
+
+监控的原理：JMX（java monitor extension）java监控拓展模块
+    JMX可以帮助我们实时监控一个java进程中需要了解的参数，甚至可以实时修改
+
+监控的三个条件：
+- 1.MBean：监控的参数需要封装成这种bean
+- 2.JMX的monitor服务：对MBean的参数进行读写
+- 3.客户端：向JMX服务发送请求，显示返回的MBean结果
+    - 3.1 使用jconsole来查看```export JAVA_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=5445 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false"```
+    - 3.2 使用web浏览器的方式查看 ```-Dflume.monitoring.type=http -Dflume.monitoring.port=34545```
+    - 3.3 使用Ganglia
+        - ganglia-web：提供前端界面查看
+        - ganglia-gmond：部署在每台节点上，复制监控MBean，采集数据
+        - ganglia-gmetad：负责将每台机器上ganglia-gmond采集到的数据写入数据库rrdtool
+
+开源方案：
+- 1.需要一个可以请求JMX服务的框架：JMXTrans
+- 2.需要一个数据库（时序数据库最佳），influxdb
+- 3.可视化框架来显示指标 Graffna

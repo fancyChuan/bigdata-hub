@@ -301,6 +301,8 @@ bin/flume-ng agent \
 - 自定义Sink：[MySink.java](src/main/java/cn/fancychuan/flume/MySink.java)
 - 自定义Interceptor：[CustomInterceptor.java](src/main/java/cn/fancychuan/flume/CustomInterceptor.java)
 
+代码打包后，把jar包上传到/home/appuser/forlearn/flumejob/jars/
+
 整体结构如下图：
 
 ![image](images/自定义Source-Sink-Interceptor.png)
@@ -313,6 +315,7 @@ bin/flume-ng agent \
 -n agentx \
 -c /usr/local/flume/conf/ \
 -f /home/appuser/forlearn/flumejob/flume-self-source-sink-interceptor.conf \
+--classpath /home/appuser/forlearn/flumejob/jars/* \
 -Dflume.root.logger=DEBUG,console
 ```
 部分结果如下：
