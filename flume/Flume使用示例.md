@@ -294,3 +294,19 @@ bin/flume-ng agent \
 -Dflume.root.logger=DEBUG,console
 
 ```
+
+
+#### 9 自定义
+- 自定义Source：[MySource.java](src/main/java/cn/fancychuan/flume/MySource.java)
+- 自定义Sink：[MySink.java](src/main/java/cn/fancychuan/flume/MySink.java)
+- 自定义Interceptor：[CustomInterceptor.java](src/main/java/cn/fancychuan/flume/CustomInterceptor.java)
+
+
+启动命令
+```
+bin/flume-ng agent \
+-n agentx \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-self-source-sink-interceptor.conf \
+-Dflume.root.logger=DEBUG,console
+```
