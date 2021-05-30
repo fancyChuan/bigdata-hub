@@ -263,3 +263,34 @@ Caused by: org.apache.flume.EventDeliveryException: NettyAvroRpcClient { host: h
 2021-05-30 08:58:42,751 (SinkRunner-PollingRunner-FailoverSinkProcessor) [DEBUG - org.apache.flume.sink.AbstractRpcSink.createConnection(AbstractRpcSink.java:230)] Rpc sink k2: Created RpcClient: NettyAvroRpcClient { host: hadoop102, port: 4142 }
 2021-05-30 08:58:52,016 (SinkRunner-PollingRunner-FailoverSinkProcessor) [DEBUG - org.apache.flume.sink.FailoverSinkProcessor.process(FailoverSinkProcessor.java:169)] Sink k2 was recovered from the fail list
 ```
+
+#### 8. 多数据源案例
+![image](images/多数据源汇总案例.png)
+- agent1读取hive日志，然后发往hadoop103的avro端口4141：[flume-multi-sources-agent1.conf](conf/flume-multi-sources-agent1.conf)
+- agent2监听端口，然后把信息也发往hadoop103的avro端口4141：[flume-multi-sources-agent2.conf](conf/flume-multi-sources-agent2.conf)
+- agent3通过avro端口4141接收来自agent1和agent2的信息：[flume-multi-sources-agent3.conf](conf/flume-multi-sources-agent3.conf)
+
+启动命令
+```
+# 在hadoop103上启动agent3
+bin/flume-ng agent \
+-n agent3 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-multi-sources-agent3.conf \
+-Dflume.root.logger=DEBUG,console
+
+# 在hadoop101启动agent1
+bin/flume-ng agent \
+-n agent1 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-multi-sources-agent1.conf \
+-Dflume.root.logger=DEBUG,console
+
+# 在hadoop102启动agent2
+bin/flume-ng agent \
+-n agent2 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-multi-sources-agent2.conf \
+-Dflume.root.logger=DEBUG,console
+
+```

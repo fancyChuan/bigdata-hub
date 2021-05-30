@@ -134,3 +134,6 @@ Flume为了进一步提高整个系统的容错能力和稳定性，提供了负
 - processor.type：设置故障转移类型“failover”。
 - processor.priority.<sinkName>：指定Sink组内各子Sink的优先级别，优先级从高到低，数值越大优先级越高。
 - processor.maxpenalty：等待失败的Sink恢复的最长时间，默认值30000毫秒。
+
+##### 3.3.4 多数据源融合
+![iamge](images/Flume聚合.png)
