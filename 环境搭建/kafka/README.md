@@ -47,8 +47,8 @@ num.recovery.threads.per.data.dir=1
 #segment文件保留的最长时间，超时将被删除
 log.retention.hours=168
 #配置连接Zookeeper集群地址
-zookeeper.connect=hadoop101:2181,hadoop102:2181,hadoop103:2181:/kafka
-#这里配置将kafka的元信息存储到zookeeper的/kafka目录下，如果不加上 ":/kafka" 则默认在根目录下存储kafka元信息
+zookeeper.connect=hadoop101:2181,hadoop102:2181,hadoop103:2181/kafka
+#这里配置将kafka的元信息存储到zookeeper的/kafka目录下，如果不加上 "/kafka" 则默认在根目录下存储kafka元信息
 ```
 > 最终配置结果参考 [server.properties](./server.properties)
 
