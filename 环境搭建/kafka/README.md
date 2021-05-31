@@ -47,7 +47,8 @@ num.recovery.threads.per.data.dir=1
 #segment文件保留的最长时间，超时将被删除
 log.retention.hours=168
 #配置连接Zookeeper集群地址
-zookeeper.connect=hadoop102:2181,hadoop103:2181,hadoop104:2181
+zookeeper.connect=hadoop101:2181,hadoop102:2181,hadoop103:2181:/kafka
+#这里配置将kafka的元信息存储到zookeeper的/kafka目录下，如果不加上 ":/kafka" 则默认在根目录下存储kafka元信息
 ```
 > 最终配置结果参考 [server.properties](./server.properties)
 
@@ -60,9 +61,8 @@ xsync kafka_2.11-0.11.0.2
 - 4.分别在三台机器上启动kafka
 ```
 xcall /usr/local/kafka/bin/kafka-server-start.sh -daemon /usr/local/kafka/config/server.properties
-xcall /usr/local/kafka/bin/kafka-server-stop.sh stop
 ```
 - 5.关闭kafka
 ```
-bin/kafka-server-stop.sh stop
+xcall /usr/local/kafka/bin/kafka-server-stop.sh stop
 ```
