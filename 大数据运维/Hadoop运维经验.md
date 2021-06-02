@@ -114,3 +114,5 @@ dfs.namenode.handler.count=20 * log2(Cluster Size)，比如集群规模为8台�
 ##### 3.3 Hadoop宕机
 - 如果MR造成系统宕机。此时要控制Yarn同时运行的任务数，和每个任务申请的最大内存。调整参数：yarn.scheduler.maximum-allocation-mb（单个任务可申请的最多物理内存量，默认是8192M）
 - 如果写入文件过量造成NameNode宕机。那么调高Kafka的存储大小，控制从Kafka到HDFS的写入速度。高峰期的时候用Kafka进行缓存，高峰期过去数据同步会自动跟上。
+
+
