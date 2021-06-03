@@ -21,6 +21,30 @@ Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应�
 - 持久化
 > 可以设置数据保留策略，在保留时限内可以随时被消费，时限到了会清楚数据并释放空间
 
+### 深入kafka
+#### 1.工作流程
+![image](images/Kafka工作流程.png)
+- topic 是逻辑上的概念，partition是物理上的概念，一个partition对应一个log文件
+
+![image](images/Kafka文件存储机制.png)
+- 为防止log文件过大导致数据定位效率低下，Kafka采取了**分片和索引**机制，将每个partition分为多个segment
+- segment的文件生命周期由服务端配置参数（log.segment.bytes，log.roll.{ms,hours}等若干参数）决定
+- 每个segment对应两个文件——“.index”文件和“.log”文件
+    - .index 索引文件
+    - .log 数据文件
+- 这两个文件的命名规则：partition全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值
+
+#### 2.生产者
+2.1分区策略：
+- 分区原因：方便在集群中扩展，可以提高并发度（以partition为读写单位）
+- 分区策略：
+
+2.2数据可靠性保证
+![image](images/Kafka数据的可靠性保证.png)
+- 副本数据同步策略：Kafka选择第二种（所有follower全部同步完成才发ack）
+    - 同样为了容忍n台节点的故障，这种方案只需要n+1个副本，第一种方案会造成大量数据的冗余
+    - 虽然第二种方案的网络延迟会比较高，但网络延迟对Kafka的影响较小
+- 
 
 ### Kafka工作流程分析
 #### 1. Kafka生产过程分析
@@ -55,9 +79,10 @@ Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应�
         - 基于时间：log.retention.hours=168
         - 基于大小：log.retention.bytes=1073741824
 - ZooKeeper存储结构
-![image](https://github.com/fancyChuan/bigdata-learn/blob/master/kafka/ZooKeeper%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.jpeg?raw=true)
+![image](images/ZooKeeper存储结构.jpeg)
     - 重点关注consumer和broker
     - producer不在zk中注册，消费者在zk中注册
+
 #### 3. Kafka消费过程分析
 - 高级API
     - 不需要去自行去管理offset，系统通过zookeeper自行管理
