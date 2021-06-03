@@ -5,7 +5,7 @@
 bin/kafka-server-start.sh -daemon config/server.properties 
 
 # 2.1 创建topic
-bin/kafka-topics.sh --zookeeper hadoop101:2181/kafka --create --replication-factor 1 --partitions 1 --topic test 
+bin/kafka-topics.sh --zookeeper hadoop101:2181/kafka --create --replication-factor 2 --partitions 1 --topic test 
 # 2.2 查看当前所有topic
 bin/kafka-topics.sh --zookeeper hadoop101:2181/kafka --list 
 bin/kafka-topics.sh --zookeeper hadoop101:2181,hadoop102:2181,hadoop103:2181/kafka --list 
@@ -27,6 +27,6 @@ bin/kafka-console-producer.sh --broker-list hadoop101:9092/kafka --topic test
 ```
 
 注意：
-1. --zookeeper hadoop101:2181/kafka 需要些实际使用的znode，如果是 hadoop101:2181 那么就是根znode
+1. --zookeeper hadoop101:2181/kafka 需要写实际使用的znode，如果是 hadoop101:2181 那么就是根znode
 2. 单机模式下--replication-factor只能为1，--partitions 可以为1或者2
 > TODO: 为什么先启动producer然后产生的消息在consumer启动后会收不到？
