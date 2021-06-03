@@ -35,16 +35,34 @@ Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应�
 - 这两个文件的命名规则：partition全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值
 
 #### 2.生产者
-2.1分区策略：
+##### 2.1分区策略：
 - 分区原因：方便在集群中扩展，可以提高并发度（以partition为读写单位）
 - 分区策略：
 
-2.2数据可靠性保证
+##### 2.2数据可靠性保证
 ![image](images/Kafka数据的可靠性保证.png)
 - 副本数据同步策略：Kafka选择第二种（所有follower全部同步完成才发ack）
     - 同样为了容忍n台节点的故障，这种方案只需要n+1个副本，第一种方案会造成大量数据的冗余
     - 虽然第二种方案的网络延迟会比较高，但网络延迟对Kafka的影响较小
-- 
+> 如果leader收到数据，但是有一个follower迟迟没有完成同步导致ack一直没有发送，怎么办？
+
+> Leader实际上维护了一个动态的in-sync replica set (ISR)，意为和leader保持同步的follower集合。当ISR中的follower完成数据的同步之后leader就会给follower发送ack。如果follower长时间未向leader同步数据，则该follower将被踢出ISR，该时间阈值由replica.lag.time.max.ms参数设定。Leader发生故障之后，就会从ISR中选举新的leader
+
+- ack应答机制，有三种级别
+    - 0：producer不等待broker的ack，当broker发生故障是数据可能丢失
+    - 1：leader接收到数据落地后，producer就会收到ack，如果follower同步数据成功之前leader挂了，数据就会丢失
+    - -1：producer等待broker的ack，而且是leader和follower都落盘成功后收到ack。follower成功后broker发送ack之前leader发生故障，这时会造成数据重复
+- 故障处理细节
+    - follower故障：会被剔除ISR，恢复后会读取本地记录的上次的HW，将log文件中高于HW的部分截取掉，之后从HW开始从leader进行同步
+    - leader故障：从ISR中选举新的leader。之后为保证一致性，其他follower会将各自log文件中高于HW的部分截取掉，从新的leader同步数据
+**也就是说：这只能保证副本之间的数据一致性，并不能保证数据不丢失或者不重复**
+> LEO：指的是每个副本最大的offset；
+> HW：指的是消费者能见到的最大的offset，ISR队列中最小的LEO
+
+##### 2.3 Exactly Once语义（保证每条消息被发送且仅被发送一次）
+0.11版本之后，Kafka Producer引入了幂等性机制（idempotent），配合acks = -1时的at least once语义，实现了producer到broker的exactly once语义
+```idempotent + at least once = exactly once```
+使用时，只需将enable.idempotence属性设置为true，kafka自动将acks属性设为-1，并将retries属性设为Integer.MAX_VALUE
 
 ### Kafka工作流程分析
 #### 1. Kafka生产过程分析
