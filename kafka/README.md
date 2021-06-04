@@ -97,11 +97,28 @@ Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应�
         - 基于时间：log.retention.hours=168
         - 基于大小：log.retention.bytes=1073741824
 - ZooKeeper存储结构
-![image](images/ZooKeeper存储结构.jpeg)
+![image](images/Kafka在zookeeper上的存储结构.png)
     - 重点关注consumer和broker
     - producer不在zk中注册，消费者在zk中注册
 
 #### 3. Kafka消费过程分析
+##### 3.1消费方式
+consumer采用pull方式从broker中读取数据。不使用push方式的原因：不同消费者的消费速率不一致容易导致拒绝服务以及网络拥塞
+> 对于Kafka而言，pull模式更合适，它可简化broker的设计，consumer可自主控制消费消息的速率，同时consumer可以自己控制消费方式——即可批量消费也可逐条消费
+
+pull方式的不足之处在于当kafka中没有数据时，consumer会陷入空循环中
+
+##### 3.2分区分配策略
+当以下情形发生时，kafka会进行一次分区分配
+> 将分区的所有权从一个消费者移到另一个消费者称为重新平衡（rebalance）
+- 同一个消费者组新增消费者时
+- 消费者离开当前消费者组时，包括shut down或者crash
+- 订阅的主题新增分区
+
+##### 3.3Offset的维护
+Kafka 0.9版本之前，consumer默认将offset保存在Zookeeper中，从0.9版本开始，consumer默认将offset保存在Kafka一个内置的topic中，该topic为__consumer_offsets
+> 外界客户端应用程序无法直接读取该主题内的数据，需要设置特别的属性才能实现
+
 - 高级API
     - 不需要去自行去管理offset，系统通过zookeeper自行管理
     - 不需要管理分区，副本等情况，系统自动管理
@@ -114,9 +131,7 @@ Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应�
     - 对zookeeper的依赖性降低（如：offset不一定非要靠zk存储，自行存储offset即可，比如存在文件或者内存中）
 - 消费者组
     
-- 消费方式
-    - consumer采用pull（拉）模式从broker中读取数据
-    > 对于Kafka而言，pull模式更合适，它可简化broker的设计，consumer可自主控制消费消息的速率，同时consumer可以自己控制消费方式——即可批量消费也可逐条消费
+
     
 #### 4.API
 - 创建生产者
