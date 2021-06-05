@@ -21,7 +21,7 @@ bin/kafka-topics.sh --zookeeper hadoop101:2181/kafka --alter --topic test --part
 ## 0.9版本使用这个命令，使用--zookeeper这个参数，注意要指定/kafka这个存储kafka数据的znode
 bin/kafka-console-consumer.sh --zookeeper hadoop101:2181/kafka --topic test
 ## 0.9版本以后，使用--bootstrap-server，因为offset在这个版本已经存在内置的topic，这个时候只需要指定broker就行了，不需要指定zk
-bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --topic test
+bin/kafka-console-consumer.sh --bootstrap-server hadoop101:9092 --topic test
 # 3.1 新建消费组成员，需要在config/consumer.properties中配置消费者组id
 bin/kafka-console-consumer.sh --zookeeper hadoop101:2181/kafka --topic test --consumer.config config/consumer.properties
 bin/kafka-console-consumer.sh --zookeeper hadoop101:2181/kafka --topic test --consumer.config config/consumer.properties
@@ -31,6 +31,12 @@ bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --from-beginning
 # 4. 新建producer 
 bin/kafka-console-producer.sh --broker-list hadoop101:9092 --topic test
 bin/kafka-console-producer.sh --broker-list hadoop102:9092 --topic
+
+# 5. 读取offset
+## 0.11.0.0之前版本
+bin/kafka-console-consumer.sh --topic __consumer_offsets --bootstrap-server hadoop101:9092 --formatter "kafka.coordinator.GroupMetadataManager\$OffsetsMessageFormatter" --consumer.config config/consumer.properties --from-beginning
+## 0.11.0.0之后版本(含)
+bin/kafka-console-consumer.sh --topic __consumer_offsets --bootstrap-server hadoop101:9092 --formatter "kafka.coordinator.group.GroupMetadataManager\$OffsetsMessageFormatter" --consumer.config config/consumer.properties --from-beginning
 ```
 
 注意：
