@@ -22,22 +22,39 @@ Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应�
 > 可以设置数据保留策略，在保留时限内可以随时被消费，时限到了会清楚数据并释放空间
 
 ### 深入kafka
-#### 1.工作流程
+#### 1.工作流程和存储机制
 ![image](images/Kafka工作流程.png)
 - topic 是逻辑上的概念，partition是物理上的概念，一个partition对应一个log文件
 
+##### 存储机制
 ![image](images/Kafka文件存储机制.png)
-- 为防止log文件过大导致数据定位效率低下，Kafka采取了**分片和索引**机制，将每个partition分为多个segment
-- segment的文件生命周期由服务端配置参数（log.segment.bytes，log.roll.{ms,hours}等若干参数）决定
-- 每个segment对应两个文件——“.index”文件和“.log”文件
-    - .index 索引文件
-    - .log 数据文件
-- 这两个文件的命名规则：partition全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值
+- 存储方式
+    - 物理上把topic分成一个或多个patition（对应 server.properties 中的num.partitions=3配置）
+    - 每个patition物理上对应一个文件夹（该文件夹存储该patition的所有消息和索引文件）
+    - 为防止log文件过大导致数据定位效率低下，Kafka采取了**分片和索引**机制，将每个partition分为多个segment
+    - segment的文件生命周期由服务端配置参数（log.segment.bytes，log.roll.{ms,hours}等若干参数）决定
+    - 每个segment对应两个文件——“.index”文件和“.log”文件
+        - .index 索引文件
+        - .log 数据文件
+        - 这两个文件的命名规则：partition全局的第一个segment从0开始，后续每个segment文件名为上一个segment文件最后一条消息的offset值
+- 存储策略
+    - 无论消息是否被消费，kafka都会保留所有消息。
+    - 有两种策略可以删除旧数据：
+        - 基于时间：log.retention.hours=168
+        - 基于大小：log.retention.bytes=1073741824
+- ZooKeeper存储结构
+![image](images/Kafka在zookeeper上的存储结构.png)
+    - 重点关注consumer和broker
+    - producer不在zk中注册，消费者在zk中注册
 
 #### 2.生产者
 ##### 2.1分区策略：
 - 分区原因：方便在集群中扩展，可以提高并发度（以partition为读写单位）
 - 分区策略：
+    - 指定了patition，则直接使用；
+    - 未指定patition但指定key，通过对key取hash值与partition数进行取余得到partition值
+    - patition和key都未指定，使用轮询选出一个patition
+> 第一次调用时随机生成一个整数（后面每次调用在这个整数上自增），将这个值与 topic 可用的 partition 总数取余得到 partition 值，也就是常说的 round-robin 算法
 
 ##### 2.2数据可靠性保证
 ![image](images/Kafka数据的可靠性保证.png)
@@ -64,19 +81,11 @@ Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应�
 ```idempotent + at least once = exactly once```
 使用时，只需将enable.idempotence属性设置为true，kafka自动将acks属性设为-1，并将retries属性设为Integer.MAX_VALUE
 
-### Kafka工作流程分析
-#### 1. Kafka生产过程分析
+#### 2.4 Kafka生产过程分析
 - 写入方式
     - 消息被采用push模式推送到broker中，追加写入partition中，属于顺序写磁盘（比随机内存效率高，保证吞吐率）
 - 分区
     - 消息被发送到topic的分区中，offset在分区类有效且唯一
-    - 分区的原因：
-        - 方便集群拓展
-        - 提高并发，因为可以以分区为单位读写
-    - 分区的原则：
-        - 指定了patition，则直接使用；
-        - 未指定patition但指定key，通过对key的value进行hash出一个patition
-        - patition和key都未指定，使用轮询选出一个patition
 - 副本
     - 在replication之间选出一个leader
     - producer和consumer只与这个leader交互，其它replication作为follower从leader中复制数据
@@ -87,21 +96,8 @@ Kafka是一个分布式的基于发布/订阅模式的消息队列，主要应�
     - 4.followers从leader pull消息，写入本地log后向leader发送ACK
     - 5.leader收到所有ISR中的replication的ACK后，增加HW（high watermark，最后commit 的offset）并向producer发送ACK
 
-#### 2. broker保存信息
-- 存储方式
-    - 物理上把topic分成一个或多个patition（对应 server.properties 中的num.partitions=3配置）
-    - 每个patition物理上对应一个文件夹（该文件夹存储该patition的所有消息和索引文件）
-- 存储策略
-    - 无论消息是否被消费，kafka都会保留所有消息。
-    - 有两种策略可以删除旧数据：
-        - 基于时间：log.retention.hours=168
-        - 基于大小：log.retention.bytes=1073741824
-- ZooKeeper存储结构
-![image](images/Kafka在zookeeper上的存储结构.png)
-    - 重点关注consumer和broker
-    - producer不在zk中注册，消费者在zk中注册
 
-#### 3. Kafka消费过程分析
+#### 3. Kafka消费者
 ##### 3.1消费方式
 consumer采用pull方式从broker中读取数据。不使用push方式的原因：不同消费者的消费速率不一致容易导致拒绝服务以及网络拥塞
 > 对于Kafka而言，pull模式更合适，它可简化broker的设计，consumer可自主控制消费消息的速率，同时consumer可以自己控制消费方式——即可批量消费也可逐条消费
