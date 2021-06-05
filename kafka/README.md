@@ -105,11 +105,17 @@ consumer采用pull方式从broker中读取数据。不使用push方式的原因�
 pull方式的不足之处在于当kafka中没有数据时，consumer会陷入空循环中
 
 ##### 3.2分区分配策略
+一个topic会有多个分区，而一个消费者组也会有多个消费者，所以就涉及分区如何分配给消费者。
+
 当以下情形发生时，kafka会进行一次分区分配
 > 将分区的所有权从一个消费者移到另一个消费者称为重新平衡（rebalance）
 - 同一个消费者组新增消费者时
 - 消费者离开当前消费者组时，包括shut down或者crash
 - 订阅的主题新增分区
+
+策略有两种：
+- RoundRobin：轮询，默认的策略
+- Range：
 
 ##### 3.3Offset的维护
 Kafka 0.9版本之前，consumer默认将offset保存在Zookeeper中，从0.9版本开始，consumer默认将offset保存在Kafka一个内置的topic中，该topic为__consumer_offsets
