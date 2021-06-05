@@ -3,23 +3,19 @@ package producer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
- * 生产者：不带回调函数的send方法
- *  KafkaProducer：需要创建一个生产者对象，用来发送数据
- *  ProducerConfig：获取所需的一系列配置参数
- *  ProducerRecord：每条数据都要封装成一个ProducerRecord对象
- *
- *  TODO：为什么每次跑都会有一条数据失败？
- *  发送成功：21条数据
- *  发送失败：1条数据
+ * 生产者：同步的方式发送数据
  */
-public class NewProducer {
+public class NewProducerSync {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         Properties props = new Properties();
         // Kafka服务端的主机名和端口号
         props.put("bootstrap.servers", "hadoop101:9092,hadoop102:9092,hadoop103:9092");
@@ -31,7 +27,7 @@ public class NewProducer {
         props.put("batch.size", 16384);
         // 请求延时（等待时间）
         // props.put("linger.ms", 1);
-        props.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+        props.put(ProducerConfig.LINGER_MS_CONFIG, 1000);
         // 发送缓存区内存大小（RecordAccumulator缓冲区大小）
         props.put("buffer.memory", 33554432);
         // key序列化
@@ -47,15 +43,15 @@ public class NewProducer {
         props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, list);
 
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-        for (int i = 0; i < 20; i++) {
-            // 指定了分区号的ProducerRecord
-            // ProducerRecord<String, String> record = new ProducerRecord<>("test", 1, String.valueOf(1), "hello kafka - " + i);
-            // 不指定分区，数据会以轮询的方式存到各个分区
-            ProducerRecord<String, String> record = new ProducerRecord<>("test", "enen, hello world-" + i);
-            // 不指定分区，但指定了key，那么会以key的hash值跟分区数取余作为存放数据的分区号
-            // ProducerRecord<String, String> record = new ProducerRecord<>("test", String.valueOf(i), "hello key-" + i);
-            producer.send(record);
+        for (int i = 0; i < 10; i++) {
+            ProducerRecord<String, String> record = new ProducerRecord<>("test", "hello kafka sync - " + i);
+            Future<RecordMetadata> send = producer.send(record);
+            // 调用future的get方法就会阻塞
+            RecordMetadata metadata = send.get();
+            System.out.print("partition: " + metadata.partition() + "\t");
+            System.out.println("offset: " + metadata.offset());
         }
+        System.out.println("============ 主线程结束 =============");
         producer.close();
     }
 }
