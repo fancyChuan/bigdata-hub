@@ -155,10 +155,13 @@ Controller的管理工作都是依赖于Zookeeper的，也就是zk辅助Controll
 leader的选举流程
 ![image](images/leader选举流程.png)
 
-#### 4.API
+### Kafka API
 - 创建生产者
-    - 不带回调 [NewProducer.java](https://github.com/fancyChuan/bigdata-learn/blob/master/kafka/src/main/java/producer/NewProducer.java)
-    - 带回调 [NewProducerCallback.java](https://github.com/fancyChuan/bigdata-learn/blob/master/kafka/src/main/java/producer/NewProducerCallback.java)
+    - 发送数据后不带回调 [NewProducer.java](kafka/src/main/java/producer/NewProducer.java)
+    - 发送数据的函数send带回调 [NewProducerCallback.java](kafka/src/main/java/producer/NewProducerCallback.java)
+> kafkaProducer发送消息流程
+![iamge](images/KafkaProducer发送消息流程.png)
+
 - 创建消费者
     - 高级API
     - 低级API，开发步骤
