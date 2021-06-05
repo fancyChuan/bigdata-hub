@@ -156,18 +156,34 @@ leader的选举流程
 ![image](images/leader选举流程.png)
 
 ### Kafka API
-- 创建生产者
-    - 发送数据后不带回调 [NewProducer.java](kafka/src/main/java/producer/NewProducer.java)
-    - 发送数据的函数send带回调 [NewProducerCallback.java](kafka/src/main/java/producer/NewProducerCallback.java)
+#### 生产者Producer API
+- 发送数据后不带回调 [NewProducer.java](kafka/src/main/java/producer/NewProducer.java)
+- 发送数据的函数send带回调 [NewProducerCallback.java](kafka/src/main/java/producer/NewProducerCallback.java)
 > kafkaProducer发送消息流程
 ![iamge](images/KafkaProducer发送消息流程.png)
 
-- 创建消费者
-    - 高级API
-    - 低级API，开发步骤
-        - 根据指定分区从主体分区元数据中找到主副本 findLeader()
-        - 获取分区最新的消费进度（offset）getLastOffset()
-        - 从主副本中拉去分区的消息 run()
-        - 识别主副本的变化，重试 findNewLeader()
+#### 消费者Consumer API
+Consumer消费数据时的可靠性是很容易保证的，因为数据在Kafka中是持久化的，故不用担心数据丢失问题。需要考虑的是重复消费的问题。
+
+- 自动提交offset
+    - enable.auto.commit：是否开启自动提交offset功能
+    - auto.commit.interval.ms：自动提交offset的时间间隔
+- 手动提交offset
+    - 异步提交：offset提交失败，没有重试机制
+    - 同步提交：有重试机制，会一直提交offset到成功为止
+    - 两者的相同点是，都会将本次poll的一批数据最高的偏移量提交
+
+
+不管是自动还是手动提交，都无法保证exactly once，因为消费和提交offset不是原子操作，也不是事务
+- 先提交offset后消费，有可能造成数据的漏消费
+- 先消费后提交offset，有可能会造成数据的重复消费
+
+**自定义存储offset**
+- 高级API
+- 低级API，开发步骤
+    - 根据指定分区从主体分区元数据中找到主副本 findLeader()
+    - 获取分区最新的消费进度（offset）getLastOffset()
+    - 从主副本中拉去分区的消息 run()
+    - 识别主副本的变化，重试 findNewLeader()
         
 #### 5. 拦截器
