@@ -123,28 +123,38 @@ pull方式的不足之处在于当kafka中没有数据时，consumer会陷入空
 - RoundRobin：轮询，默认的策略。partition0给消费者2，partition1给消费者3，partition2给消费者1。以此类推
 - Range：将一个范围内的分区分给一个消费者，比如partition0-partition2这3个分区给消费者1，partition3-partition5这3个给消费者2
 
-##### 3.3Offset的维护
+##### 3.3 Offset的维护
 Kafka 0.9版本之前，consumer默认将offset保存在Zookeeper中，从0.9版本开始，consumer默认将offset保存在Kafka一个内置的topic中，该topic为__consumer_offsets
 > 外界客户端应用程序无法直接读取该主题内的数据，需要设置特别的属性才能实现
 ```
 # vim consumer.properties
+# 不排除内部的主题
 exclude.internal.topics=false
 ```
+##### 3.4 消费者组
+修改consumer.properties
+```
+group.id=forlearn-group
+```
+然后将consumer.properties同步到需要启动消费者的机器上，然后通过--consumer.config config/consumer.properties
 
-- 高级API
-    - 不需要去自行去管理offset，系统通过zookeeper自行管理
-    - 不需要管理分区，副本等情况，系统自动管理
-    - 缺点：
-        - 不能自行控制offset（对于某些特殊需求来说）
-        - 不能细化控制如分区、副本、zk等
-- 低级API
-    - 能够开发者自己控制offset，想从哪里读取就从哪里读取。
-    - 自行控制连接分区，对分区自定义进行负载均衡
-    - 对zookeeper的依赖性降低（如：offset不一定非要靠zk存储，自行存储offset即可，比如存在文件或者内存中）
-- 消费者组
-    
+#### 4. Kafka 高效读写数据
+- 顺序读写：同样的磁盘，顺序写能到600M/s，而随机写只有100K/s
+- 零拷贝技术：利用linux的内核直接把数据传给网卡
+![正常的读取方式](images/高效读写-零拷贝1.png)
+![使用零拷贝技术](images/高效读写-零拷贝2.png)
 
-    
+#### 5. Zookeeper在Kafka中的作用
+Kafka集群中有一个broker会被选举为Controller，职责有：
+- 负责管理集群broker的上下线
+- 所有topic的分区副本分配
+- leader选举
+
+Controller的管理工作都是依赖于Zookeeper的，也就是zk辅助Controller完成kakfa的管理工作
+
+leader的选举流程
+![image](images/leader选举流程.png)
+
 #### 4.API
 - 创建生产者
     - 不带回调 [NewProducer.java](https://github.com/fancyChuan/bigdata-learn/blob/master/kafka/src/main/java/producer/NewProducer.java)
