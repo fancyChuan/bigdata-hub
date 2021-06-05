@@ -12,6 +12,10 @@ import java.util.Properties;
  *  KafkaProducer：需要创建一个生产者对象，用来发送数据
  *  ProducerConfig：获取所需的一系列配置参数
  *  ProducerRecord：每条数据都要封装成一个ProducerRecord对象
+ *
+ *  TODO：为什么每次跑都会有一条数据失败？
+ *  发送成功：21条数据
+ *  发送失败：1条数据
  */
 public class NewProducer {
 
