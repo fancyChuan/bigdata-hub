@@ -120,8 +120,10 @@ pull方式的不足之处在于当kafka中没有数据时，consumer会陷入空
 - 订阅的主题新增分区
 
 策略有两种：
-- RoundRobin：轮询，默认的策略。partition0给消费者2，partition1给消费者3，partition2给消费者1。以此类推
-- Range：将一个范围内的分区分给一个消费者，比如partition0-partition2这3个分区给消费者1，partition3-partition5这3个给消费者2
+- RoundRobin：轮询。partition0给消费者2，partition1给消费者3，partition2给消费者1。以此类推
+- Range：默认的策略。将一个范围内的分区分给一个消费者，比如partition0-partition2这3个分区给消费者1，partition3-partition5这3个给消费者2
+
+参见：[ConsumerRebalance.java](src/main/java/consumer/ConsumerRebalance.java)
 
 ##### 3.3 Offset的维护
 Kafka 0.9版本之前，consumer默认将offset保存在Zookeeper中，从0.9版本开始，consumer默认将offset保存在Kafka一个内置的topic中，该topic为__consumer_offsets
@@ -178,7 +180,11 @@ Consumer消费数据时的可靠性是很容易保证的，因为数据在Kafka�
 - 先提交offset后消费，有可能造成数据的漏消费
 - 先消费后提交offset，有可能会造成数据的重复消费
 
-**自定义存储offset**
+##### 自定义存储offset
+offset的维护是相当繁琐的，因为需要考虑到消费者的Rebalace。
+> 当有新的消费者加入消费者组、已有的消费者推出消费者组或者所订阅的主题的分区发生变化，就会触发到分区的重新分配，重新分配的过程叫做Rebalance
+
+
 - 高级API
 - 低级API，开发步骤
     - 根据指定分区从主体分区元数据中找到主副本 findLeader()
