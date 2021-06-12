@@ -41,8 +41,10 @@ public class NewProducer {
 
         // 配置拦截器链
         ArrayList<String> list = new ArrayList<>();
-        // 拦截器谁先添加谁先执行
+        // 拦截器谁先添加谁先执行，下面这两个是自定义的拦截器
+        // 拦截器：给每条数据前面加上时间戳
         list.add("intercetor.TimeIntercetor");
+        // 拦截器：统计失败和成功发送的数据量
         list.add("intercetor.CountInterceptor");
         props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, list);
 

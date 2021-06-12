@@ -159,8 +159,8 @@ leader的选举流程
 
 ### Kafka API
 #### 生产者Producer API
-- 发送数据后不带回调 [NewProducer.java](kafka/src/main/java/producer/NewProducer.java)
-- 发送数据的函数send带回调 [NewProducerCallback.java](kafka/src/main/java/producer/NewProducerCallback.java)
+- 发送数据后不带回调 [NewProducer.java](src/main/java/producer/NewProducer.java)
+- 发送数据的函数send带回调 [NewProducerCallback.java](src/main/java/producer/NewProducerCallback.java)
 > kafkaProducer发送消息流程
 ![iamge](images/KafkaProducer发送消息流程.png)
 
@@ -184,7 +184,45 @@ Consumer消费数据时的可靠性是很容易保证的，因为数据在Kafka�
 offset的维护是相当繁琐的，还需要考虑到消费者的Rebalace。
 > 当有新的消费者加入消费者组、已有的消费者推出消费者组或者所订阅的主题的分区发生变化，就会触发到分区的重新分配，重新分配的过程叫做Rebalance
 
+#### 5. 拦截器
+- 拦截器作用：对于Producer而言，interceptor使得用户在消息发送前以及producer回调逻辑前有机会对消息做一些定制化需求，比如修改消息等
+- 拦截链(interceptor chain)：producer允许用户指定多个interceptor按序作用于同一条消息
+- 拦截的位置
+    - 发送的时候：参见[TimeIntercetor.java](src/main/java/intercetor/TimeIntercetor.java)
+    - 返回ACK的时候：参见[CountInterceptor.java](src/main/java/intercetor/CountInterceptor.java)
+    
+实现方式：实现接口 org.apache.kafka.clients.producer.ProducerInterceptor
+```
+// 该方法封装进KafkaProducer.send方法中，即它运行在用户主线程中。Producer确保在消息被序列化以及计算分区前调用该方法
+// 最好保证不要修改消息所属的topic和分区，否则会影响目标分区的计算
+public ProducerRecord<String, String> onSend(ProducerRecord<String, String> record) {
+    return record;
+}
+// 【ACK】该方法会在消息从RecordAccumulator成功发送到Kafka Broker之后，或者在发送过程中失败时调用。并且通常都是在producer回调逻辑触发之前。
+// onAcknowledgement运行在producer的IO线程中，因此不要在该方法中放入很重的逻辑，否则会拖慢producer的消息发送效率
+public void onAcknowledgement(RecordMetadata metadata, Exception exception) {
+    if (exception == null) {
+        successCnt ++;
+    } else {
+        errorCnt ++;
+    }
+}
+// 关闭拦截器，做一些资源清理的动作。可以返回发送成功和失败的数据量
+public void close() {
+    System.out.println("发送成功：" + successCnt + "条数据");
+    System.out.println("发送失败：" + errorCnt + "条数据");
+}
+// 获取配置信息和初始化数据时调用
+public void configure(Map<String, ?> configs) {
+}
 
+```
+注意：
+- interceptor可能被运行在多个线程中，因此在具体实现时用户需要自行确保线程安全
+- 倘若指定了多个interceptor，则producer将按照指定顺序调用它们，并仅仅是捕获每个interceptor可能抛出的异常记录到错误日志中而非在向上传递
+
+
+--
 - 高级API
 - 低级API，开发步骤
     - 根据指定分区从主体分区元数据中找到主副本 findLeader()
@@ -192,4 +230,3 @@ offset的维护是相当繁琐的，还需要考虑到消费者的Rebalace。
     - 从主副本中拉去分区的消息 run()
     - 识别主副本的变化，重试 findNewLeader()
         
-#### 5. 拦截器
