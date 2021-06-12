@@ -221,6 +221,26 @@ public void configure(Map<String, ?> configs) {
 - interceptor可能被运行在多个线程中，因此在具体实现时用户需要自行确保线程安全
 - 倘若指定了多个interceptor，则producer将按照指定顺序调用它们，并仅仅是捕获每个interceptor可能抛出的异常记录到错误日志中而非在向上传递
 
+#### 6. Kafka监控
+##### kafka monitor
+需要使用KafkaOffsetMonitor-assembly-0.4.6.jar这个jar包，0.4.6版本及以上同时支持zk和kafka两种存放offset的方式 
+```
+#!/bin/bash
+java -cp  KafkaOffsetMonitor-assembly-0.4.6-SNAPSHOT.jar \
+com.quantifind.kafka.offsetapp.OffsetGetterWeb \
+--offsetStorage kafka \
+--kafkaBrokers hadoop101:9092,hadoop102:9092,hadoop103:9092 \
+--kafkaSecurityProtocol PLAINTEXT \
+--zk hadoop101:2181,hadoop102:2181,hadoop103:2181/kafka \
+--port 8086 \
+--refresh 10.seconds \
+--retain 2.days \
+--dbName offsetapp_kafka &
+```
+
+- kafka manager
+
+
 
 --
 - 高级API
