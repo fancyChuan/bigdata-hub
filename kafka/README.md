@@ -239,8 +239,21 @@ com.quantifind.kafka.offsetapp.OffsetGetterWeb \
 ```
 
 - kafka manager
+参见：[Kafka监控和管理安装.md](../环境搭建/kafka/Kafka监控和管理安装.md)
 
+#### 7. 与flume集成使用
+监控flume.log文件，将日志发往kafka，主题为fromflume
 
+配置参见 [flume-kakfa.conf](flume-conf/flume-kakfa.conf)
+
+启动命令
+```
+bin/flume-ng agent \
+-n a1 \
+-c /usr/local/flume/conf/ \
+-f /home/appuser/forlearn/flumejob/flume-kakfa.conf \
+-Dflume.root.logger=DEBUG,console
+```
 
 --
 - 高级API
