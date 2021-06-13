@@ -62,3 +62,20 @@ bin/flink run -c cn.fancychuan.scala.quickstart.DataStreamWcApp \
 ```
 bin/flink run -m yarn-cluster -c cn.fancychuan.scala.quickstart.DataStreamWcApp /home/appuser/forlearn/flink/flink-1.0-SNAPSHOT.jar --host hadoop101 --port 7777
 ```
+
+#### 三、Kubernetes部署
+
+- 1）搭建Kubernetes集群（略）
+- 2）配置各组件的yaml文件
+在k8s上构建Flink Session Cluster，需要将Flink集群的组件对应的docker镜像分别在k8s上启动，包括JobManager、TaskManager、JobManagerService三个镜像服务。每个镜像服务都可以从中央镜像仓库中获取。
+
+- 3) 启动 flink session cluster
+```
+// 启动jobmanager-service 服务
+kubectl create -f jobmanager-service.yaml
+// 启动jobmanager-deployment服务
+kubectl create -f jobmanager-deployment.yaml
+// 启动taskmanager-deployment服务
+kubectl create -f taskmanager-deployment.yaml
+
+```
