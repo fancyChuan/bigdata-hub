@@ -16,14 +16,13 @@ import org.apache.flink.api.scala._
   */
 object DataStreamWcApp {
   def main(args: Array[String]): Unit = {
-    val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
-
-    env.setParallelism(3) // 设置并行度为3
-
     val params: ParameterTool = ParameterTool.fromArgs(args)
     val hostname: String = params.get("host", "hadoop101")
     var part: Int = params.getInt("port", 7777)
 
+    val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
+    // 设置该作业的默认并行度为3（配置文件的默认并行度是1）
+    env.setParallelism(3)
     // 使用socket文本流
     val dataStream: DataStream[String] = env.socketTextStream(hostname, part)
 

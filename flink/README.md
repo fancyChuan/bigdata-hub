@@ -32,7 +32,17 @@ Flink的特点和优势
 
 流式计算框架的对比
  
+#### WordCount应用
+- 批处理的方式实现：[DataSetWcApp.scala](src/main/scala/cn/fancychuan/scala/quickstart/DataSetWcApp.scala)
+- 流处理的方式实现：[DataStreamWcApp.scala](src/main/scala/cn/fancychuan/scala/quickstart/DataStreamWcApp.scala)
 
+不同并行度设置对作业的影响：
+- 只使用全局设置的默认并行度
+![image](img/不同位置并行度设计对作业的影响1.png)
+- 既设计作业默认并行度，又给算子单独设置
+![iamge](img/不同位置并行度设计对作业的影响2.png)
+- 只设置作业默认的并行度
+![iamge](img/不同位置并行度设计对作业的影响3.png)
 
 #### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
