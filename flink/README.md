@@ -78,8 +78,23 @@ Yarn模式任务提交流程
 
 ##### 4.3 任务调度原理
 ![image](img/任务调度原理.png)
-- 客户端不是运行时的一部分，也不是程序执行的一部分，它用于准备并发送dataflow(JobGraph)给Master(JobManager)，然后，客户端断开连接或者维持连接以等待接收计算结果
+> 客户端不是运行时的一部分，也不是程序执行的一部分，它用于准备并发送dataflow(JobGraph)给Master(JobManager)，然后，客户端断开连接或者维持连接以等待接收计算结果
+- 4.3.1 TaskManger与Slots
+    - TaskManager是一个JVM进程，可能会在独立的线程上执行一个或多个subtask
+    - worker（TaskManager）通过task slot来进行控制（一个worker至少有一个task slot）
+    - 每个task slot表示TaskManager拥有资源的一个固定大小的子集，比如一个TaskManager上有3个slot，那么TaskManager会将其管理的内存分成三份给各个slot
+    - slot和slot之间的内容是彼此隔离的，但CPU是共享的
+    - 一个TaskManager多个slot意味着更多的subtask可以共享同一个JVM，在同一个JVM进程中的task将共享TCP连接（基于多路复用）和心跳消息
+    - 默认情况下，flink允许子任务共享slot，即使它们是不同任务的子任务（前提是它们来自同一个job）。由此一个slot是可以保存作业的整个管道的
+    - Task Slot是静态的概念，是指TaskManager具有的并发执行能力，并行度parallelism是动态概念，即TaskManager运行程序时实际使用的并发能力
 
+> 子任务共享Slot
+![image](img/TaskManager和Slot-子任务共享Slot.png)
+> 并行度与slot的使用情况示例
+![image](img/并行度与slot的使用情况示例.png)
+
+
+    
 #### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
  
