@@ -93,8 +93,33 @@ Yarn模式任务提交流程
 > 并行度与slot的使用情况示例
 ![image](img/并行度与slot的使用情况示例.png)
 
+- 4.3.2 程序与数据流（DataFlow）
+    - 程序由三部分组成：Source（读数据）、Transformation（用算子加工）和Sink（输出）
+    - 程序会被映射成“逻辑数据流”（dataflows）
+    - 每一个dataflow以一个或多个sources开始以一个或多个sinks结束。dataflow类似于任意的有向无环图（DAG）
 
-    
+- 4.3.3 执行图（ExecutionGraph）
+    - 执行图可以分成四层：StreamGraph -> JobGraph -> ExecutionGraph -> 物理执行图
+        - StreamGraph：由Flink程序直接映射成的数据流图，也叫逻辑流图，表示的是计算逻辑的高级视图，能体现程序的拓扑结构
+        - JobGraph：StreamGraph经过优化后生成了 JobGraph，提交给 JobManager 的数据结构
+            - 将多个符合条件的节点 chain 在一起作为一个节点，减少数据在节点之间流动所需要的序列化/反序列化/传输消耗
+        - ExecutionGraph：根据 JobGraph 生成ExecutionGraph。ExecutionGraph是JobGraph的并行化版本，是调度层最核心的数据结构
+        - 物理执行图：JobManager 根据 ExecutionGraph 对 Job 进行调度后，在各个TaskManager 上部署 Task 后形成的“图”，并不是一个具体的数据结构
+
+![image](img/执行图的4个层次.png)        
+
+- 4.4.4 并行度（Parallelism）
+    - 一个流有一个或多个分区，一个算子可以包含一个或多个subtask，这些子任务可以在不同线程、不同物理机或不同容器中互不依赖执行
+    - 一个特定算子的子任务的个数，成为并行度
+    - 一般的，一个程序的并行度可以认为是其所有算子中最大的并行度（不同算子可以有不同的并行度）
+    - stream在算子的的传输形式有两种：
+        - one-to-one(forwarding)：一对一，比如map、flatMap，类似于spark中的窄依赖
+        - Redistributing：分区会发生变化，例如，keyBy() 基于hashCode重分区、broadcast和rebalance会随机重新分区，这些算子都会引起redistribute过程，类似于shuffle操作，宽依赖
+- 4.4.5 任务链（Operator Chains）
+    - 将算子链接成task是非常有效的优化：它能减少线程之间的切换和基于缓存区的数据交换，在减少时延的同时提升吞吐量
+    - 要求：相同并行度的one to one操作
+![image](img/task操作链(算子链).png)
+
 #### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
  
