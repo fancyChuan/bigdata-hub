@@ -36,6 +36,15 @@ Flink的特点和优势
 - 批处理的方式实现：[DataSetWcApp.scala](src/main/scala/cn/fancychuan/scala/quickstart/DataSetWcApp.scala)
 - 流处理的方式实现：[DataStreamWcApp.scala](src/main/scala/cn/fancychuan/scala/quickstart/DataStreamWcApp.scala)
 
+作业提交方式：
+1.通过web界面提交
+2.通过flink命令
+```
+bin/flink run -c cn.fancychuan.scala.quickstart.DataStreamWcApp \
+-p 2 /home/appuser/forlearn/flink/flink-1.0-SNAPSHOT.jar \
+--host hadoop101 --port 7777
+```
+
 不同并行度设置对作业的影响：
 - 只使用全局设置的默认并行度
 ![image](img/不同位置并行度设计对作业的影响1.png)
@@ -87,7 +96,8 @@ Yarn模式任务提交流程
     - 一个TaskManager多个slot意味着更多的subtask可以共享同一个JVM，在同一个JVM进程中的task将共享TCP连接（基于多路复用）和心跳消息
     - 默认情况下，flink允许子任务共享slot，即使它们是不同任务的子任务（前提是它们来自同一个job）。由此一个slot是可以保存作业的整个管道的
     - Task Slot是静态的概念，是指TaskManager具有的并发执行能力，并行度parallelism是动态概念，即TaskManager运行程序时实际使用的并发能力
-
+    - 一个流处理程序需要的slot数量，其实就是所有任务中最大的那个并行度
+    
 > 子任务共享Slot
 ![image](img/TaskManager和Slot-子任务共享Slot.png)
 > 并行度与slot的使用情况示例
@@ -119,6 +129,10 @@ Yarn模式任务提交流程
     - 将算子链接成task是非常有效的优化：它能减少线程之间的切换和基于缓存区的数据交换，在减少时延的同时提升吞吐量
     - 要求：相同并行度的one to one操作
 ![image](img/task操作链(算子链).png)
+
+> 并行：
+> 数据并行 —— 同一个任务，不同的并行子任务，同时处理不同的数据
+> 任务并行 —— 同一时间，不同的slot在执行不同的任务
 
 #### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
