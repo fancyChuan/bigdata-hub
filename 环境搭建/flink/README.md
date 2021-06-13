@@ -1,5 +1,5 @@
 ## Flink部署的搭建
-使用1.7.0版本
+使用1.10.0版本
 #### 一、standalone模式
 跟spark类似，独立部署，不依赖与hadoop集群
 ```
@@ -7,19 +7,20 @@ spark:  master      <==> slave    driver     <==> executor
 flink:  jobmanager  <==> slave    jobmanager <==> taskmanager
 ```
 安装步骤：
-- 1.解压缩 tar -zxvf flink-1.7.0-bin-hadoop27-scala_2.11.tgz 
+- 1.解压缩 tar -zxvf flink-1.10.0-bin-hadoop27-scala_2.11.tgz 
 - 2.修改conf/flink-conf.yaml文件，配置master为s01
 ```
-jobmanager.rpc.address: s01
+jobmanager.rpc.address: hadoop101
 ```
 - 3.修改conf/slave文件，配置从节点
 ```
-s02
-s03
+hadoop102
+hadoop103
 ```
 - 4.分发到另外的两台机器上
 - 5.启动集群 bin/start-cluster.sh
-- 6.查看网页 http://s01:8081
+- 6.查看网页 http://hadoop101:8081
+
 
 
 #### 二、yarn模式

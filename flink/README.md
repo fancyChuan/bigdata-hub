@@ -44,6 +44,42 @@ Flink的特点和优势
 - 只设置作业默认的并行度
 ![iamge](img/不同位置并行度设计对作业的影响3.png)
 
+#### 4运行时架构
+##### 4.1 Flink运行时的组件
+- 作业管理器（JobManager）
+    - 控制一个应用程序执行的主进程
+    - 应用程序包括：作业图（JobGraph）、逻辑数据流图（logical dataflow graph）和打包了所有的类、库和其它资源的JAR包
+    - 会把一个逻辑数据流图转成物理层面的数据流图，叫“执行图”（ExecutionGraph），包含了所有可以并发执行的任务
+    - 向ResourceManager申请资源（也就是插槽slot）
+    - 获得足够的资源后，就会将执行图分发到真正运行task的TaskManager上
+    - 负责所有需要中央协调的操作，比如checkpoints的协调
+- 资源管理器（ResourceManager）
+    -主要负责管理TaskManager上的slot，TaskManger插槽是Flink中定义的处理资源单元
+    - 负责终止空闲的TaskManager，释放计算资源
+    - 如果ResourceManager没有足够的插槽来满足JobManager的请求，它还可以向资源提供平台发起会话，以提供启动TaskManager进程的容器【啥意思？】
+- 任务管理器（TaskManager）
+    - Flink中的工作进程
+    - 插槽的数量限制了TaskManager能够执行的任务数量
+    - 启动之后，TaskManager会向资源管理器注册它的插槽
+    - 收到资源管理器的指令后，TaskManager就会将一个或者多个插槽提供给JobManager调用
+    - 执行过程中，一个TaskManager可以跟其它运行同一应用程序的TaskManager交换数据
+- 分发器（Dispatcher）
+    - 可以跨作业运行，它为应用提交提供了REST接口
+    - 当一个应用被提交执行时，分发器就会启动并将应用移交给一个JobManager
+    - Dispatcher在架构中可能并不是必需的
+
+##### 4.2 任务作业提交流程
+任务提交和组件交互流程
+
+![image](img/任务提交和组件交互流程.png)
+
+Yarn模式任务提交流程
+![image](img/yarn模式任务提交流程.png)
+
+##### 4.3 任务调度原理
+![image](img/任务调度原理.png)
+- 客户端不是运行时的一部分，也不是程序执行的一部分，它用于准备并发送dataflow(JobGraph)给Master(JobManager)，然后，客户端断开连接或者维持连接以等待接收计算结果
+
 #### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
  
