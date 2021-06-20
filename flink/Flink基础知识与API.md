@@ -12,4 +12,21 @@ Flink的重要特点；
 - 支持exactly-once语义：有且仅执行一次
 - 支持事件时间（EventTime）
 
+流处理API：environment -> source -> transform -> sink
+
+### 1. Environment
+- getExecutionEnvironment
+    - 创建一个执行环境，表示当前执行程序的上下文
+        - 程序独立调用，此方法返回本地执行环境
+        - 程序提交到集群，此方法返回集群的执行环境
+```
+val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
+val env = StreamExecutionEnvironment.getExecutionEnvironment
+```
+- createLocalEnvironment：返回本地执行环境，需要在调用时指定默认的并行度
+- createRemoteEnvironment
+```
+val env = StreamExecutionEnvironment.createLocalEnvironment(1)
+val env = ExecutionEnvironment.createRemoteEnvironment("jobmanage-hostname", 6123,"YOURPATH//wordcount.jar")
+```
 
