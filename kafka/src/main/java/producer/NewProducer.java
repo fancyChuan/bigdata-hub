@@ -13,9 +13,6 @@ import java.util.Properties;
  *  ProducerConfig：获取所需的一系列配置参数
  *  ProducerRecord：每条数据都要封装成一个ProducerRecord对象
  *
- *  TODO：为什么每次跑都会有一条数据失败？
- *  发送成功：21条数据
- *  发送失败：1条数据
  */
 public class NewProducer {
 
@@ -53,7 +50,7 @@ public class NewProducer {
             // 指定了分区号的ProducerRecord
             // ProducerRecord<String, String> record = new ProducerRecord<>("test", 1, String.valueOf(1), "hello kafka - " + i);
             // 不指定分区，数据会以轮询的方式存到各个分区
-            ProducerRecord<String, String> record = new ProducerRecord<>("test", "enen, hello world-" + i);
+            ProducerRecord<String, String> record = new ProducerRecord<>("didi_topic", "enen, hello world-" + i);
             // 不指定分区，但指定了key，那么会以key的hash值跟分区数取余作为存放数据的分区号
             // ProducerRecord<String, String> record = new ProducerRecord<>("test", String.valueOf(i), "hello key-" + i);
             producer.send(record);
