@@ -33,3 +33,11 @@ spark.streaming.backpressure.enabled
 ```
 
 SparkStreaming版本的WordCount：[StreamingWordCountApp.scala](spark2.4.4/src/main/scala/cn/fancychuan/scala/wordcount/StreamingWordCountApp.scala)
+
+#### DStream的创建
+Spark Streaming 原生支持一些不同的数据源
+- RDD队列
+    - 使用ssc.queueStream(queueOfRDDs)来创建DStream
+    - 每一个推送到这个队列中的RDD，都会作为一个DStream处理
+- 自定义数据源（自定义接收器）
+    - 继承Receiver，并实现onStart、onStop方法来自定义数据源采集
