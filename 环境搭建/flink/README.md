@@ -8,7 +8,7 @@ flink:  jobmanager  <==> slave    jobmanager <==> taskmanager
 ```
 安装步骤：
 - 1.解压缩 tar -zxvf flink-1.10.0-bin-hadoop27-scala_2.11.tgz 
-- 2.修改conf/flink-conf.yaml文件，配置master为s01
+- 2.修改conf/flink-conf.yaml文件，配置master为hadoop101
 ```
 jobmanager.rpc.address: hadoop101
 ```
