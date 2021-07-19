@@ -14,6 +14,10 @@
 - spark
 - hbase
 - zookeeper
+- 大数据调度
+    - [azkaban](bigdata-scheduler/azkaban)
+    - [dolphinscheduler](bigdata-scheduler/dolphinscheduler)
+    - [oozie](bigdata-scheduler/oozie)
 - 环境搭建
     - apache版本搭建
     - CDH集群搭建
