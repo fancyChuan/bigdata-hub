@@ -8,6 +8,10 @@ Flink的重要特点；
     - 无界数据流：数据流有一个开始但是灭有结束
     - 有界数据流：数据流有明确定义的开始和结束
 - 分层API
+    - 高级语言：SQL
+    - 声明式DSL语法：Table API
+    - 核心API：DataStream/DataSet API 
+    - 低级API：Stateful Stream Processing
 - 支持有状态计算：flink1.4以后也支持中间结果缓存，相当于checkpoint操作
 - 支持exactly-once语义：有且仅执行一次
 - 支持事件时间（EventTime）
@@ -30,3 +34,11 @@ val env = StreamExecutionEnvironment.createLocalEnvironment(1)
 val env = ExecutionEnvironment.createRemoteEnvironment("jobmanage-hostname", 6123,"YOURPATH//wordcount.jar")
 ```
 
+### 2. DataSource
+- 基于文本：readTextFile
+- 基于Socket：socketTextStream
+- 基于集合：fromCollection
+- 自定义输入：addSource
+    - FlinkKafkaConsumer011 从kafka队列中消费
+
+代码参见：[SourceApp.scala](src/main/scala/cn/fancychuan/scala/SourceApp.scala)
