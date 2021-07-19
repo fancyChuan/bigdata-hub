@@ -1,6 +1,11 @@
 package cn.fancychuan.scala
 
+import java.util.{Properties, Random}
+
+import org.apache.flink.api.common.serialization.SimpleStringSchema
+import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.scala._
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011
 
 object SourceApp {
     def main(args: Array[String]): Unit = {
@@ -26,6 +31,21 @@ object SourceApp {
         stream3.print("socket流：")
 
         // 4. 从kafka中读取
+        val properties = new Properties()
+        properties.setProperty("bootstrap.servers", "hadoop101:9092")
+        properties.setProperty("group.id", "consumer-group")
+        properties.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
+        properties.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
+        properties.setProperty("auto.offset.reset", "latest")
+
+        // FlinkKafkaConsumer011 其中的011表示版本
+        val stream4 = env.addSource(new FlinkKafkaConsumer011[String]("sensor", new SimpleStringSchema(), properties))
+        stream4.print("kafka流")
+
+
+        // 5. 自定义source
+        val stream5 = env.addSource(new MySource())
+        stream5.print("自定义Source ")
 
 
         env.execute("source test job") // 参数表示作业名
@@ -34,3 +54,30 @@ object SourceApp {
 
 case class SensorReading(id: String, timestamp: Long, temperature: Double)
 
+class MySource() extends SourceFunction[SensorReading] {
+    // 定义一个flag，表示数据源是否正常运行
+    var running: Boolean = true
+
+    //随机生成数据
+    override def run(sourceContext: SourceFunction.SourceContext[SensorReading]): Unit = {
+        // 定义一个随机数发生器
+        val rand = new Random()
+        // 定义初始温度
+        var curTemps = 1.to(10).map(i => ("sensor_" + i, 60 + rand.nextGaussian() * 20))
+
+        while(running) {
+            // 更新温度值
+            curTemps.map(
+                t => (t._1, t._2 + rand.nextGaussian())
+            )
+            val curTime = System.currentTimeMillis()
+            curTemps.foreach(
+                // 包装成样例类，用sourceContext发出数据
+                t => sourceContext.collect(SensorReading(t._1, curTime, t._2))
+            )
+        }
+        Thread.sleep(1000)
+    }
+
+    override def cancel(): Unit = false
+}
