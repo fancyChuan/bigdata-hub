@@ -23,14 +23,27 @@
 <configuration>
     <property>
         <name>hbase.rootdir</name>
-        <value>hdfs://ns1/hbase</value><!-- 这样要使用HA用到的名称，可以不写端口好 -->
+        <value>hdfs://hadoop101:8020/hbase</value>
     </property>
-    <property>
-        <name>hbase.zookeeper.quorum</name>
-        <value>s01,s02,s03</value>
-    </property>
+    <!-- 以分布式的方式启动hbase，默认是单机模式 -->
     <property>
         <name>hbase.cluster.distributed</name>
         <value>true</value>
+    </property>
+
+    <!-- 0.98后的新变动，之前的版本默认端口为60000，现在为16000 -->
+    <property>
+        <name>hbase.master.port</name>
+        <value>16000</value>
+    </property>
+
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>hadoop101:2181,hadoop102:2181,hadoop103:2181</value>
+    </property>
+
+    <property>
+        <name>hbase.zookeeper.property.dataDir</name>
+        <value>/data/zookeeper/zkData</value>
     </property>
 </configuration>

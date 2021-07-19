@@ -18,9 +18,12 @@ object DataSetWcApp {
 
     val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
 
-    val txtDataSet: DataSet[String] = env.readTextFile("hadoop/input/wordcount.txt")
+    val txtDataSet: DataSet[String] = env.readTextFile("flink/src/main/resources/wordcount.txt")
 
-    val aggSet: AggregateDataSet[(String, Int)] = txtDataSet.flatMap(_.split(" ")).map((_, 1)).groupBy(0).sum(1)
+    val aggSet: AggregateDataSet[(String, Int)] = txtDataSet.flatMap(_.split(" "))
+        .map((_, 1))
+        .groupBy(0)
+        .sum(1)
 
     aggSet.print()
   }

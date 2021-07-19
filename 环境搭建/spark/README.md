@@ -4,17 +4,17 @@ spark有三种运行模式
 ### 1. Local模式【本地部署】
 解压后直接使用
 ```
-tar -zxvf spark-2.3.3-bin-hadoop2.7.tgz
+tar -zxvf spark-2.4.4-bin-hadoop2.7.tgz
 ```
 求PI的案例
 ```
-# cd spark-2.3.3-bin-hadoop2.7
+# cd spark-2.4.4-bin-hadoop2.7
 
 bin/spark-submit \
 --class org.apache.spark.examples.SparkPi \
 --executor-memory 1G \
 --total-executor-cores 2 \
-./examples/jars/spark-examples_2.11-2.3.3.jar \
+./examples/jars/spark-examples_2.11-2.4.4.jar \
 100
 ```
 
@@ -23,7 +23,7 @@ bin/spark-submit \
 #### 2.1 基础部署
 构建一个由Master+Slave构成的Spark集群，Spark运行在集群中。
 ```
-# cd spark-2.3.3-bin-hadoop2.7/conf
+# cd spark-2.4.4-bin-hadoop2.7/conf
 # 修改1： slaves文件
 mv slaves.template slaves
 vim slaves
@@ -41,7 +41,7 @@ SPARK_MASTER_PORT=7077
 ---------------
 
 # 分发spark包到其他机器上
-xsync /opt/app/spark-2.3.3-bin-hadoop2.7
+xsync /opt/app/spark-2.4.4-bin-hadoop2.7
 
 # 配置java环境
 vim sbin/spark-config.sh
@@ -60,7 +60,7 @@ bin/spark-submit \
 --master spark://hadoop101:7077 \
 --executor-memory 1G \
 --total-executor-cores 2 \
-./examples/jars/spark-examples_2.11-2.3.3.jar \
+./examples/jars/spark-examples_2.11-2.4.4.jar \
 100
 
 ```
@@ -76,7 +76,7 @@ bin/spark-shell \
 - 修改spark-default.conf文件，开启log
 ```
 spark.eventLog.enabled           true
-spark.eventLog.dir               hdfs://hadoop101:9000/sparklogs
+spark.eventLog.dir               hdfs://hadoop101:8020/sparklogs
 ```
 > 在HDFS上需要存在 /sparklogs 这个目录。另外要使用NameNode的rpc端口，注意修改成实际的端口 
 > TODO：如果是高可用的NameNode，该如何适配？？
@@ -84,12 +84,12 @@ spark.eventLog.dir               hdfs://hadoop101:9000/sparklogs
 ```
 export SPARK_HISTORY_OPTS="-Dspark.history.ui.port=18080 
 -Dspark.history.retainedApplications=30 
--Dspark.history.fs.logDirectory=hdfs://hadoop101:9000/sparklogs"
+-Dspark.history.fs.logDirectory=hdfs://hadoop101:8020/sparklogs"
 ```
 > 参数说明
 > - spark.eventLog.dir：Application在运行过程中所有的信息均记录在该属性指定的路径下； 
 > - spark.history.ui.port=18080  WEBUI访问的端口号为18080
-> - spark.history.fs.logDirectory=hdfs://hadoop102:9000/directory  配置了该属性后，在start-history-server.sh时就无需再显式的指定路径，Spark History Server页面只展示该指定路径下的信息
+> - spark.history.fs.logDirectory=hdfs://hadoop101:8020/directory  配置了该属性后，在start-history-server.sh时就无需再显式的指定路径，Spark History Server页面只展示该指定路径下的信息
 > - spark.history.retainedApplications=30指定保存Application历史记录的个数，如果超过这个值，旧的应用程序信息将被删除，这个是内存中的应用数，而不是页面上显示的应用数。
 - 重新分发文件
 ```
@@ -152,7 +152,7 @@ YARN_CONF_DIR=/usr/local/hadoop/etc/hadoop
 ```
 - 分发文件(不需要再启动spark的master和worker了，因为任务提交给了yarn)
 
-日志查看
+启动历史服务器日志查看
 - 修改spark-defaults.conf，添加如下内容
 ```
 spark.yarn.historyServer.address=hadoop102:18080

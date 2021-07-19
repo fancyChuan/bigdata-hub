@@ -18,7 +18,7 @@
     <!-- 这个配置yarn是没有做HA的 -->
     <property>
         <name>yarn.resourcemanager.hostname</name>
-        <value>s01</value>
+        <value>hadoop101</value>
     </property>
     <property>
         <name>yarn.nodemanager.aux-services</name>

@@ -24,6 +24,8 @@
         <module>kylin</module>
         <module>hbase</module>
         <module>sqoop</module>
+        <module>beam</module>
+        <module>flume</module>
     </modules>
 
     <properties>

@@ -11,5 +11,21 @@
 
     <artifactId>hbase</artifactId>
 
+    <dependencies>
+        <!--在对HBase执行增删改查时，只需要引入hbase-client模块即可，运行MR操作hbase时，需要引入hbase-server。-->
+        <!--拷贝hdfs-site.xml文件到客户端的类路径下-->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>1.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>1.3.1</version>
+        </dependency>
+
+    </dependencies>
 
 </project>

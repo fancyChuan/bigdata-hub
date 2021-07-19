@@ -6,6 +6,10 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.util.Map;
 
+/**
+ * 添加时间戳拦截器：在发送record之前加上时间戳
+ *  重写onSend方法
+ */
 public class TimeIntercetor implements ProducerInterceptor<String, String> {
 
     @Override

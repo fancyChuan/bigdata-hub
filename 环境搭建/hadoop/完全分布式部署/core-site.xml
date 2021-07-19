@@ -17,16 +17,44 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
+    <!-- 指定hdfs的nameservice -->
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://hadoop101:8020</value>
+        <value>hdfs://ns1</value>
     </property>
+    <!-- 指定hadoop临时目录，当前用户需要对该目录有读写权限 -->
     <property>
         <name>hadoop.tmp.dir</name>
         <value>/data/hadoop/tmp</value>
     </property>
+    <!-- 回收站清空时间 -->
     <property>
         <name>fs.trash.interval</name>
         <value>10080</value>
     </property>
+    <!-- 指定ZooKeeper地址 -->
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>hadoop101:2181,hadoop102:2181,hadoop103:2181</value>
+    </property>
+
+
+    <!--配置支持LZO压缩-->
+    <property>
+        <name>io.compression.codecs</name>
+        <value>
+            org.apache.hadoop.io.compress.GzipCodec,
+            org.apache.hadoop.io.compress.DefaultCodec,
+            org.apache.hadoop.io.compress.BZip2Codec,
+            org.apache.hadoop.io.compress.SnappyCodec,
+            com.hadoop.compression.lzo.LzoCodec,
+            com.hadoop.compression.lzo.LzopCodec
+        </value>
+    </property>
+    <property>
+        <name>io.compression.codec.lzo.class</name>
+        <value>com.hadoop.compression.lzo.LzoCodec</value>
+    </property>
+
+
 </configuration>

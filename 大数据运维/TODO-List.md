@@ -35,3 +35,5 @@ echo 1 > /proc/sys/vm/drop_caches;
 echo 2 > /proc/sys/vm/drop_caches;
 echo 3 > /proc/sys/vm/drop_caches;
 ```
+
+- 自己上传的lzo文件需要手动创建索引，那集群自己生成的文件，还需要手动去创建索引吗？

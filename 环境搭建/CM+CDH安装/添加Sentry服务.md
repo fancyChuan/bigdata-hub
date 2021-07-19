@@ -39,3 +39,4 @@ FAILED: InvalidConfigurationException hive.server2.authentication can't be none 
 - [CDH 配置 Sentry 服务 - 简书](https://www.jianshu.com/p/dfcad1a3044d)
 - [hue集成sentry后添加用户操作流程 - 简书](https://www.jianshu.com/p/e0fc624e433d)
 - [0033-如何在Hue中使用Sentry-Hadoop实操的博客-51CTO博客](https://blog.51cto.com/14049791/2320839)
+- [0569-5.15.1-开启Sentry后LOAD DATA异常分析](https://cloud.tencent.com/developer/article/1419628)
