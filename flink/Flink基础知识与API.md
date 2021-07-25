@@ -42,3 +42,16 @@ val env = ExecutionEnvironment.createRemoteEnvironment("jobmanage-hostname", 612
     - FlinkKafkaConsumer011 从kafka队列中消费
 
 代码参见：[SourceApp.scala](src/main/scala/cn/fancychuan/scala/SourceApp.scala)
+
+### 3. Transform算子
+在flink中，source之后，sink之前的中间所有过程，都可以认为是转换算子，这个跟spark中的转换算子不是一个概念。
+
+基本转换算子：map, flatMap, filter
+
+分区汇总转换算子
+- keyBy
+    - DataStream → KeyedStream：逻辑地将一个流拆分成不相交的分区，每个分区包含具有相同key的元素，在内部以hash的形式实现的
+    - 基于key的hash code重分区
+    - 同一个key
+
+多流转换算子
