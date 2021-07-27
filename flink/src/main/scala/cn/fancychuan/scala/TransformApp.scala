@@ -2,7 +2,7 @@ package cn.fancychuan.scala
 
 import org.apache.flink.streaming.api.scala._
 
-class TransformApp {
+object TransformApp {
     def main(args: Array[String]): Unit = {
         val env = StreamExecutionEnvironment.getExecutionEnvironment
         val streamFromFile: DataStream[String] = env.readTextFile("E:\\JavaWorkshop\\bigdata-learn\\flink\\src\\main\\resources\\sensor.txt")
