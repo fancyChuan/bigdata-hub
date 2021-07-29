@@ -6,12 +6,12 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.streaming.api.collector.selector.OutputSelector;
-import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.KeyedStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
-import org.apache.flink.streaming.api.datastream.SplitStream;
+import org.apache.flink.streaming.api.datastream.*;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.co.CoMapFunction;
 import org.apache.flink.util.Collector;
 
 import java.util.Collections;
@@ -94,9 +94,38 @@ public class JavaTransformApp {
             }
         });
         DataStream<SensorReading> highStream = splitStream.select("high");
+        DataStream<SensorReading> lowStream = splitStream.select("low");
         DataStream<SensorReading> allStream = splitStream.select("high", "low");
         highStream.print("high");
         allStream.print("all");
+
+        // 8.Connect 和 CoMap
+        // 先将高温流转为二元组类型的流，再与低温流合并
+        DataStream<Tuple2<String, Double>> highTupleStream = highStream.map(new MapFunction<SensorReading, Tuple2<String, Double>>() {
+            @Override
+            public Tuple2<String, Double> map(SensorReading sensorReading) throws Exception {
+                return new Tuple2<>(sensorReading.getId(), sensorReading.getTemperature());
+            }
+        });
+        // connectedStreams里面是包含2条流的，虽然在一起了，但是2条流各自独立，就好比“一国两制”
+        ConnectedStreams<Tuple2<String, Double>, SensorReading> connectedStreams = highTupleStream.connect(lowStream);
+        // 第3个参数表示的是合并map处理后的流的类型，相当于一国两制中的“一国”
+        SingleOutputStreamOperator<Object> coMapStream = connectedStreams.map(new CoMapFunction<Tuple2<String, Double>, SensorReading, Object>() {
+            @Override
+            public Object map1(Tuple2<String, Double> value) throws Exception {
+                return new Tuple3<>(value.f0, value.f1, "高温告警！");
+            }
+
+            @Override
+            public Object map2(SensorReading sensorReading) throws Exception {
+                return new Tuple2<>(sensorReading.getId(), "正常~");
+            }
+        });
+        coMapStream.print();
+
+        // 9. union 可以合并多条流，但是要求每条流的类型一样，而connect的2条流类型可以不一样
+        // highStream.union(lowStream, allStream);
+
 
         env.execute();
     }
