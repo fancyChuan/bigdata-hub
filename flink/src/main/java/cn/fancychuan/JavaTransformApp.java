@@ -6,11 +6,15 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.streaming.api.collector.selector.OutputSelector;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
+
+import java.util.Collections;
 
 
 /**
@@ -55,9 +59,9 @@ public class JavaTransformApp {
             }
         });
 
-        mapStream.print("map");
-        flatMapStream.print("flatMap");
-        filterStream.print("filter");
+//        mapStream.print("map");
+//        flatMapStream.print("flatMap");
+//        filterStream.print("filter");
 
         System.out.println("==================");
         // 4.keyBy
@@ -70,8 +74,8 @@ public class JavaTransformApp {
         KeyedStream<SensorReading, String> keyedStream1 = dataStream.keyBy(SensorReading::getId);
         SingleOutputStreamOperator<SensorReading> maxTemperature = keyedStream.max("temperature");
         SingleOutputStreamOperator<SensorReading> maxByTemperature = keyedStream.maxBy("temperature");
-        maxTemperature.print("keyBy-max");
-        maxByTemperature.print("keyBy-maxBy");
+//        maxTemperature.print("keyBy-max");
+//        maxByTemperature.print("keyBy-maxBy");
 
         // 5.reduce，实现取最大温度所对应的那组SensorReading数据
         DataStream<SensorReading> resultStream = keyedStream.reduce(new ReduceFunction<SensorReading>() {
@@ -81,6 +85,18 @@ public class JavaTransformApp {
             }
         });
         resultStream.print("reduce");
+
+        // 6. 分流 split 和 select
+        SplitStream<SensorReading> splitStream = dataStream.split(new OutputSelector<SensorReading>() {
+            @Override
+            public Iterable<String> select(SensorReading sensorReading) {
+                return (sensorReading.getTemperature() > 30) ? Collections.singletonList("high") : Collections.singletonList("low");
+            }
+        });
+        DataStream<SensorReading> highStream = splitStream.select("high");
+        DataStream<SensorReading> allStream = splitStream.select("high", "low");
+        highStream.print("high");
+        allStream.print("all");
 
         env.execute();
     }
