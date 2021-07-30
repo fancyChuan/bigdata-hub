@@ -71,7 +71,16 @@ val env = ExecutionEnvironment.createRemoteEnvironment("jobmanage-hostname", 612
 - Java简单对象（POJO）
 - 其它（Arrays, Lists, Maps, Enums, 等等）
 
-### 5. 实现UDF
+### 5. 实现UDF-更细粒度的控制流
 #### 5.1 函数类
 Flink暴露了所有UDF函数的接口，实现方式为接口或者抽象类。比如MapFunction, FilterFunction, ProcessFunction
+#### 5.2 匿名函数类
+#### 5.3 富函数类
+“富函数”是DataStream API提供的一个函数类的接口，所有Flink函数类都有其Rich版本。它与常规函数的不同在于，可以获取运行环境的上下文，并拥有一些生命周期方法，所以可以实现更复杂的功能
 
+比如RichMapFunction， RichFlatMapFunction
+
+Rich Function有一个生命周期的概念，典型的方法有：
+- open()方法是rich function的初始化方法。一个算子（比如map）被调用之前open()会被调用
+- close()方法是生命周期中的最后一个调用的方法，做一些清理工作
+- getRuntimeContext()方法提供了函数的RuntimeContext的一些信息，例如函数执行的并行度，任务的名字，以及state状态
