@@ -53,5 +53,25 @@ val env = ExecutionEnvironment.createRemoteEnvironment("jobmanage-hostname", 612
     - DataStream → KeyedStream：逻辑地将一个流拆分成不相交的分区，每个分区包含具有相同key的元素，在内部以hash的形式实现的
     - 基于key的hash code重分区
     - 同一个key
+- max/maxBy, min/minBy, sum
+- reduce
 
 多流转换算子
+- split, select
+- connect, CoMap, CoFlatMap
+- union
+
+整个转换算子涉及到的Stream类型
+![image](img/DataStream相互转换关系.png)
+
+### 4. 支持的数据类型
+- 基本的数据类型
+- java和Scala元组（tuple）
+- Scala样例类
+- Java简单对象（POJO）
+- 其它（Arrays, Lists, Maps, Enums, 等等）
+
+### 5. 实现UDF
+#### 5.1 函数类
+Flink暴露了所有UDF函数的接口，实现方式为接口或者抽象类。比如MapFunction, FilterFunction, ProcessFunction
+

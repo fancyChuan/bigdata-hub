@@ -58,12 +58,10 @@ public class JavaTransformApp {
                 return false;
             }
         });
-
 //        mapStream.print("map");
 //        flatMapStream.print("flatMap");
 //        filterStream.print("filter");
 
-        System.out.println("==================");
         // 4.keyBy
         DataStream<SensorReading> dataStream = inputStream.map(line -> {
             String[] items = line.split(",");
