@@ -94,3 +94,6 @@ Rich Function有一个生命周期的概念，典型的方法有：
 - open()方法是rich function的初始化方法。一个算子（比如map）被调用之前open()会被调用
 - close()方法是生命周期中的最后一个调用的方法，做一些清理工作
 - getRuntimeContext()方法提供了函数的RuntimeContext的一些信息，例如函数执行的并行度，任务的名字，以及state状态
+
+### 6.Sink
+FlinkKafkaProducer011
