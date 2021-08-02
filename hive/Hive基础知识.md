@@ -26,16 +26,36 @@
 - 优化器（Query Optimizer）：对逻辑执行计划进行优化。
 - 执行器（Execution）：把逻辑执行计划转换成可以运行的物理计划。对于Hive来说，就是MR/Spark
 
+hive的运行机制
+![image](img/Hive的运行机制.png)
+
 #### JDBC访问
+要使用JDBC的方式访问hive，需要在hive-site.xml中先配置hiveserver2，作为服务端。
 ```
+<!--hiveserver2要绑定的主机-->
+    <property>
+        <name>hive.server2.thrift.bind.host</name>
+        <value>0.0.0.0</value>
+    </property>
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10000</value>
+    </property>
+```
+注意事项: [参见博客的总结](https://blog.csdn.net/fancychuan/article/details/119323077)
+```
+# 启动Metastore（如果没有配置hive.metastore.uris那么启动了Metastore服务也没有用，HiveServer2不会找到Metastore）
+bin/hive --service metastore
 # 启动hiveserver2
-bin/hiveserver2
+bin/hive --service hiveserver2
 
 # 启动beeline
 bin/beeline
-
 # 连接Hiveserver2
 beeline> !connect jdbc:hive2://hadoop102:10000
+
+或者一步到位
+beeline -u "jdbc:hive2://hadoop102:10000" -n appuser
 ```
 #### Hive参数配置方式
 有三种配置方式
