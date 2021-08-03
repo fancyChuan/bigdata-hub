@@ -63,10 +63,23 @@
       <artifactId>flink-streaming-java_2.11</artifactId>
       <version>${flink.version}</version>
     </dependency>
+    <!-- kafka连接器 -->
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-connector-kafka-0.11_2.11</artifactId>
       <version>${flink.version}</version>
+    </dependency>
+    <!-- kafka连接器 -->
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-connector-elasticsearch6_2.11</artifactId>
+      <version>${flink.version}</version>
+    </dependency>
+    <!-- redis连接器 -->
+    <dependency>
+      <groupId>org.apache.bahir</groupId>
+      <artifactId>flink-connector-redis_2.11</artifactId>
+      <version>1.0</version>
     </dependency>
 
     <!--日志-->
