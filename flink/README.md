@@ -134,6 +134,14 @@ Yarn模式任务提交流程
 > 数据并行 —— 同一个任务，不同的并行子任务，同时处理不同的数据
 > 任务并行 —— 同一时间，不同的slot在执行不同的任务
 
+
+
+时间语义
+- Event Time：事件创建的时间
+- Ingestion Time：数据进入Flink的时间
+- Process Time： 执行操作算子的本地时间，与机器相关
+
+
 #### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
  

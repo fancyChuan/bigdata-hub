@@ -97,3 +97,52 @@ Rich Function有一个生命周期的概念，典型的方法有：
 
 ### 6.Sink
 FlinkKafkaProducer011
+
+
+#### 7.窗口Window
+Window是一种切割无线数据为有限块进行处理的手段。Window是无限处理流处理的核心，将一个无限的stream拆成有限大小的buckets桶，可以在这些桶上做计算操作。
+
+##### 7.1 Window类型
+- TimeWindow：按时间生成Window
+    - 滚动窗口
+        - 将数据依据固定的窗口长度对数据进行切分
+        - 特点：时间对齐，窗口长度固定，没有重叠
+        - 适用场景：BI统计（做每个时间段的聚合计算）
+    - 滑动窗口
+        - 是固定窗口的更广义的一种形式
+        - 由固定窗口长度和滑动间隔组成（例如10分钟窗口，5分钟滑动）
+        - 特点：时间对齐，窗口长度固定，可以有重叠
+        - 适合场景：对最近一段时间内的事件做统计（求某接口近5min的失败率来决定是否告警）
+    - 会话窗口
+        - 指定时间长度timeout间隙，也就是一段时间没有收到新数据就会生成新的窗口，类似于web应用的session
+        - 特点；时间无对齐（session间隔定义了非活跃周期的长度）
+> Flink默认的时间窗口是根据process time进行窗口划分的，将Flink获取到的数据根据进入Flink的时间划分到不同的窗口
+
+- CountWindow：按指定数据条数生成一个window，与时间无关
+    - 滚动计数窗口
+    - 滑动计数窗口
+
+
+#### 7.2 Window API
+window()方法
+- 用.window()来定义一个窗口
+- 需要在keyBy之后才能使用
+- Flink还提供了更加简单的timeWindow()和countWindow()方法
+
+
+窗口分配器（Window assigner）
+- window()方法接收的输入参数是一个WindowAssigner
+- WindowAssigner负责将每条输入的数据分发到正确的window中
+- Flink中提供的通用的WindowAssigner
+    - 滚动窗口 tumbling window
+        - timeWindow(Time.seconds(10))
+    - 滑动窗口 sliding window
+        - timeWindow(Time.seconds(10), Time.seconds(5))
+    - 会话窗口 session window
+        - .window(EventTimeSessionWindows.withGap(Time.seconds(10)))
+    - 全局窗口 global window
+    
+    
+窗口函数：
+- 增量聚合函数
+- 全窗口函数
