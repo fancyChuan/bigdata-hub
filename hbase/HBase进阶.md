@@ -52,7 +52,7 @@ hbase.regionserver.optionalcacheflushinterval（默认1小时）
 ```
 - 当WAL文件的数量超过hbase.regionserver.max.logs，region会按照时间顺序依次进行刷写，直到WAL文件数量减小到hbase.regionserver.max.log以下（该属性名已经废弃，现无需手动设置，最大值为32）。
 
-#### 5.StoreFile Compaction
+#### 5.StoreFile Compaction(hfile文件合并)
 ![iamge](images/StoreFile合并.png)
 > 由于Hbase依赖HDFS存储，HDFS只支持追加写。所以，当新增一个单元格的时候，HBase在HDFS上新增一条数据。当修改一个单元格的时候，HBase在HDFS又新增一条数据，只是版本号比之前那个大（或者自定义）。当删除一个单元格的时候，HBase还是新增一条数据！只是这条数据没有value，类型为DELETE，也称为墓碑标记（Tombstone）
 HBase每间隔一段时间都会进行一次合并（Compaction），合并的对象为HFile文件。合并分为两种
