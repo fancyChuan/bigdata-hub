@@ -43,14 +43,13 @@ HBase的优势主要在以下几方面：
 - 内容服务系统
 
 ### 2.Hbase数据模型
-逻辑结构
-
+#### 逻辑结构
 ![逻辑结构](images/HBase逻辑结构.png)
 
-物理存储结构
-
+#### 物理存储结构
 ![image](images/HBase物理存储结构.png)
 
+#### 数据模型
 - **命名空间NameSpace**：类似于关系型数据库的database概念,自带2个命名空间hbase和default。hbase为内置的，而default为用户默认的命名空间
 - **表和区域（Table&Region）**：当表随着记录数不断增加而变大后，会逐渐分裂成多份，成为区域，一个区域是对表的水平划分，不同的区域会被Master分配给相应的RegionServer进行管理
 > HBase定义表时只需要声明列族即可，数据属性，比如超时时间（TTL），压缩算法（COMPRESSION）等，都在列族的定义中定义
@@ -73,16 +72,20 @@ HBase的优势主要在以下几方面：
 基本概念：
 - Master服务器：一般一个集群只有一个，服务维护表结构信息
     - 只负责各种协调工作（很像打杂），比如建表、删表、移动Region、合并等操作。这些操作的共性是都需要跨RegionServer
+    - 对于RegionServer的操作：分配regions到每个RegionServer，监控每个RegionServer的状态，负载均衡和故障转移
 - RegionServer服务器：可以有多个，负责存储数据的地方，保存的表数据直接存在HDFS上（调用了HDFS的客户端接口）
-    - 非常依赖zookeeper，zk管理了所有RegionServer的信息，包括具体的数据段存放在哪个RegionServer上
-    - 客户端每次与HBase连接，都是先跟zk通信，然后再与相应的RegionServer通信
+    - RigionServer对Region的操作：splitRegion、compactRegion
+    - 对数据的操作：get, put, delete
 > HBase很特殊，客户端是直连RegionServer的，也就是master挂了以后还能查询，也可以存储和删除，但是无法新建表
 - Region：一段数据的集合，一个HBase的表一般拥有一个到多个Region
     - Region由一个表的若干行组成！在Region中行的排序按照行键（rowkey）字典排序
     - Region不能跨RegionSever，数据量大的时候，HBase会拆分Region
     - 进行均衡负载的时候，也可能会把Region从一台服务器转到另一台服务器上
     - Region由RegionServer进程管理，一个服务器可以有一个或多个Region
-    
+- Zookeeper
+    - HBase通过Zookeeper来做master的高可用、RegionServer的监控、元数据的入口以及集群配置的维护等工作
+    - 非常依赖zookeeper，zk管理了所有RegionServer的信息，包括具体的数据段存放在哪个RegionServer上
+    - 客户端每次与HBase连接，都是先跟zk通信，然后再与相应的RegionServer通信
 - HBase在列上实现了BigTable论文提到的压缩算法、内存操作和布隆过滤器。
 - HBase的表能够作为MapReduce任务的输入和输出，
 - 可以通过Java API来存取数据，也可以通过REST、Avro或者Thrift的API来访问。
@@ -101,8 +104,55 @@ region  /hbase/data/库名/表名/region名
 ```
 
 
-#### HBase的使用
+### HBase的使用
 > hbase shell不支持中文
+
+启动HBase
+```
+方式1：
+bin/start-hbase.sh
+
+方式2：
+bin/hbase-daemon.sh start master
+bin/hbase-daemon.sh statt regionserver
+```
+#### 表的操作
+##### list
+##### create
+创建表时，需要指定表名和列族名，而且至少需要指定一个列族，没有列族的表是没有任何意义的。
+创建表时，还可以指定表的属性，表的属性需要指定在列族上！
+- 格式1（需要指定列族属性时）
+```
+create '表名', { NAME => '列族名1', 属性名 => 属性值}, {NAME => '列族名2', 属性名 => 属性值}, …
+```
+- 格式2（不需要指定列族属性，可以简写）
+```
+create'表名','列族名1' ,'列族名2', …
+```
+##### desc
+##### disable
+停用表以后，防止对表做维护的时候客户端依然可以持续写入数据到表
+- 删除表前，先停用
+- 对表中的列进行修改的时候，也需要先停用表
+> is_disabled 命令可以判断表是否停用
+##### enable
+- enable ‘表名’用来启用表
+- is_enabled ‘表名’用来判断一个表是否被启用
+- enable_all ‘正则表达式’可以通过正则来过滤表，启用复合条件的表
+
+##### exists
+##### count
+##### drop
+需要先手动disable
+##### truncate
+会自动先disable
+##### get_split
+获取表所对应的Region个数
+##### alter
+
+
+
+#### 数据操作
 ##### scan命令
 scan命令可以按照rowkey的字典顺序来遍历指定的表的数据。
 - scan ‘表名’：默认当前表的所有列族。
@@ -110,6 +160,7 @@ scan命令可以按照rowkey的字典顺序来遍历指定的表的数据。
 - scan '表名', { STARTROW => '起始行键', ENDROW => '结束行键' }：指定rowkey范围。如果不指定，则会从表的开头一直显示到表的结尾。区间为左闭右开。
 - scan '表名', { LIMIT => 行数量}： 指定返回的行的数量
 - scan '表名', {VERSIONS => 版本数}：返回cell的多个版本
+> VERSIONS默认是1，需要通过alter修改后才能保存多个版本的数据
 - scan '表名', { TIMERANGE => [最小时间戳, 最大时间戳]}：指定时间戳范围
 		注意：此区间是一个左闭右开的区间，因此返回的结果包含最小时间戳的记录，但是不包含最大时间戳记录
 - scan '表名', { RAW => true, VERSIONS => 版本数}
@@ -176,4 +227,46 @@ scan 'student', {RAW=>true, VERSIONS=>10}
 ```
 > 每put一次就会在MemStore新增一个版本的数据
 
+
+```
+# 对rowkey=1001的info:age更新两次数据
+hbase(main):011:0> put 'student', '1001', 'info:age', 1
+0 row(s) in 0.0810 seconds
+
+hbase(main):012:0> put 'student', '1001', 'info:age', 2
+0 row(s) in 0.0100 seconds
+# 只能查到最新version的内容
+hbase(main):013:0> get 'student', '1001'
+COLUMN         CELL                                   
+ info:age      timestamp=1628583509482, value=2       
+ info:name     timestamp=1621056641969, value=boy     
+1 row(s) in 0.0190 seconds
+# 查看3个版本的内容
+hbase(main):041:0> get 'student', '1001', {COLUMN=>'info:age',VERSIONS=>3}
+COLUMN         CELL                                   
+ info:age      timestamp=1628583509482, value=2       
+ info:age      timestamp=1628583506150, value=1       
+ info:age      timestamp=1621086119700, value=88      
+1 row(s) in 0.0020 seconds
+
+# 将数据删除后，会打上标识 type=DeleteColumn
+hbase(main):043:0> delete 'student', '1001','info:age'
+0 row(s) in 0.0180 seconds
+
+hbase(main):047:0> scan 'student', {LIMIT=>2, RAW=>true, VERSIONS=>3}
+ROW            COLUMN+CELL                            
+ 1001          column=info:age, timestamp=162858401661
+               4, type=DeleteColumn                   
+ 1001          column=info:age, timestamp=162858350948
+               2, value=2                             
+ 1001          column=info:age, timestamp=162858350615
+               0, value=1                             
+ 1001          column=info:age, timestamp=162108611970
+               0, value=88                            
+ 1001          column=info:name, timestamp=16210566419
+               69, value=boy                          
+ 1002          column=info:name, timestamp=16210567151
+               60, value=fancy                        
+2 row(s) in 0.0070 seconds
+```
 
