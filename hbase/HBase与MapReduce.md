@@ -39,7 +39,7 @@ hdfs dfs -put fruit.tsv /forlearn/
 # 执行MR
 cd /usr/local/hbase
 yarn jar lib/hbase-server-1.3.1.jar importtsv -Dimporttsv.columns=HBASE_ROW_KEY,info:name,info:color fruit hdfs://hadoop101:8020/forlearn/fruit.tsv
-```
+``` 
 
 
 #### 自定义HBase-MapReduce
