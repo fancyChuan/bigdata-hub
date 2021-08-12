@@ -78,3 +78,5 @@ Valid program names are:
 
 
 #### 自定义HBase-MapReduce
+目标：将fruit表中的一部分数据，通过MR迁入fruit_mr表中
+
