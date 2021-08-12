@@ -144,7 +144,7 @@ window()方法
     - 全局窗口 global window
     
     
-窗口函数：
+窗口函数：对窗口收集的数据所做的计算操作
 - 增量聚合函数
     - 每条数据到来就进行计算，保持一个简单的状态
     - ReduceFunction, AggregateFunction
