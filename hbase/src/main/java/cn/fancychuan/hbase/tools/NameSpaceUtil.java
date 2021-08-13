@@ -27,44 +27,88 @@ import java.util.List;
  */
 public class NameSpaceUtil {
 
-    // 1.查询所有名称空间
+    /**
+     * 1.查询所有名称空间
+     */
     public static List<String> listNameSpace(Connection connection) throws IOException {
-        ArrayList<String> nss = new ArrayList<>();
-
         Admin admin = connection.getAdmin();
+
+        ArrayList<String> nss = new ArrayList<>();
         NamespaceDescriptor[] namespaceDescriptors = admin.listNamespaceDescriptors();
         for (NamespaceDescriptor namespaceDescriptor : namespaceDescriptors) {
             String name = namespaceDescriptor.getName();
             nss.add(name);
         }
+        admin.close();
         return nss;
     }
 
+    /**
+     * 2. 判断命名空间是否存在
+     *      通过getNamespaceDescriptor来看是否拿得到
+     */
+    public static boolean ifNameSpaceExists(Connection connection, String name) throws IOException {
+        // 合法性校验
+        if (StringUtils.isBlank(name)) {
+            System.out.println("请输入正常的库名");
+            return false;
+        }
+        // 提供一个admin对象
+        Admin admin = connection.getAdmin();
+        try {
+            // 如果找不到会抛异常
+            admin.getNamespaceDescriptor(name);
+            return true;
+        } catch (IOException e) {
+            System.out.println("不存在该库名");
+        } finally {
+            admin.close();
+        }
+        return false;
+    }
 
-    public static void main(String[] args) throws IOException {
-        Connection connection = ConnectionFactory.createConnection();
+    /**
+     * 3. 创建库
+     */
+    public static boolean createNameSpace(Connection connection, String name) throws IOException {
         Admin admin = connection.getAdmin();
 
-        // 1.查询所有名称空间
-        NamespaceDescriptor[] namespaces = admin.listNamespaceDescriptors();
-        for (NamespaceDescriptor namespace : namespaces) {
-            System.out.println(namespace.getName());
-        }
-        // 2.判断库是存在，通过getNamespaceDescriptor来看是否拿得到
+        NamespaceDescriptor descriptor = NamespaceDescriptor.create(name).build();
         try {
-            admin.getNamespaceDescriptor("test");
+            admin.createNamespace(descriptor);
+            System.out.println("命名空间创建成功");
+            return true;
         } catch (IOException e) {
-            System.out.println("命名空间不存在");
+            e.printStackTrace();
+        } finally {
+            admin.close();
         }
-        // 3. 创建库
-        admin.createNamespace(NamespaceDescriptor.create("test").build());
+        return false;
+    }
 
-        // 4. 删除库：只能删除空表，不为空无法删除
-        admin.deleteNamespace("test");
+    /**
+     * 4. 删除库：只能删除空表，不为空无法删除
+     */
+    public static boolean deleteNameSpace(Connection connection, String name) throws IOException {
+        // 合法性校验
+        if (StringUtils.isBlank(name)) {
+            System.out.println("请输入正常的库名");
+            return false;
+        }
+        Admin admin = connection.getAdmin();
+        // 先查看该命名空间下是否存在表
+        List<String> tablesInNameSpace = getTablesInNameSpace(connection, name);
+        if (tablesInNameSpace.size() == 0) {
+            admin.deleteNamespace(name);
+            System.out.println("删除命名空间成功");
+            admin.close();
+            return true;
+        } else {
+            System.out.println(name + "命名空间非空，删除失败");
+            admin.close();
+            return false;
+        }
 
-        // admin的创建是轻量级的，及时关闭
-        admin.close();
-        connection.close();
     }
 
     // 查询库下有哪些表

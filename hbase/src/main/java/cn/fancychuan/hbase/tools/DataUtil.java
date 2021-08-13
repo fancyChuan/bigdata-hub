@@ -32,10 +32,10 @@ public class DataUtil {
         ResultScanner resultScanner = table.getScanner(scan);
         for (Result result : resultScanner) {
             for (Cell cell : result.rawCells()) {
-                System.out.println("行健rowkey：" + CellUtil.cloneRow(cell));
-                System.out.println("列族： " + CellUtil.cloneFamily(cell));
-                System.out.println("列： " + CellUtil.cloneQualifier(cell));
-                System.out.println("值： " + CellUtil.cloneValue(cell));
+                System.out.println("行健rowkey：" + new String(CellUtil.cloneRow(cell)));
+                System.out.println("列族： " + new String(CellUtil.cloneFamily(cell)));
+                System.out.println("列： " + new String(CellUtil.cloneQualifier(cell)));
+                System.out.println("值： " + new String(CellUtil.cloneValue(cell)));
                 System.out.println("--------------");
             }
         }
