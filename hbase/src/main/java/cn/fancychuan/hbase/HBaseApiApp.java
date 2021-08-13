@@ -1,6 +1,8 @@
 package cn.fancychuan.hbase;
 
 import cn.fancychuan.hbase.tools.ConnectUtil;
+import cn.fancychuan.hbase.tools.DataUtil;
+import cn.fancychuan.hbase.tools.NameSpaceUtil;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,5 +20,16 @@ public class HBaseApiApp {
         System.out.println(ConnectUtil.getConnection2());
         System.out.println(ConnectUtil.getConnection2());
 
+    }
+
+    @Test
+    public void testListNameSpace() throws IOException {
+        System.out.println(NameSpaceUtil.listNameSpace(ConnectUtil.getConnection()));
+    }
+
+
+    @Test
+    public void testGetAllRows() throws IOException {
+        DataUtil.getAllRows("student");
     }
 }

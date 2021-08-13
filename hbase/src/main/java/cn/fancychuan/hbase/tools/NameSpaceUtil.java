@@ -7,6 +7,8 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 命名空间相关操作
@@ -21,8 +23,23 @@ import java.io.IOException;
  *      - Connection的生命周期是用户自己控制的
  *
  *  3.从Connection对象中可以获取Table和Admin对象实例。这两种对象的创建是轻量级的，但不是线程安全的，因此不建议池化或者缓存
+ *      也就是说，Table和Admin对象要用的生活再实例化，实例化后直接销毁
  */
 public class NameSpaceUtil {
+
+    // 1.查询所有名称空间
+    public static List<String> listNameSpace(Connection connection) throws IOException {
+        ArrayList<String> nss = new ArrayList<>();
+
+        Admin admin = connection.getAdmin();
+        NamespaceDescriptor[] namespaceDescriptors = admin.listNamespaceDescriptors();
+        for (NamespaceDescriptor namespaceDescriptor : namespaceDescriptors) {
+            String name = namespaceDescriptor.getName();
+            nss.add(name);
+        }
+        return nss;
+    }
+
 
     public static void main(String[] args) throws IOException {
         Connection connection = ConnectionFactory.createConnection();
@@ -48,5 +65,13 @@ public class NameSpaceUtil {
         // admin的创建是轻量级的，及时关闭
         admin.close();
         connection.close();
+    }
+
+    // 查询库下有哪些表
+    public static List<String> getTablesInNameSpace(Connection conn, String nsName) throws IOException {
+        ArrayList<String> tables = new ArrayList<>();
+        Admin admin = conn.getAdmin();
+
+        return tables;
     }
 }

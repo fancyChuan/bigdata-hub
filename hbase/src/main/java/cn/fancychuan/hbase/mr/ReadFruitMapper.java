@@ -7,6 +7,7 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.NullWritable;
 
 import java.io.IOException;
 
@@ -22,8 +23,12 @@ import java.io.IOException;
  *      在Mapper中，数据如果需要排序，必须作为key，否则可以作为value
  */
 public class ReadFruitMapper extends TableMapper<ImmutableBytesWritable, Put> {
+    // 如果map的输出key或者value为空，那么就用NullWritable
+    private NullWritable outKey = NullWritable.get();
+
     @Override
     protected void map(ImmutableBytesWritable key, Result value, Context context) throws IOException, InterruptedException {
+        // key.get() 等价于 key.copyBytes()
         Put put = new Put(key.get());
         Cell[] cells = value.rawCells();
         for (Cell cell : cells) {

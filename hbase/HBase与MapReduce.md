@@ -80,3 +80,7 @@ Valid program names are:
 #### 自定义HBase-MapReduce
 目标：将fruit表中的一部分数据，通过MR迁入fruit_mr表中
 
+参见：[ReadFruitMapper.java](src/main/java/cn/fancychuan/hbase/mr/ReadFruitMapper.java)
+
+经验：
+- 在Mapper中，数据如果需要排序，必须作为key，否则可以作为value
