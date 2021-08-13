@@ -1,10 +1,10 @@
 package cn.fancychuan.hbase.tools;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.NamespaceDescriptor;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class NameSpaceUtil {
         }
         Admin admin = connection.getAdmin();
         // 先查看该命名空间下是否存在表
-        List<String> tablesInNameSpace = getTablesInNameSpace(connection, name);
+        List<String> tablesInNameSpace = listTablesByNameSpace(connection, name);
         if (tablesInNameSpace.size() == 0) {
             admin.deleteNamespace(name);
             System.out.println("删除命名空间成功");
@@ -111,11 +111,13 @@ public class NameSpaceUtil {
 
     }
 
-    // 查询库下有哪些表
-    public static List<String> getTablesInNameSpace(Connection conn, String nsName) throws IOException {
+    // 查询库下有哪些表 todo:加了库名好像不生效？
+    public static List<String> listTablesByNameSpace(Connection conn, String nsName) throws IOException {
         ArrayList<String> tables = new ArrayList<>();
         Admin admin = conn.getAdmin();
-
+        for (HTableDescriptor hTableDescriptor : admin.listTableDescriptorsByNamespace(nsName)) {
+            tables.add(hTableDescriptor.getNameAsString());
+        }
         return tables;
     }
 }

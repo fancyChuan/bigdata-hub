@@ -3,6 +3,7 @@ package cn.fancychuan.hbase;
 import cn.fancychuan.hbase.tools.ConnectUtil;
 import cn.fancychuan.hbase.tools.DataUtil;
 import cn.fancychuan.hbase.tools.NameSpaceUtil;
+import cn.fancychuan.hbase.tools.TableUtil;
 import org.apache.hadoop.hbase.client.Connection;
 import org.junit.After;
 import org.junit.Before;
@@ -34,11 +35,11 @@ public class HBaseApiApp {
 
     }
 
+    // ================== 测试命名空间的相关操作 ==================
     @Test
     public void testListNameSpace() throws IOException {
         System.out.println(NameSpaceUtil.listNameSpace(connection));
     }
-
     @Test
     public void testifNameSpaceExists() throws IOException {
         System.out.println(NameSpaceUtil.ifNameSpaceExists(connection, ""));
@@ -51,6 +52,28 @@ public class HBaseApiApp {
         System.out.println(NameSpaceUtil.listNameSpace(connection));
     }
 
+    @Test
+    public void testDeleteNameSpace() throws IOException {
+        System.out.println(NameSpaceUtil.deleteNameSpace(connection, "hbase_test"));
+        System.out.println(NameSpaceUtil.listNameSpace(connection));
+    }
+    // ================== 测试表的相关操作 ==================
+    @Test
+    public void testIfTableExist() throws IOException {
+        System.out.println(TableUtil.ifTableExist(connection, "student", "default"));
+        System.out.println(TableUtil.ifTableExist(connection, "student", "hbase"));
+    }
+    @Test
+    public void testCreateTable() throws IOException {
+        System.out.println(TableUtil.createTable(connection, "default", "tablex", "infox"));
+        System.out.println(NameSpaceUtil.listTablesByNameSpace(connection, "default"));
+    }
+    @Test
+    public void testDropTable() throws IOException {
+        System.out.println(TableUtil.dropTable(connection, "tablex", "default"));
+        System.out.println(NameSpaceUtil.listTablesByNameSpace(connection, "default"));
+    }
+
 
     @Test
     public void testGetAllRows() throws IOException {
@@ -59,9 +82,5 @@ public class HBaseApiApp {
 
 
 
-    @Test
-    public void testDeleteNameSpace() throws IOException {
-        System.out.println(NameSpaceUtil.deleteNameSpace(connection, "hbase_test"));
-        System.out.println(NameSpaceUtil.listNameSpace(connection));
-    }
+
 }

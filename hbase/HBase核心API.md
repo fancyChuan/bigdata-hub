@@ -10,3 +10,14 @@
 - Connection的实例化是重量级的，而Table和Admin对象的创建是轻量级的
 
 > 注意：一个客户端只需要实例化一个连接，并不意味着是单例模式。也就是说，在客户端如果实例化两次，会创建两个Connection对象出来
+
+#### TableName
+- 不可变的POJO类
+- 这个类存在的目的是为了缓存，以免创建太多
+- 通过valueOf()来返回TableName对象
+
+#### HTableDescriptor：表的描述，还包含表中列族的描述
+#### HColumnDescriptor：列族描述
+
+#### 代码示例
+- 命名空间相关操作：[NameSpaceUtil.java](src/main/java/cn/fancychuan/hbase/tools/NameSpaceUtil.java)
