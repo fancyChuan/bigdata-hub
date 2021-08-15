@@ -74,12 +74,22 @@ public class HBaseApiApp {
         System.out.println(NameSpaceUtil.listTablesByNameSpace(connection, "default"));
     }
 
-
+    // ================== 测试数据的相关操作 ==================
+    @Test
+    public void testPut() throws IOException {
+        DataUtil.insertRowData(connection, "default", "tablex", "1001x", "infox", "namex", "hbase");
+        DataUtil.insertRowData(connection, "default", "tablex", "1002x", "infox", "namex", "hbase");
+        DataUtil.insertRowData(connection, "default", "tablex", "1003x", "infox", "namex", "hbase");
+        DataUtil.getAllRows("tablex");
+    }
     @Test
     public void testGetAllRows() throws IOException {
         DataUtil.getAllRows("student");
     }
-
+    @Test
+    public void testGetRow() throws IOException {
+        DataUtil.getRow(connection, "default", "tablex", "1001x");
+    }
 
 
 
