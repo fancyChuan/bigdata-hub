@@ -18,6 +18,17 @@
 
 #### HTableDescriptor：表的描述，还包含表中列族的描述
 #### HColumnDescriptor：列族描述
+#### NameSpaceDescriptor：名称空间的定义和描述
+#### Put：对单行数据执行put操作的对象，在这个对象中可以对表中的列族进行设置
+#### Get：对单行数据执行get操作的对象，在get对象中可以定义每次查询的参数
+#### Result：单行返回的结果集，包含若干的cell
+#### Delete
+#### Scan
 
-#### 代码示例
+#### 工具类 CellUtil
+- CellUtil.cloneXxx()
+- CellUtil.toXxx()
+
+
+### 代码示例
 - 命名空间相关操作：[NameSpaceUtil.java](src/main/java/cn/fancychuan/hbase/tools/NameSpaceUtil.java)

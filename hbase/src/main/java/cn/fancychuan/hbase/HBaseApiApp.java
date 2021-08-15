@@ -80,17 +80,21 @@ public class HBaseApiApp {
         DataUtil.insertRowData(connection, "default", "tablex", "1001x", "infox", "namex", "hbase");
         DataUtil.insertRowData(connection, "default", "tablex", "1002x", "infox", "namex", "hbase");
         DataUtil.insertRowData(connection, "default", "tablex", "1003x", "infox", "namex", "hbase");
-        DataUtil.getAllRows("tablex");
+        DataUtil.scanAllRows(connection,"default", "tablex");
     }
     @Test
     public void testGetAllRows() throws IOException {
-        DataUtil.getAllRows("student");
+        DataUtil.scanAllRows(connection,"default", "tablex");
     }
     @Test
     public void testGetRow() throws IOException {
         DataUtil.getRow(connection, "default", "tablex", "1001x");
     }
-
+    @Test
+    public void testDeleteRow() throws IOException {
+        DataUtil.delete(connection, "default", "tablex", "1003x");
+        DataUtil.scanAllRows(connection,"default", "tablex");
+    }
 
 
 }

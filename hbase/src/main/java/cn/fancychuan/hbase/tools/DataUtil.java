@@ -22,7 +22,7 @@ import java.util.Arrays;
  */
 public class DataUtil {
 
-    public static Table getTable(Connection connection, String name, String nameSpace) throws IOException {
+    public static Table getTable(Connection connection, String nameSpace, String name) throws IOException {
         TableName tableName = TableUtil.checkTableName(name, nameSpace);
         if (tableName == null) {
             return null;
@@ -30,9 +30,12 @@ public class DataUtil {
         return connection.getTable(tableName);
     }
 
+    /**
+     * 使用put来插入数据
+     */
     public static void insertRowData(Connection connection, String nameSpace, String tname,
                                      String rowKey, String columnFamily, String column, String value) throws IOException {
-        Table table = getTable(connection, tname, nameSpace);
+        Table table = getTable(connection, nameSpace, tname);
         if (table == null) {
             return;
         }
@@ -48,29 +51,40 @@ public class DataUtil {
 
     }
 
-    // 获取所有数据
-    public static void getAllRows(String tableName) throws IOException {
+    /**
+     * 使用scan来获取所有的数据
+     */
+    public static void scanAllRows(Connection connection, String nameSpace, String tname) throws IOException {
+        Table table = getTable(connection, nameSpace, tname);
+        if (table == null) {
+            return ;
+        }
         // 获取用于扫描region的对象
         Scan scan = new Scan();
-        TableName tableName1 = TableName.valueOf(tableName);
-        Connection connection = ConnectUtil.getConnection();
-        Table table = connection.getTable(tableName1);
+        // 设置扫描的起始行
+        // scan.setStartRow(startRow);
+        // scan.setStartRow()
 
+        // 结果集扫描器
         ResultScanner resultScanner = table.getScanner(scan);
         for (Result result : resultScanner) {
-            for (Cell cell : result.rawCells()) {
-                System.out.println("行健rowkey：" + new String(CellUtil.cloneRow(cell)));
-                System.out.println("列族： " + new String(CellUtil.cloneFamily(cell)));
-                System.out.println("列： " + new String(CellUtil.cloneQualifier(cell)));
-                System.out.println("值： " + new String(CellUtil.cloneValue(cell)));
-                System.out.println("--------------");
-            }
+            parseResult(result);
+//            for (Cell cell : result.rawCells()) {
+//                System.out.println("行健rowkey：" + new String(CellUtil.cloneRow(cell)));
+//                System.out.println("列族： " + new String(CellUtil.cloneFamily(cell)));
+//                System.out.println("列： " + new String(CellUtil.cloneQualifier(cell)));
+//                System.out.println("值： " + new String(CellUtil.cloneValue(cell)));
+//                System.out.println("--------------");
+//            }
         }
+        table.close();
     }
 
-    // 获取某一行数据
+    /**
+     * 使用get方法获取某一行数据
+     */
     public static Result getRow(Connection connection, String nameSpace, String tname, String rowKey) throws IOException {
-        Table table = getTable(connection, tname, nameSpace);
+        Table table = getTable(connection, nameSpace, tname);
         if (table == null) {
             return null;
         }
@@ -87,6 +101,7 @@ public class DataUtil {
         Result result = table.get(get);
         System.out.println(result);
         parseResult(result);
+        table.close();
         return result;
     }
 
@@ -95,12 +110,39 @@ public class DataUtil {
 
     }
 
+    /**
+     * 使用delete来删除指定行
+     *      delete.addColumn()  删除某个具体列时，具体行为是：为该列的最新cell添加一条type=Delete的标识，
+     *                          只能删除最新的一条记录，如果有历史版本的记录，则不会删除
+     *      delete.addColumns() 具体行为是：直接新增一条type=DeleteColumn的记录，表示所有版本的记录都会被删除
+     */
+    public static void delete(Connection connection, String nameSpace, String tname, String rowKey) throws IOException {
+        Table table = getTable(connection, nameSpace, tname);
+        if (table == null) {
+            return ;
+        }
+
+        Delete delete = new Delete(Bytes.toBytes(rowKey));
+        // 不添加column的时候，表示删除所有列.
+        // 指定要删除的列名，只会删除最新version的记录，不会删除所有
+        // delete.addColumn(columnFamily, column);
+        // 删除指定列的所有版本的记录
+        // delete.addColumns(columnFamily, column);
+        // 删除整个列族
+        // delete.addFamily()
+
+        table.delete(delete);
+        table.close();
+    }
+
     // 将hbase的数据打印查询
     public static void parseResult(Result result) {
         if (result != null) {
             Cell[] cells = result.rawCells();
             for (Cell cell : cells) {
-                System.out.println("列族：" + new String(CellUtil.cloneFamily(cell)) +
+                // 两种方式将byte[]转为string
+                System.out.println("rowkey： " + new String(CellUtil.cloneRow(cell)) +
+                        "   列族：" + new String(CellUtil.cloneFamily(cell)) +
                         "   列名： " + Bytes.toString(CellUtil.cloneQualifier(cell)) +
                         "   值： " + Bytes.toString(CellUtil.cloneValue(cell)));
             }
