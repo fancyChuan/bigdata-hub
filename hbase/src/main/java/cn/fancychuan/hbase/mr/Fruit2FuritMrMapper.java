@@ -22,7 +22,7 @@ import java.io.IOException;
  *  4. 输出的数据应该是一个put对象
  *      在Mapper中，数据如果需要排序，必须作为key，否则可以作为value
  */
-public class ReadFruitMapper extends TableMapper<ImmutableBytesWritable, Put> {
+public class Fruit2FuritMrMapper extends TableMapper<ImmutableBytesWritable, Put> {
     // 如果map的输出key或者value为空，那么就用NullWritable
     private NullWritable outKey = NullWritable.get();
 
@@ -33,6 +33,7 @@ public class ReadFruitMapper extends TableMapper<ImmutableBytesWritable, Put> {
         Cell[] cells = value.rawCells();
         for (Cell cell : cells) {
             if("info".equals(Bytes.toString(CellUtil.cloneFamily(cell)))) {
+                // 取name和color列，优先取name，没有的情况下取color
                 if("name".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
                     put.add(cell);
                 } else if("color".equals(Bytes.toString(CellUtil.cloneFamily(cell)))) {
