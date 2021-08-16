@@ -7,6 +7,7 @@ import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -45,10 +46,6 @@ public class DataUtil {
 
         table.put(put);
         table.close();
-    }
-
-    public static void deleteMultiRow(String tableName, String... rows) {
-
     }
 
     /**
@@ -106,8 +103,19 @@ public class DataUtil {
     }
 
     // 获取某一行指定“列族：列”的数据
-    public static void getRowQualifier(String tableName, String rowKey, String family, String qualifier) {
+    public static Result getRowQualifier(Connection connection, String nameSpace, String tname,
+                                       String rowKey, String columnFamily, String column) throws IOException {
+        Table table = getTable(connection, nameSpace, tname);
+        if (table == null) {
+            return null;
+        }
+        Get get = new Get(Bytes.toBytes(rowKey));
+        get.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(column));
+        Result result = table.get(get);
+        parseResult(result);
+        table.close();
 
+        return result;
     }
 
     /**
@@ -132,6 +140,23 @@ public class DataUtil {
         // delete.addFamily()
 
         table.delete(delete);
+        table.close();
+    }
+
+    /**
+     * 使用delete来删除多行数据
+     */
+    public static void deleteMultiRow(Connection connection, String nameSpace, String tname, String... rowKeys) throws IOException {
+        Table table = getTable(connection, nameSpace, tname);
+        if (table == null) {
+            return ;
+        }
+        ArrayList<Delete> deleteList = new ArrayList<>();
+        for (String rowKey : rowKeys) {
+            Delete delete = new Delete(Bytes.toBytes(rowKey));
+            deleteList.add(delete);
+        }
+        table.delete(deleteList);
         table.close();
     }
 
