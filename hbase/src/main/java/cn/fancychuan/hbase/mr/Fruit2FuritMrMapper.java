@@ -21,6 +21,8 @@ import java.io.IOException;
  *      TableMapper<KEYOUT, VALUEOUT> extends Mapper<ImmutableBytesWritable, Result, KEYOUT, VALUEOUT>
  *  4. 输出的数据应该是一个put对象
  *      在Mapper中，数据如果需要排序，必须作为key，否则可以作为value
+ *  5. 如果Mapper输出的value是put类型，会自动设置Combiner
+ *      无法避免设置combiner时，可以让Combiner的逻辑无法执行：保证输出的key不能相等
  */
 public class Fruit2FuritMrMapper extends TableMapper<ImmutableBytesWritable, Put> {
     // 如果map的输出key或者value为空，那么就用NullWritable

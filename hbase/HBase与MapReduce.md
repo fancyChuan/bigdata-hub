@@ -77,10 +77,22 @@ Valid program names are:
 ```
 
 
-#### 自定义HBase-MapReduce
+#### 自定义HBase-MapReduce：示例1
 目标：将fruit表中的一部分数据，通过MR迁入fruit_mr表中
 
-参见：[ReadFruitMapper.java](src/main/java/cn/fancychuan/hbase/mr/ReadFruitMapper.java)
+参见：
+- Mapper：[Fruit2FuritMrMapper.java](src/main/java/cn/fancychuan/hbase/mr/Fruit2FuritMrMapper.java)
+- Reduer：[Fruit2FuritMrReducer.java](src/main/java/cn/fancychuan/hbase/mr/Fruit2FuritMrReducer.java)
+- Driver：[Fruit2FuritMrApp.java](src/main/java/cn/fancychuan/hbase/mr/Fruit2FuritMrApp.java)
+
+#### 自定义HBase-MapReduce：示例2
+目标：实现将HDFS中的数据写入HBase表中
+
+参见：
+- Mapper：[Hdfs2HbaseMapper.java](src/main/java/cn/fancychuan/hbase/mr/Hdfs2HbaseMapper.java)
+- Reduer：[Hdfs2HbaseReducer.java](src/main/java/cn/fancychuan/hbase/mr/Hdfs2HbaseReducer.java)
+- Driver：[Hdfs2HbaseApp.java](src/main/java/cn/fancychuan/hbase/mr/Hdfs2HbaseApp.java)
+
 
 经验：
 - 在Mapper中，数据如果需要排序，必须作为key，否则可以作为value
