@@ -69,3 +69,86 @@ id varchar primary key,
     - 使用create table创建的关联表，如果对表进行了修改，源数据也会改变，同时如果关联表被删除，源表也会被删除。但是视图就不会，如果删除视图，源数据不会发生改变
 
 #### 二级索引
+HBase 里面只有 rowkey 作为一级索引， 如果要对库里的非 rowkey 字段进行数据检索和查询， 往往要通过 MapReduce/Spark 等分布式计算框架进行，硬件资源消耗和时间延迟都会比较高
+
+从 0.94 版本开始, HBase 开始支持二级索引.
+- 全局索引：创建后在hbase中会生成一个表专门储存索引
+    - 适合多读少写的场景。因为每次写操作，不仅需要更新数据，还需要更新索引
+    - 网络开销大，家中RegionServer的压力
+- 本地索引：创建后在原表中新增一个列族，在列族储存索引信息
+    - 使用多写少读的场景
+```
+# 全局索引
+create index idx_name on user_1(name);
+drop index idx_name on user_1;
+# 本地索引
+create local index idx_addr on user_1(addr);
+```
+
+
+案例测试：
+- 准备数据
+```
+create table user_1(id varchar primary key, name varchar, addr varchar)
+
+upsert into user_1 values ('1', 'zs', 'beijing');
+upsert into user_1 values ('2', 'lisi', 'shanghai');
+upsert into user_1 values ('3', 'ww', 'sz');
+```
+- 查看查询是否索引
+```
+0: jdbc:phoenix:hadoop101:2181> explain select * from user_1 where id='1';
++-----------------------------------------------------------------------------------------------+-----------------+----------------+------+
+|                                             PLAN                                              | EST_BYTES_READ  | EST_ROWS_READ  | EST_ |
++-----------------------------------------------------------------------------------------------+-----------------+----------------+------+
+| CLIENT 1-CHUNK 1 ROWS 205 BYTES PARALLEL 1-WAY ROUND ROBIN POINT LOOKUP ON 1 KEY OVER USER_1  | 205             | 1              | 0    |
++-----------------------------------------------------------------------------------------------+-----------------+----------------+------+
+1 row selected (0.052 seconds)
+0: jdbc:phoenix:hadoop101:2181> explain select * from user_1 where name='1';
++------------------------------------------------------------------+-----------------+----------------+--------------+
+|                               PLAN                               | EST_BYTES_READ  | EST_ROWS_READ  | EST_INFO_TS  |
++------------------------------------------------------------------+-----------------+----------------+--------------+
+| CLIENT 1-CHUNK PARALLEL 1-WAY ROUND ROBIN FULL SCAN OVER USER_1  | null            | null           | null         |
+|     SERVER FILTER BY NAME = '1'                                  | null            | null           | null         |
++------------------------------------------------------------------+-----------------+----------------+--------------+
+2 rows selected (0.033 seconds)
+```
+> 出现full scan表示全部列扫描，没有使用上索引
+- 创建索引
+```
+0: jdbc:phoenix:hadoop101:2181> create index idx_name on user_1(name);
+3 rows affected (6.366 seconds)
+0: jdbc:phoenix:hadoop101:2181> explain select * from user_1 where name='1';
++------------------------------------------------------------------+-----------------+----------------+--------------+
+|                               PLAN                               | EST_BYTES_READ  | EST_ROWS_READ  | EST_INFO_TS  |
++------------------------------------------------------------------+-----------------+----------------+--------------+
+| CLIENT 1-CHUNK PARALLEL 1-WAY ROUND ROBIN FULL SCAN OVER USER_1  | null            | null           | null         |
+|     SERVER FILTER BY NAME = '1'                                  | null            | null           | null         |
++------------------------------------------------------------------+-----------------+----------------+--------------+
+2 rows selected (0.056 seconds)
+0: jdbc:phoenix:hadoop101:2181> explain select name,addr from user_1 where name='1';
++------------------------------------------------------------------+-----------------+----------------+--------------+
+|                               PLAN                               | EST_BYTES_READ  | EST_ROWS_READ  | EST_INFO_TS  |
++------------------------------------------------------------------+-----------------+----------------+--------------+
+| CLIENT 1-CHUNK PARALLEL 1-WAY ROUND ROBIN FULL SCAN OVER USER_1  | null            | null           | null         |
+|     SERVER FILTER BY NAME = '1'                                  | null            | null           | null         |
++------------------------------------------------------------------+-----------------+----------------+--------------+
+2 rows selected (0.049 seconds)
+0: jdbc:phoenix:hadoop101:2181> explain select name from user_1 where name='1';
++---------------------------------------------------------------------------+-----------------+----------------+--------------+
+|                                   PLAN                                    | EST_BYTES_READ  | EST_ROWS_READ  | EST_INFO_TS  |
++---------------------------------------------------------------------------+-----------------+----------------+--------------+
+| CLIENT 1-CHUNK PARALLEL 1-WAY ROUND ROBIN RANGE SCAN OVER IDX_NAME ['1']  | null            | null           | null         |
+|     SERVER FILTER BY FIRST KEY ONLY                                       | null            | null           | null         |
++---------------------------------------------------------------------------+-----------------+----------------+--------------+
+2 rows selected (0.049 seconds)
+0: jdbc:phoenix:hadoop101:2181> explain select id,name from user_1 where name='1';
++---------------------------------------------------------------------------+-----------------+----------------+--------------+
+|                                   PLAN                                    | EST_BYTES_READ  | EST_ROWS_READ  | EST_INFO_TS  |
++---------------------------------------------------------------------------+-----------------+----------------+--------------+
+| CLIENT 1-CHUNK PARALLEL 1-WAY ROUND ROBIN RANGE SCAN OVER IDX_NAME ['1']  | null            | null           | null         |
+|     SERVER FILTER BY FIRST KEY ONLY                                       | null            | null           | null         |
++---------------------------------------------------------------------------+-----------------+----------------+--------------+
+2 rows selected (0.038 seconds)
+```
+> 可以发现如果select中出现没有加索引的的字段，那么就会full scan

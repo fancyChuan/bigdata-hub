@@ -25,13 +25,13 @@
         <name>hbase.rootdir</name>
         <value>hdfs://hadoop101:8020/hbase</value>
     </property>
-    <!-- 以分布式的方式启动hbase，默认是单机模式 -->
+
     <property>
         <name>hbase.cluster.distributed</name>
         <value>true</value>
     </property>
 
-    <!-- 0.98后的新变动，之前的版本默认端口为60000，现在为16000 -->
+    <!-- 0.98后的新变动，之前版本没有.port,默认端口为60000 -->
     <property>
         <name>hbase.master.port</name>
         <value>16000</value>
@@ -46,4 +46,34 @@
         <name>hbase.zookeeper.property.dataDir</name>
         <value>/data/zookeeper/zkData</value>
     </property>
+
+    <!-- phoenix regionserver 配置参数 -->
+    <property>
+        <name>hbase.regionserver.wal.codec</name>
+        <value>org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec</value>
+    </property>
+
+    <property>
+        <name>hbase.region.server.rpc.scheduler.factory.class</name>
+        <value>org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory</value>
+        <description>Factory to create the Phoenix RPC Scheduler that uses separate queues for index and metadata updates</description>
+    </property>
+
+    <property>
+        <name>hbase.rpc.controllerfactory.class</name>
+        <value>org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory</value>
+        <description>Factory to create the Phoenix RPC Scheduler that uses separate queues for index and metadata updates</description>
+    </property>
+
+    <!-- phoenix master 配置参数 -->
+    <property>
+        <name>hbase.master.loadbalancer.class</name>
+        <value>org.apache.phoenix.hbase.index.balancer.IndexLoadBalancer</value>
+    </property>
+
+    <property>
+        <name>hbase.coprocessor.master.classes</name>
+        <value>org.apache.phoenix.hbase.index.master.IndexMasterObserver</value>
+    </property>
+
 </configuration>
