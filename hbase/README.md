@@ -191,6 +191,8 @@ get是一种特殊的scan命令，支持scan的大部分属性，如COLUMNS，TI
 
 - 列族的VERSIONS：表示数据从MemStore刷新到StoreFile的时候最多保留多少个版本。如下所示，student的info列族的VERSIONS就是1
 ```
+hbase(main):006:0> create 'student','info','allinfo'
+0 row(s) in 1.2330 seconds
 hbase(main):108:0> describe 'student'
 Table student is ENABLED                                                                                                                                                                  
 student                                                                                                                                                                                   
