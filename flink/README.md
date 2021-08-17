@@ -135,11 +135,35 @@ Yarn模式任务提交流程
 > 任务并行 —— 同一时间，不同的slot在执行不同的任务
 
 
-
+#### 时间语义与watermark
 时间语义
 - Event Time：事件创建的时间
 - Ingestion Time：数据进入Flink的时间
 - Process Time： 执行操作算子的本地时间，与机器相关
+> Flink默认是使用process time时间
+
+EventTime的引入
+```
+env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
+```
+
+Watermark
+> 
+- Watermark是一种衡量event time进展的机制
+- 用于处理乱序事件的，通常用watermark机制结合window实现
+- 数据流中的Watermark用于表示timestamp小鱼Watermark的数据都已经到达，因此window的执行也是由Watermark触发
+- Watermark可以理解为一个延迟触发机制，
+- Watermark用来让程序自己平衡延迟和结果正确性
+
+
+watermark的特点：
+- watermark是一条特殊的数据记录（继承StreamElement）
+- watermark必须是单调递增，以确保任务的EventTime时钟在向前推进
+- watermark与数据的时间戳相关
+
+watermark的传递
+
+
 
 
 #### Flink应用
