@@ -31,4 +31,9 @@
         <name>yarn.log-aggregation.retain-seconds</name>
         <value>640800</value>
     </property>
+    <!-- 用于在yarn的web界面上查看到任务的详细日志 -->
+    <property>
+        <name>yarn.log.server.url</name>
+        <value>http://hadoop101:19888/jobhistory/logs</value>
+    </property>
 </configuration>
