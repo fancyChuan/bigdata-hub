@@ -9,6 +9,9 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 
+/**
+ * 需求：统计每一个手机号耗费的总上行流量、下行流量、总流量
+ */
 public class FlowDriver {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         if (args.length == 0) {

@@ -34,16 +34,24 @@ public class FlowBean implements Writable {
         sumFlow = in.readLong();
     }
 
+    /**
+     * 空参构造器是必须的
+     */
     public FlowBean() {
     }
 
-    // 对于bean来说这个方法不是必要的，只是为了后面编写MR的时候方便点
+    /**
+     * 对于bean来说这个方法不是必要的，只是为了后面编写MR的时候方便点
+     */
     public void set(long upFlow, long downFlow) {
         this.upFlow = upFlow;
         this.downFlow = downFlow;
         this.sumFlow = upFlow + downFlow;
     }
 
+    /**
+     * 要想把结果显示在文件中，就需要重写toString()
+     */
     @Override
     public String toString() {
         return upFlow + "\t" + downFlow + "\t" + sumFlow;

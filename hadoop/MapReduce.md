@@ -1,27 +1,42 @@
 ## MapReduce
 ### 1. MapReduce概述
-![img](https://github.com/fancychuan/bigdata-learn/blob/master/hadoop/img/MapReduce核心编程思想.png?raw=true)
+MR是一个分布式运算程序的编程框架，核心功能是将用户编写的逻辑代码和自带默认组件整合成一个完整的分布式运算程序，并发运行在Hadoop集群上
+#### 1.1优缺点
+优点：
+- MR易于编程
+- 良好的扩展性（计算能力横向扩展）
+- 高容错性
+- 适合PB级以上海量数据的离线处理
+缺点；
+- 不擅长实时计算
+- 不擅长流式计算
+- 不擅长DAG有向图计算
+
+#### 1.2MR核心编程思想：分而治之
+![img](img/MapReduce核心编程思想.png)
 
 注意；
 - map阶段的MapTask并发实例完全并行运行，互不干扰
 - reduce节点也并发执行，互不相干，但是依赖map阶段的所有MapTask并发实例的输出（按分区）
 - MapReduce编程模型只能包含一个Map阶段和一个Reduce阶段，如果用户的业务逻辑非常复杂，那就只能多个MapReduce程序，串行运行
 
+#### 1.3MR进程
 一个完整的MapReduce程序在分布式运行时有三类实例进程：
 - MRAppMaster： 负责整个程序的过程调度和状态协调
 - MapTask： 负责map阶段的整个数据处理流程
 - ReduceTask： 负责reduce阶段的整个数据处理流程
 
-#### MapReduce编程规范
+#### 1.4MapReduce编程规范
 - Mapper阶段
     - 用户自定义的Mapper要继承自己的父类
-    - Mapper的输入数据是KVa对的形式
+    - Mapper的输入数据是KV对的形式
     - Mapper的业务逻辑写在map()方法中
     - Mapper的输出数据是KV对的形式
-    - map()方法对每一个KV对调用一次（在MapTask进程中）
+    - **map()方法对每一个KV对调用一次（在MapTask进程中）**
 - Reducer阶段
+    - 输入类型对应Mapper结对的输出类型
     - 业务逻辑写在reduce方法中
-    - ReduceTask进程对每一组相同key的KV对调用一次reduce方法
+    - **ReduceTask进程对每一组相同key的KV对调用一次reduce方法**
 - Driver阶段
     - 相当于YARN集群的客户端，用于提交整个程序到YARN集群
     - 提交的是封装了MapReduce程序相关运行参数的job对象
@@ -29,10 +44,42 @@
 ### 2. Hadoop序列化
 要在MapReduce中使用自定义的类，要保证能够序列化。有两种：使用Serializable或hadoop自带的序列化机制Writable
 
-如果要把自定义的bean放到key中传输，那么还需要实现Comparable接口，因为MR框架的shuffle要求key必须能够排序
-
 为什么不用java自带的序列化？
 > java序列化是一个重量级序列化框架（Serializable），一个对象被序列化之后会附带许多额外的信息（各种校验信息、header、继承体系等），不利于在网络中高效传输
+
+#### Hadoop序列化特点；
+- 紧凑：高效利用储存空间
+- 快速：读写额外开销小
+- 可扩展：随通信协议的升级而升级
+- 互操作：支持多语言的交互
+
+#### 自定义bean对象实现序列化接口
+- 必须实现Writable接口
+- 必须要有空参构造器（因为反序列化时，需要反射调用空参构造函数）
+- 重写序列化方法
+```
+@Override
+public void write(DataOutput out) throws IOException {
+	out.writeLong(upFlow);
+	out.writeLong(downFlow);
+	out.writeLong(sumFlow);
+```
+- 重写反序列化方法
+```
+@Override
+public void readFields(DataInput in) throws IOException {
+	upFlow = in.readLong();
+	downFlow = in.readLong();
+	sumFlow = in.readLong();
+}
+```
+> 注意反序列化的顺序和序列化的顺序完全一致
+- 要想把结果显示在文件中，需要重写toString()
+- 如果要把自定义的bean放到key中传输，那么还需要实现Comparable接口，因为MR框架的shuffle要求key必须能够排序
+
+示例：参考[FlowBean.java](src/main/java/mrapps/flow/FlowBean.java)
+
+需求：统计每一个手机号耗费的总上行流量、下行流量、总流量。实现代码：[flow](src/main/java/mrapps/flow)
 
 ### 3. MapReduce框架原理
 输入 -> 切片 -> KV值 -> 
