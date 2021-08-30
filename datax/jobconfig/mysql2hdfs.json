@@ -1,0 +1,55 @@
+{
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "name": "mysqlreader",
+          "parameter": {
+            "column": [
+              "id",
+              "name"
+            ],
+            "connection": [
+              {
+                "jdbcUrl": [
+                  "jdbc:mysql://hphost:3306/test"
+                ],
+                "table": [
+                  "student"
+                ]
+              }
+            ],
+            "username": "root",
+            "password": "123456"
+          }
+        },
+        "writer": {
+          "name": "hdfswriter",
+          "parameter": {
+            "column": [
+              {
+                "name": "id",
+                "type": "int"
+              },
+              {
+                "name": "name",
+                "type": "string"
+              }
+            ],
+            "defaultFS": "hdfs://hadoop101:8020",
+            "fieldDelimiter": "\t",
+            "fileName": "student.txt",
+            "fileType": "text",
+            "path": "/forlearn/datax/",
+            "writeMode": "append"
+          }
+        }
+      }
+    ],
+    "setting": {
+      "speed": {
+        "channel": "1"
+      }
+    }
+  }
+}

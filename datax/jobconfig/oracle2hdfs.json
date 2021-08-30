@@ -1,0 +1,49 @@
+{
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "name": "oraclereader",
+          "parameter": {
+            "column": ["*"],
+            "connection": [
+              {
+                "jdbcUrl": ["jdbc:oracle:thin:@hadoop102:1521:orcl"],
+                "table": ["student"]
+              }
+            ],
+            "password": "000000",
+            "username": "atguigu"
+          }
+        },
+        "writer": {
+          "name": "hdfswriter",
+          "parameter": {
+            "column": [
+              {
+                "name": "id",
+                "type": "int"
+              },
+              {
+                "name": "name",
+                "type": "string"
+              }
+
+            ],
+            "defaultFS": "hdfs://hadoop102:9000",
+            "fieldDelimiter": "\t",
+            "fileName": "oracle.txt",
+            "fileType": "text",
+            "path": "/",
+            "writeMode": "append"
+          }
+        }
+      }
+    ],
+    "setting": {
+      "speed": {
+        "channel": "1"
+      }
+    }
+  }
+}

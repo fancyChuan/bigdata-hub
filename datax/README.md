@@ -36,4 +36,4 @@ data.py /home/appuser/forlearn/datax/mysql2hdfs.json
 
 #### 6.读取MongoDB的数据导入到HDFS
 
-#### 7.
+#### 7.读取MongoDB的数据导入MySQL

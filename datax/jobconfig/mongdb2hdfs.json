@@ -1,0 +1,52 @@
+{
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "name": "mongodbreader",
+          "parameter": {
+            "address": ["127.0.0.1:27017"],
+            "collectionName": "atguigu",
+            "column": [
+              {
+                "name":"name",
+                "type":"string"
+              },
+              {
+                "name":"url",
+                "type":"string"
+              }
+            ],
+            "dbName": "test",
+          }
+        },
+        "writer": {
+          "name": "hdfswriter",
+          "parameter": {
+            "column": [
+              {
+                "name":"name",
+                "type":"string"
+              },
+              {
+                "name":"url",
+                "type":"string"
+              }
+            ],
+            "defaultFS": "hdfs://hadoop102:9000",
+            "fieldDelimiter": "\t",
+            "fileName": "mongo.txt",
+            "fileType": "text",
+            "path": "/",
+            "writeMode": "append"
+          }
+        }
+      }
+    ],
+    "setting": {
+      "speed": {
+        "channel": "1"
+      }
+    }
+  }
+}

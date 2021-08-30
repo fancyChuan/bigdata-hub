@@ -1,0 +1,46 @@
+{
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "name": "mongodbreader",
+          "parameter": {
+            "address": ["127.0.0.1:27017"],
+            "collectionName": "atguigu",
+            "column": [
+              {
+                "name":"name",
+                "type":"string"
+              },
+              {
+                "name":"url",
+                "type":"string"
+              }
+            ],
+            "dbName": "test",
+          }
+        },
+        "writer": {
+          "name": "mysqlwriter",
+          "parameter": {
+            "column": ["*"],
+            "connection": [
+              {
+                "jdbcUrl": "jdbc:mysql://hadoop102:3306/test",
+                "table": ["atguigu"]
+              }
+            ],
+            "password": "000000",
+            "username": "root",
+            "writeMode": "insert"
+          }
+        }
+      }
+    ],
+    "setting": {
+      "speed": {
+        "channel": "1"
+      }
+    }
+  }
+}
