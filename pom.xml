@@ -26,6 +26,7 @@
         <module>sqoop</module>
         <module>beam</module>
         <module>flume</module>
+        <module>datax</module>
     </modules>
 
     <properties>
