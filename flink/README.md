@@ -168,13 +168,15 @@ watermark的传递
 - 如果新来watermark后，当前分区的最小watermark不变，那么不会向下游广播watermark
 
 watermark的设定
-- 太大，则结果产出慢，太小，则
+- 设置的延迟太久，则结果产出慢，解决办法是在水位线到达之前输出一个近似结果
+- 如果watermark到达得太早，则可能受到错位的结果，不过Flink处理迟到数据的机制可以解决这个问题
 
 ###### Watermark的引入
 ```
 dataStream.assignTimestampAndWatermarks(new MyAssigner())
 ```
 MyAssigner有两种类型，都继承自TimestampAssigner：
+> TimestampAssigner定义了抽取时间戳以及生成watermark的方法
 - AssignerWithPeriodicWatermarks
     - 周期性生成watermark，默认周期是200毫秒，修改生成周期的方法：env.getConfig.setAutoWatermarkInterval(100);
     - 自定义实现：[MyPeriodicAssigner.java](src/main/java/cn/fancychuan/assigner/MyPeriodicAssigner.java)
@@ -189,6 +191,49 @@ MyAssigner有两种类型，都继承自TimestampAssigner：
     - 使用场景：流数据稀疏
     
 
+###### 示例1：Watermark设置延迟为2，滚动窗口大小为5
+参见代码：[JavaWatermarkApp.java](src/main/java/cn/fancychuan/JavaWatermarkApp.java)
+```
+sensor_6,1547718199,35.8    # [195,200) 199存入这个窗口
+sensor_6,1547718202,15.4    # 202存入[200,205)这个窗口，同时watermark(200)触发了上个窗口[195,200)的计算
+sensor_6,1547718203,13.4    # 203存入[200,205)这个窗口
+sensor_6,1547718204,14.4    # 204存入[200,205)这个窗口
+sensor_6,1547718205,15.4    # 205存入[205,210)这个窗口，这个时候不会有任何计算
+sensor_6,1547718206,16.4
+sensor_6,1547718207,16.4    # 207存入[205,210)这个窗口，同时watermark(205)触发了[200,205)的计算
+```
+
+Window的起始位置计算逻辑：org.apache.flink.streaming.api.windowing.windows.TimeWindow.getWindowStartWithOffset
+```
+public static long getWindowStartWithOffset(long timestamp, long offset, long windowSize) {
+	return timestamp - (timestamp - offset + windowSize) % windowSize;
+}
+```
+
+###### 示例2：Watermark设置延迟为2，滚动窗口大小为5，允许迟到数据1分钟内，并开启兜底方案
+```
+// 设置允许的迟到时间。这里例子中，每5秒一个窗口，1分钟之内这个窗口都不会关闭，每来一个数据更新一次结果
+.allowedLateness(Time.minutes(1))
+// 兜底方案，将超过1分钟都没有到达的数据放到侧输出流中
+.sideOutputLateData(outputTag)
+```
+详细过程如下
+```
+sensor_1,1547718211,36.1    # 211存入[210,215)窗口，不会触发计算
+sensor_1,1547718215,36.5    # 215存入[215,220)窗口，不会触发计算
+sensor_1,1547718214,37.5    # 214存入[210,215)窗口，不会触发计算
+sensor_1,1547718217,36.5    # 215存入[215,220)窗口，触发[200,215)这个窗口计算
+sensor_1,1547718212,32.2    # 212存入[210,215)窗口，不会触发计算
+sensor_1,1547718218,36.5    # 218存入[215,220)窗口，不会触发计算
+sensor_1,1547718222,31.1    # 222存入[220,225)窗口，触发[215,220)这个窗口计算
+sensor_1,1547718280,30.5    # 280存入[280,285)窗口，触发[220,225)这个窗口计算（在275之前的所有窗口都会被触发，运维Watermark已经到了278）
+sensor_1,1547718212,32.2    # 212原本属于[210,215)，但现在Watermark已经到了278，超过了60s，属于迟到数据，按迟到机制处理
+sensor_1,1547718288,33.8    # 288存入[285,290)窗口，触发[280,285)这个窗口计算
+sensor_1,1547718228,32.2    # 228存入[225,230)窗口，因为Watermark=278还没到这个窗口所允许的最大迟到时间，也就是290，因此228直接触发了[225,230)这个窗口的计算
+sensor_1,1547718225,13.2    # Watermark=278，所关闭的窗口为[210,215)，因此225还是触发了[225,230)这个窗口的计算
+sensor_1,1547718292,33.8    # 292存入[290,292)窗口，Watermark=290，因此关闭了[225,230)这个窗口
+sensor_1,1547718225,13.2    # 再来一个225的时候，[225,230)这个窗口已经关闭，因此，225迟到了
+```
 
 
 #### Flink应用

@@ -13,10 +13,13 @@ import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrderness
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.OutputTag;
 
+/**
+ * 演示了Watermark的使用，以及结合Flink的对迟到数据的处理机制
+ */
 public class JavaWatermarkApp {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(4);
+        env.setParallelism(1);
         // 设置使用Event Time这种语义
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
         // 设置生产Watermark的周期为100毫秒，默认是200毫秒
@@ -45,17 +48,20 @@ public class JavaWatermarkApp {
                         return element.getTimestamp() * 1000L;
                     }
         });
-
-        OutputTag<SensorReading> outputTag = new OutputTag<SensorReading>("late");
+        // 基于事件时间的开窗聚合，统计5秒内温度的最小值
+        OutputTag<SensorReading> outputTag = new OutputTag<SensorReading>("late"){};
         SingleOutputStreamOperator<SensorReading> minTempStream = dataStream.keyBy("id")
-                .timeWindow(Time.seconds(15))
-                // 设置了watermark之后，还可以设置允许的迟到时间。这里例子中，每15秒一个窗口，1分钟之内这个窗口都不会关闭，每来一个数据更新一次结果
+                .timeWindow(Time.seconds(5))
+                // 设置了watermark之后，还可以设置允许的迟到时间。这里例子中，每5秒一个窗口，1分钟之内这个窗口都不会关闭，每来一个数据更新一次结果
                 .allowedLateness(Time.minutes(1))
-                // 兜底方案：
+                // 兜底方案，将超过1分钟都没有到达的数据放到侧输出流中
                 .sideOutputLateData(outputTag)
                 .minBy("temperature");
 
         minTempStream.print("minTemp");
-        minTempStream.getSideOutput(outputTag).print("late");
+        DataStream<SensorReading> sideOutput = minTempStream.getSideOutput(outputTag);
+        sideOutput.print("late");
+
+        env.execute("testWatermark");
     }
 }
