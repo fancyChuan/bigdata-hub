@@ -135,8 +135,8 @@ Yarn模式任务提交流程
 > 任务并行 —— 同一时间，不同的slot在执行不同的任务
 
 
-#### 时间语义与watermark
-时间语义
+#### 5.时间语义与watermark
+##### 5.1时间语义
 - Event Time：事件创建的时间
 - Ingestion Time：数据进入Flink的时间
 - Process Time： 执行操作算子的本地时间，与机器相关
@@ -147,13 +147,14 @@ EventTime的引入
 env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
 ```
 
-Watermark
-> 
-- Watermark是一种衡量event time进展的机制
-- 用于处理乱序事件的，通常用watermark机制结合window实现
-- 数据流中的Watermark用于表示timestamp小鱼Watermark的数据都已经到达，因此window的执行也是由Watermark触发
-- Watermark可以理解为一个延迟触发机制，
-- Watermark用来让程序自己平衡延迟和结果正确性
+##### 5.2 Watermark
+> 乱序：Flink接收到事件的先后顺序不是严格按照Event Time顺序排列的。此时只根据EventTime无法明确数据是否到位，又不能无限期的等下去。因此需要有Watermark这样的一个机制，等待一个特定的时间后触发Window去计算
+- Watermark是一种衡量event time进展的机制，可以理解为一个延迟触发机制，
+  已到达的数据中最大的maxEventTime减去允许的延迟时间等于窗口的停止时间，则触发窗口的计算，
+  也就是说window的执行也是由Watermark触发
+- 数据流中的Watermark用于表示timestamp小于Watermark的数据都已经到达
+- Watermark是基于数据携带的时间戳生产的，如果运行过程中无法获取新的数据，那么没有被触发的窗口将永远不会被触发
+- Watermark用来让程序自己平衡延迟和结果正确性，主要用于处理乱序事件，通常用watermark机制结合window实现
 
 
 watermark的特点：
@@ -167,7 +168,28 @@ watermark的传递
 - 如果新来watermark后，当前分区的最小watermark不变，那么不会向下游广播watermark
 
 watermark的设定
-- 
+- 太大，则结果产出慢，太小，则
+
+###### Watermark的引入
+```
+dataStream.assignTimestampAndWatermarks(new MyAssigner())
+```
+MyAssigner有两种类型，都继承自TimestampAssigner：
+- AssignerWithPeriodicWatermarks
+    - 周期性生成watermark，默认周期是200毫秒，修改生成周期的方法：env.getConfig.setAutoWatermarkInterval(100);
+    - 自定义实现：[MyPeriodicAssigner.java](src/main/java/cn/fancychuan/assigner/MyPeriodicAssigner.java)
+    - 使用场景：在流数据密集，周期性生成
+    - 两种特殊场景：
+        - 事先知道数据流是单调递增的，没有乱序，则可以使用 AscendingTimestampExtractor，这个类直接使用数据的时间戳生产Watermark
+        - 能大致估摸出数据流中的最大延迟时间，则可以使用 BoundedOutOfOrdernessTimestampExtractor
+        - 这两种情况参考 [JavaWatermarkApp.java](src/main/java/cn/fancychuan/JavaWatermarkApp.java)
+- AssignerWithPunctuatedWatermarks
+    - 断点式生成watermark，可以根据每条数据的情况来选择是否生成Watermark，处理方法是：checkAndGetNextWatermark
+    - 自定义时间：[MyPunctuatedAssigner.java](src/main/java/cn/fancychuan/assigner/MyPunctuatedAssigner.java)
+    - 使用场景：流数据稀疏
+    
+
+
 
 #### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)

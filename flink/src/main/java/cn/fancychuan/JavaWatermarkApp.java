@@ -1,5 +1,7 @@
 package cn.fancychuan;
 
+
+import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.eventtime.AscendingTimestampsWatermarks;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.TimeCharacteristic;
@@ -15,10 +17,12 @@ public class JavaWatermarkApp {
     public static void main(String[] args) {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(4);
-        // 设置使用Event Time
+        // 设置使用Event Time这种语义
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+        // 设置生产Watermark的周期为100毫秒，默认是200毫秒
+        env.getConfig().setAutoWatermarkInterval(100);
 
-        DataStream<String> inputStream = env.readTextFile("E:\\JavaWorkshop\\bigdata-learn\\flink\\src\\main\\resources\\sensor.txt");
+        DataStream<String> inputStream = env.socketTextStream("hadoop101", 7777);
 
         DataStream<SensorReading> dataStream = inputStream.map(line -> {
             String[] items = line.split(",");
