@@ -157,14 +157,17 @@ Watermark
 
 
 watermark的特点：
-- watermark是一条特殊的数据记录（继承StreamElement）
+- watermark是一条特殊的数据记录（继承StreamElement）【相当于只是时间戳】
 - watermark必须是单调递增，以确保任务的EventTime时钟在向前推进
 - watermark与数据的时间戳相关
 
 watermark的传递
+- 从上游到下游，需要将watermark广播到下游
+- 不同分区来的watermark，会存到在当前分区的Partition WM中，并从中选取最小的watermark广播到下游分区
+- 如果新来watermark后，当前分区的最小watermark不变，那么不会向下游广播watermark
 
-
-
+watermark的设定
+- 
 
 #### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
