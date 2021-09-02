@@ -160,3 +160,16 @@ window()方法
 - sideOutputLateData() 将迟到的数据放入侧输出流
 - getSideOutput() 获取侧输出流
 
+### 8.ProcessFunction API （底层API）
+DataStream提供了一系列底层的转换算子，可以**时间戳、Watermark以及注册定时时间**，还可以输出**特定的一些事件**，普通的转换算子是无法做到的。
+> Flink SQL就是使用ProcessFunction实现的
+
+- ProcessFunction
+- KeyedProcessFunction
+- CoProcessFunction
+- ProcessJoinFunction
+- BroadcastProcessFunction
+- KeyedBroadcastProcessFunction
+- ProcessWindowFunction
+- ProcessAllWindowFunction
+

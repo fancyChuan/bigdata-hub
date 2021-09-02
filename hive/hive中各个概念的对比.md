@@ -1,9 +1,32 @@
 
+拉链表的两种闭链方式：
+- enddate=新链数据的业务日期-1
+    - 这种情况，startdate可能等于enddate
+    - 数据的有效周期为[startdate, enddate]
+    - 取某天的有效数据：startdate<=${datadate} and ${datadate} =< enddate
+```
+acct_no     card_no    startdate    enddate
+A001        11134       20201022    20201023    # 这里的20201023为20201024-1，也就是在20201025这一天跑批的时候闭链的
+A001        11134       20201024    20201027
+A001        11134       20201028    99991231
+```
+- enddate=新链数据的业务日期
+    - 这种情况，startdate一定小于enddate
+    - 数据的有效周期为[startdate, enddate)
+    - 取某天的有效数据：startdate<=${datadate} and ${datadate} < enddate
+```
+acct_no     card_no    startdate    enddate
+A001        11134       20201022    20201024    # 这里的20201024就是业务时间，也就是在20201025这一天跑批的时候闭链的
+A001        11134       20201024    20201028
+A001        11134       20201028    99991231
+```
+> 业务时间=数据在业务系统产生的时间，一遍为跑批时间-1，也就是T+1时效
+
+**注意！**使用拉链表的时候，要优先判断是采用的哪一种闭链方式！
 
 拉链表
 - end_date='99991231' 表示该条记录处于最新有效状态
-- 某一天的有效数据：startdate<=${datadate} and ${datadate} =< enddate
-- 用拉链表的时候，尤其需要知道哪些是主键！比如acct_no，card_no是主键。也就意味着一个账户下，没换一张卡就会有一条新的链
+- 用拉链表的时候，尤其需要知道哪些是主键！比如acct_no，card_no是主键。也就意味着一个账户下，每换一张卡就会有一条新的链
 ```
 acct_no     card_no    startdate    enddate
 A001        11134       20201022    20201023
@@ -13,9 +36,14 @@ A001        11139       20201029    20201112   # 开了一条新的链
 A001        11139       20201112    99991231
 ```
 
+拉链表的更新：
+- 当天的数据为增量数据，即包括：新增 + 变动
+- 当天的数据为全量数据，即包括：新增 + 变动 + 不变的数据
+
+
 ### 参考资料
 1. [一文搞定数据仓库之拉链表，流水表，全量表，增量表](https://blog.csdn.net/mtj66/article/details/78019370)
-2. [(2条消息)数据仓库中的拉链表（hive实现) - 大鹰的天空 - CSDN博客](https://blog.csdn.net/u014770372/article/details/77069518)
+2. [数据仓库中的拉链表（hive实现) - 大鹰的天空 - CSDN博客](https://blog.csdn.net/u014770372/article/details/77069518)
 
 
 #### 几个by的区别对比

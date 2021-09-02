@@ -32,7 +32,7 @@ Flink的特点和优势
 
 流式计算框架的对比
  
-#### WordCount应用
+### WordCount应用
 - 批处理的方式实现：[DataSetWcApp.scala](src/main/scala/cn/fancychuan/scala/quickstart/DataSetWcApp.scala)
 - 流处理的方式实现：[DataStreamWcApp.scala](src/main/scala/cn/fancychuan/scala/quickstart/DataStreamWcApp.scala)
 
@@ -53,8 +53,8 @@ bin/flink run -c cn.fancychuan.scala.quickstart.DataStreamWcApp \
 - 只设置作业默认的并行度
 ![iamge](img/不同位置并行度设计对作业的影响3.png)
 
-#### 4运行时架构
-##### 4.1 Flink运行时的组件
+### 4运行时架构
+#### 4.1 Flink运行时的组件
 - 作业管理器（JobManager）
     - 控制一个应用程序执行的主进程
     - 应用程序包括：作业图（JobGraph）、逻辑数据流图（logical dataflow graph）和打包了所有的类、库和其它资源的JAR包
@@ -77,7 +77,7 @@ bin/flink run -c cn.fancychuan.scala.quickstart.DataStreamWcApp \
     - 当一个应用被提交执行时，分发器就会启动并将应用移交给一个JobManager
     - Dispatcher在架构中可能并不是必需的
 
-##### 4.2 任务作业提交流程
+#### 4.2 任务作业提交流程
 任务提交和组件交互流程
 
 ![image](img/任务提交和组件交互流程.png)
@@ -85,7 +85,7 @@ bin/flink run -c cn.fancychuan.scala.quickstart.DataStreamWcApp \
 Yarn模式任务提交流程
 ![image](img/yarn模式任务提交流程.png)
 
-##### 4.3 任务调度原理
+#### 4.3 任务调度原理
 ![image](img/任务调度原理.png)
 > 客户端不是运行时的一部分，也不是程序执行的一部分，它用于准备并发送dataflow(JobGraph)给Master(JobManager)，然后，客户端断开连接或者维持连接以等待接收计算结果
 - 4.3.1 TaskManger与Slots
@@ -135,8 +135,8 @@ Yarn模式任务提交流程
 > 任务并行 —— 同一时间，不同的slot在执行不同的任务
 
 
-#### 5.时间语义与watermark
-##### 5.1时间语义
+### 5.时间语义与watermark
+#### 5.1时间语义
 - Event Time：事件创建的时间
 - Ingestion Time：数据进入Flink的时间
 - Process Time： 执行操作算子的本地时间，与机器相关
@@ -147,7 +147,7 @@ EventTime的引入
 env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
 ```
 
-##### 5.2 Watermark
+#### 5.2 Watermark
 > 乱序：Flink接收到事件的先后顺序不是严格按照Event Time顺序排列的。此时只根据EventTime无法明确数据是否到位，又不能无限期的等下去。因此需要有Watermark这样的一个机制，等待一个特定的时间后触发Window去计算
 - Watermark是一种衡量event time进展的机制，可以理解为一个延迟触发机制，
   已到达的数据中最大的maxEventTime减去允许的延迟时间等于窗口的停止时间，则触发窗口的计算，
@@ -171,7 +171,7 @@ watermark的设定
 - 设置的延迟太久，则结果产出慢，解决办法是在水位线到达之前输出一个近似结果
 - 如果watermark到达得太早，则可能受到错位的结果，不过Flink处理迟到数据的机制可以解决这个问题
 
-###### Watermark的引入
+##### Watermark的引入
 ```
 dataStream.assignTimestampAndWatermarks(new MyAssigner())
 ```
@@ -191,7 +191,7 @@ MyAssigner有两种类型，都继承自TimestampAssigner：
     - 使用场景：流数据稀疏
     
 
-###### 示例1：Watermark设置延迟为2，滚动窗口大小为5
+##### 示例1：Watermark设置延迟为2，滚动窗口大小为5
 参见代码：[JavaWatermarkApp.java](src/main/java/cn/fancychuan/JavaWatermarkApp.java)
 ```
 sensor_6,1547718199,35.8    # [195,200) 199存入这个窗口
@@ -210,7 +210,7 @@ public static long getWindowStartWithOffset(long timestamp, long offset, long wi
 }
 ```
 
-###### 示例2：Watermark设置延迟为2，滚动窗口大小为5，允许迟到数据1分钟内，并开启兜底方案
+##### 示例2：Watermark设置延迟为2，滚动窗口大小为5，允许迟到数据1分钟内，并开启兜底方案
 ```
 // 设置允许的迟到时间。这里例子中，每5秒一个窗口，1分钟之内这个窗口都不会关闭，每来一个数据更新一次结果
 .allowedLateness(Time.minutes(1))
@@ -236,7 +236,7 @@ sensor_1,1547718225,13.2    # 再来一个225的时候，[225,230)这个窗口�
 ```
 
 
-#### Flink应用
+### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
  
 
