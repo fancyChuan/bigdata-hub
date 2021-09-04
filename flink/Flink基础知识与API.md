@@ -77,7 +77,7 @@ Flink暴露了所有UDF函数的接口，实现方式为接口或者抽象类。
 
 DataStream的其他函数
 - broadcast
-- shuffle：将数据均匀分发
+- shuffle：将数据均匀分发。注意，不是完全平均的分发，而是随机的打散
 - forward
 - rebalance
 - rescale
