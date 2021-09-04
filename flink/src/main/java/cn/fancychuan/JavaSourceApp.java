@@ -6,6 +6,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.RichSourceFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -22,10 +25,16 @@ import java.util.Random;
  *          - cancel() 调用该方法的时候可以终止run里面的循环
  */
 public class JavaSourceApp {
-    public static void main(String[] args) throws Exception {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
+    private StreamExecutionEnvironment env;
 
+    @Before
+    public void before() {
+        env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(1);
+    }
+
+    @Test
+    public void testFromCollection() {
         // 1. 从集合中获取
         DataStreamSource<SensorReading> streamSource1 = env.fromCollection(Arrays.asList(
                 new SensorReading("sensor_1", 1547718199L, 35.8)
@@ -33,12 +42,17 @@ public class JavaSourceApp {
                 , new SensorReading("sensor_7", 1547718202L, 6.7)
                 , new SensorReading("sensor_10", 1547718205L, 38.1)));
         streamSource1.print("fromCollection");
+    }
 
+    @Test
+    public void testReadTextFile() {
         // 2. 从文件中读取
         DataStreamSource<String> streamSource2 = env.readTextFile(JavaSourceApp.class.getClassLoader().getResource("sensor.txt").getPath());
-
         streamSource2.print("fromFile");
+    }
 
+    @Test
+    public void testReadFromKafka() {
         // 3. 从kafka中读取
         Properties props = new Properties();
         props.put("bootstrap.servers", "hadoop101:9092");
@@ -49,7 +63,10 @@ public class JavaSourceApp {
 
         DataStreamSource<String> streamSource3 = env.addSource(new FlinkKafkaConsumer011<String>("sensor", new SimpleStringSchema(), props));
         streamSource3.print("fromKafka");
+    }
 
+    @Test
+    public void testUserDefineSource() {
         // 4. 自定义数据源（随机产生）
         SourceFunction<SensorReading> mySource = new SourceFunction<SensorReading>() {
             boolean flag = true;
@@ -70,8 +87,10 @@ public class JavaSourceApp {
         };
         DataStreamSource<SensorReading> streamSource4 = env.addSource(mySource);
         streamSource4.print("fromMySource");
+    }
 
-
+    @After
+    public void after() throws Exception {
         env.execute("sourceApp");
     }
 }
