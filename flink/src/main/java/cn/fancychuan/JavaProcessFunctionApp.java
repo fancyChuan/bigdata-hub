@@ -3,10 +3,12 @@ package cn.fancychuan;
 import cn.fancychuan.process.MyKeyedProcessFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.AscendingTimestampExtractor;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.junit.After;
 import org.junit.Before;
@@ -19,11 +21,13 @@ public class JavaProcessFunctionApp {
     public void before() {
         env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
+        // 设置时间语义
+        env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
     }
 
     @After
     public void after() throws Exception {
-        env.execute("sourceApp");
+        env.execute();
     }
     
     @Test    
@@ -34,6 +38,11 @@ public class JavaProcessFunctionApp {
             public SensorReading map(String s) throws Exception {
                 String[] items = s.split(",");
                 return new SensorReading(items[0], Long.parseLong(items[1]), new Double(items[2]));
+            }
+        }).assignTimestampsAndWatermarks(new AscendingTimestampExtractor<SensorReading>() {
+            @Override
+            public long extractAscendingTimestamp(SensorReading element) {
+                return element.getTimestamp() * 1000L;
             }
         });
 
