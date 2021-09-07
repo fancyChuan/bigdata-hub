@@ -7,3 +7,4 @@
 - DataFlow和StreamGraph是什么关系？是否为不同视角，DataFlow是逻辑上的概念，对代码的可视化，更侧重数据流的关系；而StreamGraph虽然也是逻辑上的概念，但是更多的是从执行视角看的程序的拓扑结构。
 - Flink的StreamGraph、JobGraph、ExecutionGraph的数据结构是什么样子的
 - Flink的Sink通过JDBC来自定义时，如何使用连接池来提高性能？避免一个流就创建一次连接
+- keyBy()传入多个字段，跟使用map先把多个字段拼接成一个字段，这这两种方式各有说明优缺点？
