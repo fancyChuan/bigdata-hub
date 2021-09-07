@@ -136,6 +136,7 @@ Yarn模式任务提交流程
 
 
 ### 5.时间语义与watermark
+窗口Window相关知识查看[Flink基础知识与API.md](./Flink基础知识与API.md)
 #### 5.1时间语义
 - Event Time：事件创建的时间
 - Ingestion Time：数据进入Flink的时间

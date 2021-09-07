@@ -11,11 +11,11 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 
 public class JavaWindowApp {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
 
-        DataStream<String> inputStream = env.readTextFile("E:\\JavaWorkshop\\bigdata-learn\\flink\\src\\main\\resources\\sensor.txt");
+        DataStream<String> inputStream = env.readTextFile(JavaWindowApp.class.getClassLoader().getResource("sensor.txt").getPath());
         DataStream<SensorReading> dataStream = inputStream.map(line -> {
             String[] items = line.split(",");
             return new SensorReading(items[0], Long.parseLong(items[1]), new Double(items[2]));

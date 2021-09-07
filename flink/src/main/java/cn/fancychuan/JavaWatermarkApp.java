@@ -19,6 +19,7 @@ import org.apache.flink.util.OutputTag;
 public class JavaWatermarkApp {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        // 多并行度时，Watermark以最小的为准
         env.setParallelism(1);
         // 设置使用Event Time这种语义
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
