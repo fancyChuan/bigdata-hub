@@ -22,7 +22,7 @@ public class JavaProcessFunctionApp {
         env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
         // 设置时间语义
-        env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
+//        env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
     }
 
     @After
@@ -38,11 +38,6 @@ public class JavaProcessFunctionApp {
             public SensorReading map(String s) throws Exception {
                 String[] items = s.split(",");
                 return new SensorReading(items[0], Long.parseLong(items[1]), new Double(items[2]));
-            }
-        }).assignTimestampsAndWatermarks(new AscendingTimestampExtractor<SensorReading>() {
-            @Override
-            public long extractAscendingTimestamp(SensorReading element) {
-                return element.getTimestamp() * 1000L;
             }
         });
 

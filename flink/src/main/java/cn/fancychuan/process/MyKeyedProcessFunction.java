@@ -27,7 +27,7 @@ public class MyKeyedProcessFunction extends KeyedProcessFunction<String, SensorR
     public void processElement(SensorReading value, Context ctx, Collector<Long> out) throws Exception {
         // 当前数据的分组key
         System.out.println(ctx.getCurrentKey());
-        // 当前数据代表的时间戳：如果程序的时间语义是process time，那么这个值为null
+        // 当前数据代表的时间戳：如果程序的时间语义是process time，那么这个值可能为null
         System.out.println(new Timestamp(ctx.timestamp()) + "_" + ctx.timestamp());
         // 可以将数据放入侧输出流。侧输出流在这里配置可以更灵活一点，不受SensorReading value这种类型的限制
         // ctx.output(outputTag, some);
@@ -38,6 +38,7 @@ public class MyKeyedProcessFunction extends KeyedProcessFunction<String, SensorR
                 // 设置的“闹钟”为：当前process time往后5秒
                 timerService.currentProcessingTime() + 5000L
         );
+        // 定时器注册的类型 跟配置的时间语义没关系
         // 设置事件时间的定时器
 //        timerService.registerEventTimeTimer(
 //                value.getTimestamp() * 1000L + 4000L
