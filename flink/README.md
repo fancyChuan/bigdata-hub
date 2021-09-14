@@ -237,6 +237,82 @@ sensor_1,1547718225,13.2    # 再来一个225的时候，[225,230)这个窗口�
 ```
 
 
+### 6. 状态编程与容错机制
+#### 6.1 概述
+流式计算：
+- 无状态：观察每个独立事件，根据最后一个事件输出结果。例如水位超过指定高度就告警
+- 有状态：基于多个事件输出结果。例如：
+  - 计算过去一小时的平均水位
+  - 一分钟内收到两个相差20cm以上的水位差读书，则告警
+  - 流与流之间的所有关联操作，以及流与静态表或动态表之间的关联操作，都是有状态的
+
+#### 6.2 有状态的算子
+有两种类型的状态：
+- 算子状态(operator state)：作用范围限定为算子任务
+  - 状态对于同一任务而言是共享的，所有数据都可以访问到相同的状态
+  - 算子状态不能由相同或不同算子的**另一个任务**访问
+  - 算子状态有3种数据结构：
+    - 列表状态
+    - 联合列表状态
+    - 广播状态
+- 键控状态(keyed state)：根据输入数据流中定义的键(key)来维护和访问的
+  - 具有相同key的所有数据都会访问相同的状态
+  - 只能用于KeyedStream
+  - Flink为每个键值维护一个状态实例，相当于是一个分布式的key-value map数据结构
+
+状态后端(state backend)：一个可插入的组件，决定着状态的存储、访问以及维护
+> 每传入一条数据，有状态的算子都会读取和更新状态，为了保证低延迟的快速访问，每个并行任务会在本地维护其状态
+- 职责：
+  - 本地的状态管理
+  - 将checkpoint状态写入远程存储
+- 分类：
+  - MemoryStateBackend：内存级的状态后端
+    - 将键控状态存储在TaskManager的JVM堆上
+    - 将checkpoint存储在JobManager的内存中
+    - 适用场景：
+      - 本地开发或调试，这个时候作业的状态有限
+      - MemoryStateBackend最适合具有小状态大小的用例和有状态流处理应用程序，例如仅包含一次记录功能（Map，FlatMap或Filter）的作业或使用Kafkaconsumer
+  - FsStateBackend
+    - 将checkpoint存到远程的持久化文件系统（FileSystem）上
+    - 本地状态，跟MemoryStateBackend一样，存在TaskManager的JVM堆上
+    - 适用场景：适合处理大状态，长窗口或大键值状态的流处理作业，适合每个高可用设置
+  - RocksDBStateBackend：将所有状态序列化后存入本地的RocksDB中存储（Flink不直接支持，需要加入依赖）
+    - 适用场景同FsStateBackend
+    - 是目前唯一可以用于支持有状态流处理程序的增量检查点的状态后端
+
+#### 6.3 状态一致性
+一致性级别：
+- at-most-once
+- at-least-once
+- exactly-once
+
+端到端(end-to-end)状态一致性
+> 意味着结果的正确性贯穿了整个流处理应用的始终，整个端到端的一致性级别取决于所有组件中一致性最弱的组件
+- source端：需要外部源可重设数据的读取位置
+- flink内部：依赖checkpoint
+- sink端：需要保证从故障恢复时，数据不会重复写入外部系统。而对于sink端，又有两种具体的实现方式：
+  - 幂等（Idempotent）写入：所谓幂等操作，是说一个操作，可以重复执行很多次，但只导致一次结果更改
+  - 事务性（Transactional）写入：需要构建事务来写入外部系统，构建的事务对应着checkpoint，等到checkpoint完成才把所有结果写入。 有两种实现：
+    - 预写日志（WAL）：GenericWriteAheadSink
+    - 两阶段提交（2PC）：TwoPhaseCommitSinkFunction 
+
+两阶段提交示意图
+![iamge](img/事务性写入-两阶段提交示意图.png)
+
+不同source和sink的一致性保证：
+![image](img/不同source和sink的一致性保证.png)
+
+#### 6.4 检查点
+Flink检查点的核心作用是：确保状态正确，即使遇到持续终端也要正确
+> 检查点是Flink最有价值的创新之一，因为它使flink可以保证exactly-once而不需要牺牲性能
+
+Flink+Kafka如何实现端到端的Exactly-Once语义
+> 我们知道，端到端的状态一致性的实现，需要每一个组件都实现，对于Flink + Kafka的数据管道系统（Kafka进、Kafka出）而言，各组件怎样保证exactly-once语义呢？
+- 内部: 利用checkpoint机制，把状态存盘，发生故障的时候可以恢复，保证内部的状态一致性
+- source: kafka consumer作为source，可以将偏移量保存下来，如果后续任务出现了故障，恢复的时候可以由连接器重置偏移量，重新消费数据，保证一致性
+- sink: kafka producer作为sink，采用两阶段提交 sink，需要实现一个 TwoPhaseCommitSinkFunction
+
+
 ### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
  
