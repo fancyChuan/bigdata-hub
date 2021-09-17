@@ -17,7 +17,7 @@ public class MyKeyedProcessFunction extends KeyedProcessFunction<String, SensorR
      */
     @Override
     public void onTimer(long timestamp, OnTimerContext ctx, Collector<Long> out) throws Exception {
-        System.out.println(new Timestamp(timestamp) + "_触发");
+        System.out.println(new Timestamp(timestamp) + "_触发_" + timestamp);
     }
 
     /**
@@ -26,19 +26,23 @@ public class MyKeyedProcessFunction extends KeyedProcessFunction<String, SensorR
     @Override
     public void processElement(SensorReading value, Context ctx, Collector<Long> out) throws Exception {
         // 当前数据的分组key
-        String currentKey = ctx.getCurrentKey();
-        // 当前数据代表的时间戳：根据时间语义，这个时间要么是事件时间，也可以是process time
-        ctx.timestamp();
+        System.out.println(ctx.getCurrentKey());
+        // 当前数据代表的时间戳：如果程序的时间语义是process time，那么这个值可能为null
+        System.out.println(new Timestamp(ctx.timestamp()) + "_" + ctx.timestamp());
         // 可以将数据放入侧输出流。侧输出流在这里配置可以更灵活一点，不受SensorReading value这种类型的限制
         // ctx.output(outputTag, some);
 
         // 定时器：注册、删除、当前时间、当前Watermark
         TimerService timerService = ctx.timerService();
         timerService.registerProcessingTimeTimer(
-                // 设置的“闹钟”为：当前处理时间往后5秒
+                // 设置的“闹钟”为：当前process time往后5秒
                 timerService.currentProcessingTime() + 5000L
         );
-        // timerService.registerEventTimeTimer();
+        // 定时器注册的类型 跟配置的时间语义没关系
+        // 设置事件时间的定时器
+//        timerService.registerEventTimeTimer(
+//                value.getTimestamp() * 1000L + 4000L
+//        );
         // timerService.deleteEventTimeTimer();
         // timerService.deleteProcessingTimeTimer();
         // timerService.currentProcessingTime();
