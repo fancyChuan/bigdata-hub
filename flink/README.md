@@ -147,6 +147,8 @@ EventTime的引入
 ```
 env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
 ```
+时间语义的不同行为
+- ProcessTime + 不指定
 
 #### 5.2 Watermark
 > 乱序：Flink接收到事件的先后顺序不是严格按照Event Time顺序排列的。此时只根据EventTime无法明确数据是否到位，又不能无限期的等下去。因此需要有Watermark这样的一个机制，等待一个特定的时间后触发Window去计算
