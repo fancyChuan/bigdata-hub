@@ -8,6 +8,8 @@ import org.apache.flink.util.Collector;
 import java.sql.Timestamp;
 
 public class MyKeyedProcessFunction extends KeyedProcessFunction<String, SensorReading, Long> {
+    private Long triggerTs = 0L;
+
     /**
      * 到了定时器设定的时间，所要执行的方法
      * @param timestamp 注册的定时器的时间
@@ -40,15 +42,20 @@ public class MyKeyedProcessFunction extends KeyedProcessFunction<String, SensorR
 
         // 定时器：注册、删除、当前时间、当前Watermark
         TimerService timerService = ctx.timerService();
-        timerService.registerProcessingTimeTimer(
-                // 设置的“闹钟”为：当前process time往后5秒
-                timerService.currentProcessingTime() + 5000L
-        );
+//        timerService.registerProcessingTimeTimer(
+//                // 设置的“闹钟”为：当前process time往后5秒
+//                timerService.currentProcessingTime() + 5000L
+//        );
+
         // 定时器注册的类型 跟配置的时间语义没关系
         // 设置事件时间的定时器
-//        timerService.registerEventTimeTimer(
-//                value.getTimestamp() * 1000L + 4000L
-//        );
+        // 为了避免重复注册、重复创建对象，注册定时器的时候，判断一下是否已经注册过了
+        if (triggerTs == 0L) {  // 这样子写，只有一个定时器，只会触发一次
+            timerService.registerEventTimeTimer(
+                    value.getTimestamp() * 1000L + 4000L
+            );
+            triggerTs = value.getTimestamp() * 1000L + 4000L;
+        }
         // timerService.deleteEventTimeTimer();
         // timerService.deleteProcessingTimeTimer();
         // timerService.currentProcessingTime();
