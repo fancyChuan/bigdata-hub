@@ -10,11 +10,15 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.AssignerWithPunctuatedWatermarks;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
+import org.apache.flink.streaming.api.watermark.Watermark;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.annotation.Nullable;
 
 public class JavaProcessFunctionTest {
     private StreamExecutionEnvironment env;
@@ -70,6 +74,44 @@ public class JavaProcessFunctionTest {
 
         SingleOutputStreamOperator<Long> processResult = keyedStream.process(new MyKeyedProcessFunction());
 
+    }
+
+    /**
+     * 练习需求：监控温度传感器，如果温度值在5s之内(processing time)连续上升，则报警。
+     *
+     * sensor_1,1547719200,15.8     # 第一条数据，设置了定时器
+     * sensor_1,1547719203,16.8
+     * sensor_1,1547719204,17.8
+     * sensor_1,1547719205,18.8     # 告警
+     * sensor_1,1547719206,10.8
+     * sensor_1,1547719207,9.8      # 删除了206的定时器，重新注册了207的定时器，因此下一个告警时刻是212
+     * sensor_1,1547719208,12.8
+     * sensor_1,1547719211,17.8
+     * sensor_1,1547719212,20.8     # 告警
+     * sensor_1,1547719213,22.8     # 不会告警，因为只有一个告警器
+     */
+    @Test
+    public void testTempDown() {
+        DataStream<SensorReading> dataStream = getDataStream();
+        // 使用AssignerWithPunctuatedWatermarks避免使用AscendingTimestampExtractor时"时间戳+1"的影响
+        dataStream = dataStream.assignTimestampsAndWatermarks(new AssignerWithPunctuatedWatermarks<SensorReading>() {
+            private Long maxTs = Long.MIN_VALUE;
+            @Nullable
+            @Override
+            public Watermark checkAndGetNextWatermark(SensorReading lastElement, long extractedTimestamp) {
+                this.maxTs = Math.max(this.maxTs, extractedTimestamp);
+                return new Watermark(this.maxTs);
+            }
+
+            @Override
+            public long extractTimestamp(SensorReading element, long recordTimestamp) {
+                return element.getTimestamp() * 1000;
+            }
+        });
+
+        SingleOutputStreamOperator<String> processStream = dataStream.keyBy(SensorReading::getId)
+                .process(new TempDownKeyedProcesssFunc());
+        processStream.print("tempdown");
     }
 }
 
