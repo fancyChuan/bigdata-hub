@@ -14,6 +14,7 @@ import org.apache.flink.streaming.api.functions.AssignerWithPunctuatedWatermarks
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
 import org.apache.flink.streaming.api.watermark.Watermark;
+import org.apache.flink.util.OutputTag;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,7 +89,7 @@ public class JavaProcessFunctionTest {
      * sensor_1,1547719208,12.8
      * sensor_1,1547719211,17.8
      * sensor_1,1547719212,20.8     # 告警
-     * sensor_1,1547719213,22.8     # 不会告警，因为只有一个告警器
+     * sensor_1,1547719213,22.8     # 不会告警，因为只有一个告警器（不考虑持续报警）
      */
     @Test
     public void testTempDown() {
@@ -112,6 +113,16 @@ public class JavaProcessFunctionTest {
         SingleOutputStreamOperator<String> processStream = dataStream.keyBy(SensorReading::getId)
                 .process(new TempDownKeyedProcesssFunc());
         processStream.print("tempdown");
+    }
+
+    @Test
+    public void testSideOutput() {
+        DataStream<SensorReading> dataStream = getDataStream();
+        SingleOutputStreamOperator<SensorReading> processStream = dataStream.keyBy(SensorReading::getId).process(new SideOutputProcessFunction());
+
+        OutputTag<String> alarmTag = new OutputTag<String>("temperatureAlarm") {};
+        processStream.getSideOutput(alarmTag).print("alarm");
+        processStream.print();
     }
 }
 

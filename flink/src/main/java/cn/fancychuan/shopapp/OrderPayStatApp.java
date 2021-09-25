@@ -47,6 +47,9 @@ public class OrderPayStatApp {
                 });
 
         ConnectedStreams<OrderEvent, TxEvent> connectedStream = orderStream.connect(payStream);
+
+         // 注意下面这一行代码，如果不适用keyBy()直接使用process的话，就会受到并行度影响
+         // 可能会导致同一个交易编号的两条数据被分配到不同的子任务中
         ConnectedStreams<OrderEvent, TxEvent> keyByStream = connectedStream.keyBy(order -> order.getTxId(), TxEvent::getTxId);
         SingleOutputStreamOperator<String> processResult =
                 connectedStream.process(new CoProcessFunction<OrderEvent, TxEvent, String>() {

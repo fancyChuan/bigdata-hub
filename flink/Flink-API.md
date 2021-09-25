@@ -185,3 +185,19 @@ TimerService对象拥有以下方法:
 定时器
 - 定时器注册的类型 跟配置的时间语义没关系
 - 定时器timer只能在keyed streams上面使用
+
+参见示例：
+- 使用说明 [MyKeyedProcessFunction](src/main/java/cn/fancychuan/process/MyKeyedProcessFunction.java)
+- 案例，连续5s温度上升：[TempDownKeyedProcesssFunc](src/main/java/cn/fancychuan/process/TempDownKeyedProcesssFunc.java)
+
+#### 8.2 侧输出流（SideOutput）
+除了split算子，可以将一条流分成多条流，这些流的数据类型也都相同。
+process function的side outputs功能可以产生多条流，并且这些流的数据类型可以不一样。
+一个side output可以定义为OutputTag[X]对象，X是输出流的数据类型。
+process function可以通过Context对象发送一个事件到一个或者多个side outputs。
+
+使用示例：[SideOutputProcessFunction](src/main/java/cn/fancychuan/process/SideOutputProcessFunction.java)
+
+#### 8.3 CoProcessFunction
+注意案例 [OrderPayStatApp.java](src/main/java/cn/fancychuan/shopapp/OrderPayStatApp.java)
+中对两条流的数据，要考虑多并行度的影响，一般需要先使用keyBy()
