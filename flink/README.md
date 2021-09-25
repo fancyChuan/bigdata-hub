@@ -255,14 +255,36 @@ sensor_1,1547718225,13.2    # 再来一个225的时候，[225,230)这个窗口�
   - 算子状态不能由相同或不同算子的**另一个任务**访问
   - 算子状态有3种数据结构：
     - 列表状态
-    - 联合列表状态
+    - 联合列表状态 参见[StateMapFunction](src/main/java/cn/fancychuan/state/StateMapFunction.java)
     - 广播状态
-- 键控状态(keyed state)：根据输入数据流中定义的键(key)来维护和访问的
+- **键控状态(keyed state)**：根据输入数据流中定义的键(key)来维护和访问的
   - 具有相同key的所有数据都会访问相同的状态
   - 只能用于KeyedStream
-  - Flink为每个键值维护一个状态实例，相当于是一个分布式的key-value map数据结构
+  - **Flink为每个键值维护一个状态实例**，相当于是一个分布式的key-value map数据结构
 
-状态后端(state backend)：一个可插入的组件，决定着状态的存储、访问以及维护
+##### 键控状态（keyed state)
+Flink的Keyed State支持以下数据类型：
+- ValueState[T]保存单个的值，值的类型为T。
+  - get操作: ValueState.value()
+  - set操作: ValueState.update(value: T)
+- ListState[T]保存一个列表，列表里的元素的数据类型为T。基本操作如下：
+  - ListState.add(value: T)
+  - ListState.addAll(values: java.util.List[T])
+  - ListState.get()返回Iterable[T]
+  - ListState.update(values: java.util.List[T])
+- MapState[K, V]保存Key-Value对。
+  - MapState.get(key: K)
+  - MapState.put(key: K, value: V)
+  - MapState.contains(key: K)
+  - MapState.remove(key: K)
+- ReducingState[T]
+- AggregatingState[I, O]
+
+案例：
+- 使用示例 [StateKeyedProcessFunction](src/main/java/cn/fancychuan/state/StateKeyedProcessFunction.java)
+
+
+##### 状态后端(state backend)：一个可插入的组件，决定着状态的存储、访问以及维护
 > 每传入一条数据，有状态的算子都会读取和更新状态，为了保证低延迟的快速访问，每个并行任务会在本地维护其状态
 - 职责：
   - 本地的状态管理
