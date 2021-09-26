@@ -90,6 +90,8 @@ public class JavaProcessFunctionTest {
      * sensor_1,1547719211,17.8
      * sensor_1,1547719212,20.8     # 告警
      * sensor_1,1547719213,22.8     # 不会告警，因为只有一个告警器（不考虑持续报警）
+     * sensor_3,1547719214,12.8     # 插入了一条sensor_id不同的数据，这个时候会注册一个sensor_3的定时器
+     * sensor_1,1547719219,22.8     # 虽然传的sensor_1，但还是告警了，说明在keyedProcessFunction中使用全局变量，不同id的数据都会访问到
      */
     @Test
     public void testTempDown() {
@@ -113,6 +115,41 @@ public class JavaProcessFunctionTest {
         SingleOutputStreamOperator<String> processStream = dataStream.keyBy(SensorReading::getId)
                 .process(new TempDownKeyedProcesssFunc());
         processStream.print("tempdown");
+    }
+
+    /**
+     * 使用状态实现需求：监控温度传感器，如果温度值在5s之内(processing time)连续上升，则报警。
+     * 演示状态隔离
+     * sensor_1,1547719200,15.8     # 第一条数据，设置了定时器为205，此时定时器内的数据id是sensor_1
+     * sensor_1,1547719203,16.8
+     * sensor_2,1547719204,17.8     # 这里也设置一个定时器为209
+     * sensor_2,1547719205,18.8     # 触发告警. 虽然是sensor_2，但是定时器是跟Watermark有关，与id无关，
+     *                              # 因此这条数据还是触发了第一条数据设置的定时器，查出来的温度是第2条的16.8而不是18.8
+     * sensor_1,1547719209,17.9     # 虽然温度17.9比18.8小，但是因为状态隔离，所以比较的是第3条数据的17.8
+     *                              # 触发的是第4条数据sensor_2所设置的定时器209，而保存的温度也是第4条的18.8，而不是这条数据的17.9
+     */
+    @Test
+    public void testTempDownState() {
+        DataStream<SensorReading> dataStream = getDataStream();
+        // 使用AssignerWithPunctuatedWatermarks避免使用AscendingTimestampExtractor时"时间戳+1"的影响
+        dataStream = dataStream.assignTimestampsAndWatermarks(new AssignerWithPunctuatedWatermarks<SensorReading>() {
+            private Long maxTs = Long.MIN_VALUE;
+            @Nullable
+            @Override
+            public Watermark checkAndGetNextWatermark(SensorReading lastElement, long extractedTimestamp) {
+                this.maxTs = Math.max(this.maxTs, extractedTimestamp);
+                return new Watermark(this.maxTs);
+            }
+
+            @Override
+            public long extractTimestamp(SensorReading element, long recordTimestamp) {
+                return element.getTimestamp() * 1000;
+            }
+        });
+
+        SingleOutputStreamOperator<String> processStream = dataStream.keyBy(SensorReading::getId)
+                .process(new TempDownStateKeyedProcesssFunc());
+        processStream.print("tempdown-state");
     }
 
     @Test
