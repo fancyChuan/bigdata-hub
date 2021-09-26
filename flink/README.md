@@ -287,7 +287,7 @@ Flink的Keyed State支持以下数据类型：
 
 ##### 状态后端(state backend)：一个可插入的组件，决定着状态的存储、访问以及维护
 > 每传入一条数据，有状态的算子都会读取和更新状态，为了保证低延迟的快速访问，每个并行任务会在本地维护其状态
-- 职责：
+- 状态后端的职责：
   - 本地的状态管理
   - 将checkpoint状态写入远程存储
 - 分类：
@@ -304,6 +304,8 @@ Flink的Keyed State支持以下数据类型：
   - RocksDBStateBackend：将所有状态序列化后存入本地的RocksDB中存储（Flink不直接支持，需要加入依赖）
     - 适用场景同FsStateBackend
     - 是目前唯一可以用于支持有状态流处理程序的增量检查点的状态后端
+
+使用示例: [AppStateBackend.java](src/main/java/cn/fancychuan/state/AppStateBackend.java)
 
 #### 6.3 状态一致性
 一致性级别：
