@@ -305,7 +305,7 @@ Flink的Keyed State支持以下数据类型：
     - 适用场景同FsStateBackend
     - 是目前唯一可以用于支持有状态流处理程序的增量检查点的状态后端
 
-使用示例: [AppStateBackend.java](src/main/java/cn/fancychuan/state/AppStateBackend.java)
+使用示例: [AppStateBackendCheckpoint.java](src/main/java/cn/fancychuan/state/AppStateBackendCheckpoint.java)
 
 #### 6.3 状态一致性
 一致性级别：
@@ -330,6 +330,8 @@ Flink的Keyed State支持以下数据类型：
 ![image](img/不同source和sink的一致性保证.png)
 
 #### 6.4 检查点
+Flink检查点算法的正式名称是异步分界线快照(asynchronous barrier snapshotting)。该算法大致基于Chandy-Lamport分布式快照算法。
+
 Flink检查点的核心作用是：确保状态正确，即使遇到持续终端也要正确
 > 检查点是Flink最有价值的创新之一，因为它使flink可以保证exactly-once而不需要牺牲性能
 
@@ -339,6 +341,26 @@ Flink+Kafka如何实现端到端的Exactly-Once语义
 - source: kafka consumer作为source，可以将偏移量保存下来，如果后续任务出现了故障，恢复的时候可以由连接器重置偏移量，重新消费数据，保证一致性
 - sink: kafka producer作为sink，采用两阶段提交 sink，需要实现一个 TwoPhaseCommitSinkFunction
 
+![image](img/checkpoint的运行细节.png)
+
+Flink由JobManager协调各个TaskManager进行checkpoint存储，checkpoint保存在 StateBackend中，默认StateBackend是内存级的，也可以改为文件级的进行持久化保存
+- 当 checkpoint 启动时，JobManager 会将检查点分界线（barrier）注入数据流；barrier会在算子间传递下去
+- 每个算子会对当前的状态做个快照，保存到状态后端
+  - 对于source任务而言，就会把当前的offset作为状态保存起来
+  - 每个内部的 transform 任务遇到 barrier 时，都会把状态存到 checkpoint 里
+  - sink 任务首先把数据写入外部 kafka，这些数据都属于预提交的事务（还不能被消费）；当遇到 barrier 时，把状态保存到状态后端，并开启新的预提交事务
+- 当所有算子任务的快照完成，也就是这次的 checkpoint 完成时，JobManager 会向所有任务发通知，确认这次 checkpoint 完成
+- 当sink 任务收到确认通知，就会正式提交之前的事务，kafka 中未确认的数据就改为“已确认”，数据就真正可以被消费了
+
+两阶段提交步骤总结如下：
+- (1)第一条数据来了之后，开启一个 kafka 的事务（transaction），正常写入 kafka 分区日志但标记为未提交，这就是“预提交”
+- (2)jobmanager 触发 checkpoint 操作，barrier 从 source 开始向下传递，遇到 barrier 的算子将状态存入状态后端，并通知 jobmanager
+- (3)sink 连接器收到 barrier，保存当前状态，存入 checkpoint，通知 jobmanager，并开启下一阶段的事务，用于提交下个检查点的数据
+- (4)jobmanager 收到所有任务的通知，发出确认信息，表示 checkpoint 完成
+- (5)sink 任务收到 jobmanager 的确认信息，正式提交这段时间的数据
+- (6)外部kafka关闭事务，提交的数据可以正常消费了。
+
+checkpoint配置与使用：[AppStateBackendCheckpoint.java](src/main/java/cn/fancychuan/state/AppStateBackendCheckpoint.java)
 
 ### Flink应用
 - [基于flink-sql的实时流计算web平台](https://github.com/zhp8341/flink-streaming-platform-web)
