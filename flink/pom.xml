@@ -91,6 +91,18 @@
       <artifactId>flink-statebackend-rocksdb_2.11</artifactId>
       <version>${flink.version}</version>
     </dependency>
+    <!-- 增加flink CEP支持 -->
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-cep-scala_2.11</artifactId>
+      <version>${flink.version}</version>
+    </dependency>
+    <!--增加flink CDC的支持-->
+    <dependency>
+      <groupId>com.ververica</groupId>
+      <artifactId>flink-connector-mysql-cdc</artifactId>
+      <version>2.0.0</version>
+    </dependency>
 
     <!--日志-->
     <dependency>
