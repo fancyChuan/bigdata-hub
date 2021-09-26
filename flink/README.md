@@ -282,7 +282,8 @@ Flink的Keyed State支持以下数据类型：
 
 案例：
 - 使用示例 [StateKeyedProcessFunction](src/main/java/cn/fancychuan/state/StateKeyedProcessFunction.java)
-
+- 演示状态隔离：连续温度差大于20告警 [AppStateTempDiff.java](src/main/java/cn/fancychuan/state/AppStateTempDiff.java)
+- 演示状态隔离：连续5s温度大于20告警 [TempDownStateKeyedProcesssFunc.java](src/main/java/cn/fancychuan/process/TempDownStateKeyedProcesssFunc.java)
 
 ##### 状态后端(state backend)：一个可插入的组件，决定着状态的存储、访问以及维护
 > 每传入一条数据，有状态的算子都会读取和更新状态，为了保证低延迟的快速访问，每个并行任务会在本地维护其状态

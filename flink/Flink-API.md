@@ -173,6 +173,10 @@ DataStream提供了一系列底层的转换算子，可以**时间戳、Watermar
 - ProcessWindowFunction
 - ProcessAllWindowFunction
 
+> 使用的时候尤其要考虑在实现类中，使用成员变量还是使用状态对象！
+> 参见[TempDownStateKeyedProcesssFunc.java](src/main/java/cn/fancychuan/process/TempDownStateKeyedProcesssFunc.java)
+> 和[TempDownStateProcesssFunc.java](src/main/java/cn/fancychuan/process/TempDownKeyedProcesssFunc.java)的区别
+
 #### 8.1 TimeService和定时器（Timers)
 TimerService对象拥有以下方法:
 - currentProcessingTime(): Long 返回当前处理时间
