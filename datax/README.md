@@ -44,7 +44,7 @@ python /opt/app/datax/bin/datax.py -r mysqlreader -w hdfswriter
 
 执行命令：
 ```
-data.py /home/appuser/forlearn/datax/mysql2hdfs.json
+datax.py /home/appuser/forlearn/datax/mysql2hdfs.json
 ```
 > 注意：HdfsWriter实际执行时会在该文件名后添加随机的后缀作为每个线程写入实际文件名。
 
@@ -63,3 +63,4 @@ data.py /home/appuser/forlearn/datax/mysql2hdfs.json
 
 
 ### data-web
+访问地址：
