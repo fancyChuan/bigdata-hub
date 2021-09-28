@@ -1,4 +1,4 @@
-## bigdata-learn
+## bigdata-hub
 大数据相关的技术可以分为：传输、存储、计算三大方面
 
 ### pom相关
@@ -8,13 +8,13 @@
 
 ### 学习项目
 - 基础重要框架
-  - [hadoop](./hadoop)
-  - [hive](./hive)
-  - [spark](./spark)
-  - [flink](./flink)
+  - [hadoop](./hadoop)：HDFS、MR、YARN及高级话题、企业优化
+  - [hive](./hive)：基础使用、优化、SQL编译过程、数据血缘、进阶、权限控制
+  - [spark](./spark)：spark-core、spark-sql、streaming、优化、进阶
+  - [flink](./flink)：flink基础知识、API、CEP、CDC、流式架构、案例实践
 - 数据存储
-  - [hbase](./hbase)
-  - [kafka](./kafka)
+  - [hbase](./hbase)：核心API、进阶、与Hive和MR集成、Phoenix集成
+  - [kafka](./kafka)：命令行、API、企业级实战
   - [elasticsearch](./elasticsearch)
   - [zookeeper](./zookeeper)
 - 数据传输（数据交换、数据集成）
@@ -33,15 +33,15 @@
   - [CDH集群搭建](./环境搭建/CM+CDH安装)
   - [HDP集群搭建](./环境搭建/Ambari+HDP安装)
 - 大数据建设
-  - 可视化
-  - 标签/指标体系
-  - 数据质量
-  - 混合计算
+  - [可视化](./大数据建设/可视化BI)
+  - [标签/指标体系](./大数据建设/指标&标签体系建设)
+  - [数据质量](./大数据建设/数据质量管理)
+  - [混合计算](./大数据建设/混合计算)
 - 前沿
   - 增强性数据分析
   - 数据中台
-  - 数据湖
-  - 湖仓一体Lakehouse
+  - [数据湖](./大数据建设/数据中台建设)
+  - [湖仓一体Lakehouse](./大数据建设/湖仓Lakehouse)
 - 其他
   - [数字化转型](./数字化转型)
 
