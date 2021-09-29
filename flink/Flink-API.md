@@ -44,6 +44,13 @@ val env = ExecutionEnvironment.createRemoteEnvironment("jobmanage-hostname", 612
 代码参见：[SourceApp.scala](src/main/scala/cn/fancychuan/scala/SourceApp.scala)
 
 ### 3. Transform算子
+支持的数据类型
+- 基本的数据类型
+- java和Scala元组（tuple）
+- Scala样例类
+- Java简单对象（POJO）
+- 其它（Arrays, Lists, Maps, Enums, 等等）
+
 在flink中，source之后，sink之前的中间所有过程，都可以认为是转换算子，这个跟spark中的转换算子不是一个概念。
 
 基本转换算子：map, flatMap, filter
@@ -64,12 +71,17 @@ val env = ExecutionEnvironment.createRemoteEnvironment("jobmanage-hostname", 612
 整个转换算子涉及到的Stream类型
 ![image](img/DataStream相互转换关系.png)
 
-### 4. 支持的数据类型
-- 基本的数据类型
-- java和Scala元组（tuple）
-- Scala样例类
-- Java简单对象（POJO）
-- 其它（Arrays, Lists, Maps, Enums, 等等）
+### 4. Operator
+- 滚动聚合算子（Rolling Aggregation）
+  - sum()
+  - min()
+  - max()
+  - aggregate()
+> 这些算子可以针对KeyedStream的每一个支流做聚合。执行完成后，会将聚合的结果合成一个流返回，所以结果都是DataStream
+- reduce
+> 一个分组数据流的聚合操作，合并当前的元素和上次聚合的结果，产生一个新的值，返回的流中包含每一次聚合的结果，而不是只返回最后一次聚合的最终结果
+- process
+> Flink在数据流通过keyBy进行分流处理后，如果想要处理过程中获取环境相关信息，可以采用process算子自定义实现
 
 ### 5. 实现UDF-更细粒度的控制流
 #### 5.1 函数类
