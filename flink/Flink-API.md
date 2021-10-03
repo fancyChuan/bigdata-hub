@@ -76,7 +76,6 @@ val env = ExecutionEnvironment.createRemoteEnvironment("jobmanage-hostname", 612
   - sum()
   - min()
   - max()
-  - aggregate()
 > 这些算子可以针对KeyedStream的每一个支流做聚合。执行完成后，会将聚合的结果合成一个流返回，所以结果都是DataStream
 - reduce
 > 一个分组数据流的聚合操作，合并当前的元素和上次聚合的结果，产生一个新的值，返回的流中包含每一次聚合的结果，而不是只返回最后一次聚合的最终结果
@@ -160,6 +159,7 @@ window()方法
 - 增量聚合函数
     - 每条数据到来就进行计算，保持一个简单的状态
     - ReduceFunction, AggregateFunction
+> 参见：[JavaTransformApp2](src/main/java/cn/fancychuan/JavaTransformApp2.java)
 - 全窗口函数
     - 先把窗口所有数据收集起来，等到计算的时候便利所有数据
     - ProcessWindowFunction, WindowFunction
