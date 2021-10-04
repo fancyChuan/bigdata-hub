@@ -10,6 +10,7 @@ import org.apache.flink.streaming.api.collector.selector.OutputSelector;
 import org.apache.flink.streaming.api.datastream.*;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.CoMapFunction;
+import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
 import org.junit.After;
@@ -113,7 +114,13 @@ public class JavaTransformApp2 {
      * 示例：求近5秒的温度平均值
      */
     public void testAggregate() {
-        DataStream<SensorReading> dataStream = getDataStream();
+        DataStream<SensorReading> dataStream = getDataStream()
+                .assignTimestampsAndWatermarks(new AscendingTimestampExtractor<SensorReading>() {
+                    @Override
+                    public long extractAscendingTimestamp(SensorReading element) {
+                        return element.getTimestamp() * 1000;
+                    }
+                });
         dataStream.keyBy(SensorReading::getId)
                 .timeWindow(Time.seconds(5))
                 .aggregate(new AggregateFunction<SensorReading, Tuple2<Double, Integer>, Double>() {
