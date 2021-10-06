@@ -70,6 +70,7 @@ public class JavaWindowApp {
      * 增量聚合函数：aggregate
      * 示例：求近5秒的温度平均值
      */
+    @Test
     public void testAggregate() {
         DataStream<SensorReading> dataStream = getDataStream()
                 .assignTimestampsAndWatermarks(new AscendingTimestampExtractor<SensorReading>() {
@@ -123,6 +124,16 @@ public class JavaWindowApp {
      * sensor_1,1547718208,35.5
      * sensor_1,1547718209,35.5
      * sensor_1,1547718210,35.5 # 输出结果4，包括206-209共4条数据
+     *
+     * 窗口如何分配：
+     *  1. 窗口的开始时间: timestamp - (timestamp + windowSize) % windowSize;
+     *  2. 窗口的结束时间: start + size => 窗口的开始时间 + 窗口长度
+     *  3. 窗口是 左闭右开 :  maxTimestamp = end - 1  (单位是毫秒）
+     *  上面的案例中，第一个窗口是[200,205)，第二个窗口是[205,210)
+     *
+     * 窗口是如何触发计算的：
+     *  window.maxTimestamp() <= ctx.getCurrentWatermark()
+     *  也就是 end - 1 <= watermark
      */
     @Test
     public void testProcessWindow() {
@@ -141,6 +152,7 @@ public class JavaWindowApp {
                      */
                     @Override
                     public void process(String s, ProcessWindowFunction<SensorReading, Long, String, TimeWindow>.Context context, Iterable<SensorReading> elements, Collector<Long> out) throws Exception {
+                        System.out.println("start: " + elements.iterator().next().getTimestamp());
                         out.collect(elements.spliterator().estimateSize());
                     }
                 })

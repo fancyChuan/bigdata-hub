@@ -135,6 +135,9 @@ Window是一种切割无线数据为有限块进行处理的手段。Window是�
 > 注意：countWindow的window_size指的是相同key的元素的个数，而不是输入的所有元素的总数
 
 #### 7.2 Window API
+分组 > 开窗 > 聚合
+> 开窗调用聚合操作之后，每个窗口的输出结果会混到一起，也就是说，没有了窗口的概念
+
 window()方法
 - 用.window()来定义一个窗口
 - 需要在keyBy之后才能使用
@@ -158,12 +161,21 @@ window()方法
 窗口函数：对窗口收集的数据所做的计算操作
 - 增量聚合函数
     - 每条数据到来就进行计算，保持一个简单的状态
-    - ReduceFunction, AggregateFunction
-> 参见：[JavaTransformApp2](src/main/java/cn/fancychuan/JavaTransformApp2.java)
+    - ReduceFunction
+      - 参考：[cn.fancychuan.JavaTransformApp2.testReduce](src/main/java/cn/fancychuan/JavaTransformApp2.java)
+    - AggregateFunction
+      - aggregate用法一：[cn.fancychuan.JavaWindowApp.testAggregate](src/main/java/cn/fancychuan/JavaWindowApp.java)
+      - aggregate用法二：传入两个参数 aggregate(aggregateFunction, windowFunction)
+        - aggregateFunction 预聚合函数（增量聚合）
+        - 将aggregateFunction得到的结果，作为windowFunction的输入
+        - 参见代码：
+        > 这种做法比直接使用process的全窗口函数可以避免OOM的风险
 - 全窗口函数
     - 先把窗口所有数据收集起来，等到计算的时候便利所有数据
     - ProcessWindowFunction, WindowFunction
-    
+
+
+
 其他可选API
 - trigger() 触发器    
     - 定义window什么时候关闭，触发计算并输出结果

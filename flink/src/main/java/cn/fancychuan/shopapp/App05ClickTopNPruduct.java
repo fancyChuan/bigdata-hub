@@ -1,14 +1,11 @@
 package cn.fancychuan.shopapp;
 
+import cn.fancychuan.SensorReading;
+import cn.fancychuan.shopapp.bean.ItemCountBean;
 import cn.fancychuan.shopapp.bean.UserBehaviorBean;
-import org.apache.flink.api.common.eventtime.AscendingTimestampsWatermarks;
-import org.apache.flink.api.common.eventtime.WatermarkGenerator;
-import org.apache.flink.api.common.eventtime.WatermarkGeneratorSupplier;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -22,13 +19,13 @@ import org.apache.flink.util.Collector;
 /**
  * 需求：实时热门商品（每隔5分钟输出最近一小时内点击量最多的前N个产品
  */
-public class ClickTopNPruductApp {
+public class App05ClickTopNPruduct {
     public static void main(String[] args) {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
-        DataStreamSource<String> inputStream = env.readTextFile(ClickTopNPruductApp.class.getClassLoader().getResource("UserBehavior.csv").getPath());
+        DataStreamSource<String> inputStream = env.readTextFile(App05ClickTopNPruduct.class.getClassLoader().getResource("UserBehavior.csv").getPath());
         SingleOutputStreamOperator<UserBehaviorBean> dataStream =
                 inputStream.map(new MapFunction<String, UserBehaviorBean>() {
                     @Override
@@ -55,30 +52,29 @@ public class ClickTopNPruductApp {
 
         userBehaviorStream.keyBy(UserBehaviorBean::getItemId)
                 .timeWindow(Time.hours(1), Time.minutes(5))
-                .aggregate(
-                        new AggregateFunction<UserBehaviorBean, Long, Long>() {
-                            @Override
-                            public Long createAccumulator() {
-                                return 0L;
-                            }
-                            @Override
-                            public Long add(UserBehaviorBean userBehaviorBean, Long aLong) {
-                                return aLong + 1;
-                            }
-                            @Override
-                            public Long getResult(Long aLong) {
-                                return aLong;
-                            }
-                            @Override
-                            public Long merge(Long aLong, Long acc1) {
-                                return acc1 + aLong;
-                            }
-                        },
-                        new WindowFunction<Long, Object, Long, TimeWindow>() {
-                            @Override
-                            public void apply(Long aLong, TimeWindow window, Iterable<Long> input, Collector<Object> out) throws Exception {
+                .aggregate();
+    }
 
-                            }
-                        });
+    private static class CountAgg implements AggregateFunction<SensorReading, ItemCountBean, ItemCountBean> {
+
+        @Override
+        public ItemCountBean createAccumulator() {
+            return null;
+        }
+
+        @Override
+        public ItemCountBean add(SensorReading sensorReading, ItemCountBean itemCountBean) {
+            return null;
+        }
+
+        @Override
+        public ItemCountBean getResult(ItemCountBean itemCountBean) {
+            return null;
+        }
+
+        @Override
+        public ItemCountBean merge(ItemCountBean itemCountBean, ItemCountBean acc1) {
+            return null;
+        }
     }
 }
