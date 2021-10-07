@@ -1,11 +1,11 @@
 ## ZooKeeper
 
-#### 概述
+### 概述
 Zookeeper是一个具有高可用性的高性能协调服务
 > 分布式应用的主要困难是会出现“部分错误”(partial failure)，这是分布式系统固有的特征。ZooKeeper可以提供一组工具，能够对部分失败进行正确的处理
 > 部分失败： 一条消息在两个节点之间传送，发送网络错误，发送者无法知道接受者是否收到这条消息
 
-**zk工作机制**
+#### zk工作机制
 ![image](img/ZooKeeper工作机制.png)
 
 特点：
@@ -18,36 +18,36 @@ Zookeeper是一个具有高可用性的高性能协调服务
 
 **深入理解**：[ZooKeeper核心功能和工作机制](https://github.com/fancyChuan/read-the-source/blob/master/zookeeper/zookeeper核心功能和工作机制.md)
 
-zk的数据结构：
+#### zk的数据结构
 - zk的数据模型跟Unix文件系统很类似，整体上可以看为一棵树，每个节点称为一个znode（没有目录和文件的区别）
 - 每个znode默认能够存储1MB数据，每个znode都可以通过其路径唯一标识
 > 将ZooKeeper视为一个具有高可用性的文件系统，只不过没有文件和目录，而是统一使用节点node的概念，称为znode，同时具有文件和目录的功能
 
 
-应用场景：
+#### 应用场景
 - 传统javaEE场景：统一命名服务、统一配置管理、统一集群管理、服务器节点动态上下线、软负载均衡（zk记录每台服务器的访问数，让访问数最小的服务器去处理最新的客户端请求）等
 - 大数据场景：HA、Kafka、HBase等
 
 
+**服务器动态上下线**
 
-独立模式运行zk的最低要求：
-```
-tickTime=2000
-dataDir=/opt/modules/zookeeper-3.4.5/data/zkData
-clientPort=2181
-```
+![image](img/zk应用场景-服务器动态上下线.png)
 
+**统一命名服务**
 
-#### java API
-- 创建组
-- 加入组
-    - 每个组成员作为一个程序运行
-    - 当程序退出时，组成员应当从组中删除
-    - 通过在ZooKeeper的命名空间中使用短暂znode来代表一个组成员
-- 列出组成员
-- 删除组
-    - zookeeper不支持递归的删除操作，在删除父节点之前需要先删除子节点
-    - delete需要提供两个参数：节点路径+版本号。一致才会删除，版本号设为-1的时候，会直接删除
+![image](img/zk应用场景-统一命名服务.png)
+
+**统一配置管理**
+
+![image](img/zk应用场景-统一配置管理.png)
+
+**统一集群管理**
+
+![image](img/zk应用场景-统一集群管理.png)
+
+**软负载均衡**
+
+![image](img/zk应用场景-软负载均衡.png)
 
 
 #### ZooKeeper服务
