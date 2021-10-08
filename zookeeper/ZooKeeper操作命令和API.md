@@ -6,6 +6,9 @@
 
 
 ### API
+#### zk客户端的使用
+
+参见代码：[ZkClientApp.java](src/main/java/apps/ZkClientApp.java)
 
 - 创建组
 - 加入组
