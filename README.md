@@ -6,7 +6,7 @@
 - hadoop-book-pom-manager
 - hadoop-pom
 
-### 学习项目
+### 知识体系
 - 基础重要框架
   - [hadoop](./hadoop)：HDFS、MR、YARN及高级话题、企业优化
   - [hive](./hive)：基础使用、优化、SQL编译过程、数据血缘、进阶、权限控制
@@ -21,13 +21,16 @@
   - [datax](./datax)
   - [sqoop](./sqoop)
   - [flume](./flume)
-- 大数据调度
+- 大数据调度：满足复杂大规模作业的调度场景
   - [oozie](bigdata-scheduler/oozie)
   - [azkaban](bigdata-scheduler/azkaban)
   - [dolphinscheduler](bigdata-scheduler/dolphinscheduler)
 - 第三方or商业集成技术
   - [aliyun-bigdata](./aliyun-bigdata)：阿里云大数据（包括DataWorks、MaxCompute等）
   - [dss](./dss)：微众开源一站式数据平台（DataSphere Studio）
+    - 计算中间件：linkis
+    - 数据交换：exchangis
+
 - 环境搭建
   - [apache版本搭建](./环境搭建)
   - [CDH集群搭建](./环境搭建/CM+CDH安装)
