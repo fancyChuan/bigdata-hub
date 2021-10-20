@@ -1,5 +1,12 @@
 ## HDFS
 
+### 概述
+优点：
+
+缺点：（实际上也是由HDFS设计的特性所决定的）
+
+### 客户端操作
+
 java接口
 - 从Hadoop URL读取数据
     - java自带的URL可以读取url的信息，new URL("hdfs://host/path"").openStream()
