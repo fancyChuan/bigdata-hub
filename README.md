@@ -10,6 +10,10 @@
 - 基础重要框架
   - [hadoop](./hadoop)：HDFS、MR、YARN及高级话题、企业优化
   - [hive](./hive)：基础使用、优化、SQL编译过程、数据血缘、进阶、权限控制
+    - [hive优化](./hive/hive调优)
+    - [hive数据血缘](./hive/hive数据血缘)
+    - [数仓工作与建设](./hive/数仓工作与建设)
+    - [数仓建模](./hive/数仓建模)
   - [spark](./spark)：spark-core、spark-sql、streaming、优化、进阶
   - [flink](./flink)：flink基础知识、API、CEP、CDC、流式架构、案例实践
 - 数据存储
