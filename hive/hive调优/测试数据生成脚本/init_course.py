@@ -17,7 +17,7 @@ def create_student_sc_dict(start):
                      "op_datetime": datetime.datetime.now().strftime("%Y-%m-%d"),
                      "reason": u"我非常非常非常非常非常非常非常"
                                u"非常非常非常非常非常非常非常喜爱{0}".format(course)}
-            line = "{0}\t{1}\t{2}\t{3}" \
+            line = "{0}\t{1}\t{2}\t{3}\n" \
                 .format(model['s_no'],
                         model['course'],
                         model['op_datetime'],
