@@ -95,3 +95,31 @@
     2、拦截器 监控器 选择器
 
     3、优化及挂了怎么办
+
+### Spark
+1、入门
+    部署：
+        local
+        standalone  对效率追求比较高的场景 国内很小使用
+        yarn
+        mosoe
+        k8s
+    启动流程：
+
+2、Sparkcore
+    代码在哪执行：driver、 executor
+    五大属性
+        标记数据是哪个分区的
+        计算
+        依赖
+        分区器
+        移动数据不如移动计算
+
+
+3、Spark sql
+
+4、spark streaming
+
+5、内核
+
+6、优化+数据倾斜

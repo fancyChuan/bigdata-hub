@@ -46,8 +46,8 @@
   - [混合计算](./大数据建设/混合计算)
 - 前沿
   - 增强性数据分析
-  - 数据中台
-  - [数据湖](./大数据建设/数据中台建设)
+  - [数据中台](./大数据建设/数据中台建设)
+  - [数据湖](./大数据建设/数据湖)
   - [湖仓一体Lakehouse](./大数据建设/湖仓Lakehouse)
 - 其他
   - [数字化转型](./数字化转型)
@@ -68,4 +68,6 @@
 - [《Hadoop构建数据仓库实践》-王雪迎](https://weread.qq.com/web/reader/1d532310719b20661d52380)
 - [《Hadoop技术内幕：深入解析YARN架构设计与实现原理》](https://weread.qq.com/web/reader/71a32ab0597cf871a51c384kc81322c012c81e728d9d180)
 - 《spark快速大数据分析(learning-spark)》: [https://github.com/databricks/learning-spark](https://github.com/databricks/learning-spark)
-
+- [《Hive性能调优实战》-林志煌](https://weread.qq.com/web/reader/a503221071a486c0a503e7akc81322c012c81e728d9d180)
+  - 笔记：[01感受hive性能调优的多样式](hive/hive调优/01感受hive性能调优的多样式.md)
+  - 笔记：[02Hive问题排查与调优思路](hive/hive调优/02Hive问题排查与调优思路.md)
