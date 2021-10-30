@@ -27,6 +27,7 @@
         <module>beam</module>
         <module>flume</module>
         <module>datax</module>
+        <module>flink-cdc</module>
     </modules>
 
     <properties>

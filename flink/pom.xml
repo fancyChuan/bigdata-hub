@@ -69,7 +69,7 @@
       <artifactId>flink-connector-kafka-0.11_2.11</artifactId>
       <version>${flink.version}</version>
     </dependency>
-    <!-- kafka连接器 -->
+    <!-- es连接器 -->
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-connector-elasticsearch6_2.11</artifactId>
@@ -81,11 +81,13 @@
       <artifactId>flink-connector-redis_2.11</artifactId>
       <version>1.0</version>
     </dependency>
+    <!-- mysql连接驱动 -->
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>5.1.47</version>
     </dependency>
+    <!-- rocksdb 状态后端 -->
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-statebackend-rocksdb_2.11</artifactId>
@@ -96,12 +98,6 @@
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-cep-scala_2.11</artifactId>
       <version>${flink.version}</version>
-    </dependency>
-    <!--增加flink CDC的支持-->
-    <dependency>
-      <groupId>com.ververica</groupId>
-      <artifactId>flink-connector-mysql-cdc</artifactId>
-      <version>2.0.0</version>
     </dependency>
 
     <!--日志-->
