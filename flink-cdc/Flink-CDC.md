@@ -27,13 +27,14 @@ flink-cdc-connectors 组件，这是一个可以直接从mysql、postgresql等�
 #### 使用
 ```
 public enum StartupMode {
-    INITIAL,            // 会先把表的数据查出来，然后再从binlog读取
-    EARLIEST_OFFSET,    // 这种会从表最开始的位置开始读取，但是要求在表创建之前就已经开启binlog
+    INITIAL,            // 会先把表的数据用查询的方式查出来（做一个快照），然后再从binlog读取
+    EARLIEST_OFFSET,    // 这种会从表最开始的位置开始读取，如果要读到完整数据，那么要求在表创建之前就已经开启binlog
     LATEST_OFFSET,      // 从最新的binlog位置读取
-    SPECIFIC_OFFSETS,
-    TIMESTAMP;
+    SPECIFIC_OFFSETS,   // 指定offset
+    TIMESTAMP;          // 指定时间戳
 
     private StartupMode() {
     }
 }
 ```
+
