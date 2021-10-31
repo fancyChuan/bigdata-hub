@@ -17,8 +17,7 @@ public class WordCountApp {
         inputDataSet.flatMap(new FlatMapFunction<String, String>() {
             @Override
             public void flatMap(String s, Collector<String> collector) throws Exception {
-                String[] split = s.split(".");
-
+                String[] split = s.split(" ");
             }
         });
     }

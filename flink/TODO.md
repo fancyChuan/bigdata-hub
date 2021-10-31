@@ -8,3 +8,8 @@
 - Flink的StreamGraph、JobGraph、ExecutionGraph的数据结构是什么样子的
 - Flink的Sink通过JDBC来自定义时，如何使用连接池来提高性能？避免一个流就创建一次连接
 - keyBy()传入多个字段，跟使用map先把多个字段拼接成一个字段，这这两种方式各有说明优缺点？
+
+
+使用yarn-session模式的时候，作业的提交流程，注意跟`/tmp/.yarn-properties-appuser`的交互细节
+- 使用 `echo "stop" | ./bin/yarn-session.sh -id application_1609324396857_95667` 可以优雅的停掉session，并且删除`/tmp/.yarn-properties-appuser`
+- 如果是`yarn application -kill application_1609324396857_95667`的话，那么`/tmp/.yarn-properties-appuser` 会保留

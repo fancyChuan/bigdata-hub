@@ -34,16 +34,18 @@ hadoop103
 - 1.启动hadoop集群
 - 2.启动yarn-session
 ```
-bin/yarn-session.sh -n 2 -s 2 -jm 1024 -tm 1024 -nm flinktest -d
+bin/yarn-session.sh -d -n 2 -s 2 -jm 1024 -tm 1024 -nm flinktest 
 
 其中：
+-d：后台执行。注意，-d一定要写在前面
 -n(--container)：TaskManager的数量。
 -s(--slots)：	每个TaskManager的slot数量，默认一个slot一个core，默认每个taskmanager的slot的个数为1，有时可以多一些taskmanager，做冗余。
 -jm：JobManager的内存（单位MB)。
 -tm：每个taskmanager的内存（单位MB)。
 -nm：yarn 的appName(现在yarn的ui上的名字)。 
--d：后台执行。
 ```
+> 新版本的yarn会按需动态分配TaskManager和slot，其实-n -s参数已经失效
+
 - 3.提交任务时
 ```
 bin/flink run -c cn.fancychuan.scala.quickstart.DataStreamWcApp \
