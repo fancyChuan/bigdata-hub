@@ -28,8 +28,18 @@ sudo sbin/nginx
 ```
 ps -ef | grep nginx
 ```
+6、重启
+```
+sbin/nginx -s reload
+```
+7、停止
+```
+sbin/nginx -s stop
+```
 
 > nginx占用80端口，默认情况下非root用户不允许使用1024以下端口
 > 
 > 解决：让当前用户的某个应用也可以使用 1024 以下的端口
 ```sudo setcap cap_net_bind_service=+eip /opt/modules/nginx/sbin/nginx```
+
+##

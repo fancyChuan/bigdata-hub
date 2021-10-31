@@ -1,6 +1,9 @@
-## Centos上安装mysql
+## MySQL多版本多实例安装指南
 
+### 01通过rpm包的方式安装
 下载rpm包地址： http://mirrors.sohu.com/mysql/MySQL-5.6/
+官方下载地址： https://downloads.mysql.com/archives/community/
+
 
 安装mysql
 ```
@@ -26,3 +29,8 @@ mysql> select user, host, password from user;
 # 刷新权限
 mysql> flush privileges;
 ```
+
+### 02多版本多实例共存
+查看整理的博文：
+- [win10同时安装mysql5.6、mysql5.7以及mysql8多个版本_fancychuan的博客-CSDN博客](https://blog.csdn.net/fancychuan/article/details/121059475)
+- [Centos7安装mysql5.6、mysql5.7和mysql8多个版本并共存_fancychuan的博客-CSDN博客](https://blog.csdn.net/fancychuan/article/details/121066434)
