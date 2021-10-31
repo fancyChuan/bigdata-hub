@@ -11,7 +11,7 @@
 - 3.当然，也可以在flink的界面上submit的方式提交。
 > 注意，使用Per-Job-Cluster，则不能在界面上使用 submit 的方式提交
 
-#### 使用yarn-session
+#### 1.使用yarn-session
 - 启动yarn-session
 ```
 yarn-session.sh -d -jm 1024 -tm 1024 -nm flinktest 
@@ -20,7 +20,7 @@ yarn-session.sh -d -jm 1024 -tm 1024 -nm flinktest
 - 找到相应的application，并访问
 - 通过web界面的"submit New Job"来提交新的作业
 
-#### 使用yarn-cluster，即 pre-job-cluster
+#### 2.使用yarn-cluster，即 pre-job-cluster
 直接在提交作业的时候加上参数 `-m yarn-cluster`
 ```
 flink run -m yarn-cluster  \
@@ -28,3 +28,6 @@ flink run -m yarn-cluster  \
  /home/appuser/forlearn/flink/flink-1.0-SNAPSHOT.jar \ 
  --host hadoop101 --port 7777
 ```
+#### 3.flink1.11以后的 Application Mode
+
+https://ci.apache.org/projects/flink/flink-docs-release-1.12/zh/deployment/resource-providers/yarn.html

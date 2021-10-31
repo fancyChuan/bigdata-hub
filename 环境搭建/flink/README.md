@@ -25,6 +25,7 @@ hadoop103
 
 #### 二、yarn模式
 有两种模式：Session-Cluster和Per-Job-Cluster模式
+> 注意使用yarn模式，需要在 `$FLNKE_HOME/lib` 下增加依赖包 flink-shaded-hadoop-2-uber-2.7.5-7.0.jar
 ##### Session-Cluster模式
 在yarn中初始化一个flink集群，开辟指定的资源，以后提交任务都向这里提交。这个flink集群会常驻在yarn集群中，除非手工停止
 
