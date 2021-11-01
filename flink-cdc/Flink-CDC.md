@@ -38,3 +38,28 @@ public enum StartupMode {
 }
 ```
 
+读取mysql cdc的示例：[FlinkCDC.java](src/main/java/cn/fancychuan/flink/cdc/FlinkCDC.java)
+
+结果示例：![image](image/flink-cdc-mysql创建删除修改记录.png)
+
+启动命令
+```
+# 通过yarn-session模式
+yarn-session.sh -d -jm 1024 -tm 1024 -nm flinktest 
+
+# 提交作业
+flink run -c cn.fancychuan.flink.cdc.FlinkCDC /home/appuser/forlearn/flink/flink-cdc-1.0-SNAPSHOT.jar
+```
+
+
+实现“断点续传”：
+```
+# 先手动做一次savepoint，其中9afaecdb70cf8036c353f4ff3ff5601f为job id
+flink savepoint 9afaecdb70cf8036c353f4ff3ff5601f hdfs://hadoop101:8020/forlearn/flinkCDC/savepoint
+
+# 在web界面上取消掉作业 9afaecdb70cf8036c353f4ff3ff5601f
+
+# 重启启动作业，通过-s参数指定savepoint的路径
+flink run -c cn.fancychuan.flink.cdc.FlinkCDC -s hdfs://hadoop101:8020/forlearn/flinkCDC/savepoint/savepoint-9afaec-0971be89c8f8 /home/appuser/forlearn/flink/flink-cdc-1.0-SNAPSHOT.jar
+```
+

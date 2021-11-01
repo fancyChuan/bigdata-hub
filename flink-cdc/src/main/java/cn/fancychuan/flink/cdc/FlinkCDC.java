@@ -20,14 +20,14 @@ public class FlinkCDC {
         env.enableCheckpointing(5000L);
         // 指定checkpoint的一致性语义
         env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
-//        // 设置任务关闭的时候保留最后一次checkpoint数据
-//        env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+        // 设置任务关闭的时候保留最后一次checkpoint数据
+        env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
         // 指定从checkpoint的重启策略
         env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, 2000L));
         // 设置状态后端
-        env.setStateBackend(new FsStateBackend("hdfs://hadoop101:8020/flinkCDC/statebackend"));
+        env.setStateBackend(new FsStateBackend("hdfs://hadoop101:8020/forlearn/flinkCDC/statebackend"));
 
-        System.setProperty("HADOOP_USER_NAME", "hdfs");
+        System.setProperty("HADOOP_USER_NAME", "appuser");
         DebeziumSourceFunction<String> mysqlSource = MySqlSource.<String>builder()
                 .hostname("hphost").port(3307)
                 .username("root").password("123456")
