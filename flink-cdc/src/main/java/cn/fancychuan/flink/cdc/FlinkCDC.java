@@ -1,9 +1,9 @@
 package cn.fancychuan.flink.cdc;
 
-import com.ververica.cdc.connectors.mysql.MySqlSource;
-import com.ververica.cdc.connectors.mysql.table.StartupOptions;
-import com.ververica.cdc.debezium.DebeziumSourceFunction;
-import com.ververica.cdc.debezium.StringDebeziumDeserializationSchema;
+import com.alibaba.ververica.cdc.connectors.mysql.MySQLSource;
+import com.alibaba.ververica.cdc.connectors.mysql.table.StartupOptions;
+import com.alibaba.ververica.cdc.debezium.DebeziumSourceFunction;
+import com.alibaba.ververica.cdc.debezium.StringDebeziumDeserializationSchema;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
@@ -28,7 +28,7 @@ public class FlinkCDC {
         env.setStateBackend(new FsStateBackend("hdfs://hadoop101:8020/forlearn/flinkCDC/statebackend"));
 
         System.setProperty("HADOOP_USER_NAME", "appuser");
-        DebeziumSourceFunction<String> mysqlSource = MySqlSource.<String>builder()
+        DebeziumSourceFunction<String> mysqlSource = MySQLSource.<String>builder()
                 .hostname("hphost").port(3307)
                 .username("root").password("123456")
 //                .serverTimeZone("Asia/Shanghai")  // 使用高版本的驱动比如8.0以上就可以不加这个

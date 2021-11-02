@@ -13,7 +13,7 @@ CDC的两种类型：
 
 flink-cdc-connectors 组件，这是一个可以直接从mysql、postgresql等数据库直接读取**全量数据**和**增量变更数据**的source组件
 
-#### 支持的版本
+#### 支持的数据库版本
 | Database | Version |
 | --- | --- |
 | MySQL | Database: 5.7, 8.0.x <br/>JDBC Driver: 8.0.16 |
@@ -23,8 +23,47 @@ flink-cdc-connectors 组件，这是一个可以直接从mysql、postgresql等�
 
 注意mysql5.6.x版本是不支持CDC的
 
+#### cdc与flink版本的对应关系
+| Flink CDC Connector Version | Flink Version |
+| --- | --- |
+|1.0.0 | 1.11.* |
+|1.1.0 | 1.11.* |
+|1.2.0 | 1.12.* |
+|1.3.0 | 1.12.* |
+|1.4.0 | 1.13.* |
+|2.0.* | 1.13.* |
 
 #### 使用
+flink1.12.0 和 mysql-cdc1.2.0版本搭配：
+
+pom
+```
+# 使用alibaba的
+<dependency>
+    <groupId>com.alibaba.ververica</groupId>
+    <artifactId>flink-connector-mysql-cdc</artifactId>
+    <version>1.2.0</version>
+</dependency>
+# 使用官方的
+<dependency>
+    <groupId>com.ververica</groupId>
+    <artifactId>flink-connector-mysql-cdc</artifactId>
+    <version>1.2.0</version>
+</dependency>
+
+```
+
+创建测试表
+```
+CREATE TABLE `flinkcdc` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `sex` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)
+```
+
+生产环境用的多的还是 INITIAL 和 LATEST_OFFSET
 ```
 public enum StartupMode {
     INITIAL,            // 会先把表的数据用查询的方式查出来（做一个快照），然后再从binlog读取
