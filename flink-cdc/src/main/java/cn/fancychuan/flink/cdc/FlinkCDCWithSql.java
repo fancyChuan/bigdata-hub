@@ -31,6 +31,6 @@ public class FlinkCDCWithSql {
                 ")");
         tableEnv.executeSql("select * from flinkcdc").print();
 
-        env.execute();
+        env.execute("flink-cdc-sql");
     }
 }

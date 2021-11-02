@@ -102,3 +102,55 @@ flink savepoint 9afaecdb70cf8036c353f4ff3ff5601f hdfs://hadoop101:8020/forlearn/
 flink run -c cn.fancychuan.flink.cdc.FlinkCDC -s hdfs://hadoop101:8020/forlearn/flinkCDC/savepoint/savepoint-9afaec-0971be89c8f8 /home/appuser/forlearn/flink/flink-cdc-1.0-SNAPSHOT.jar
 ```
 
+#### flink cdc with sql
+
+[FlinkCDCWithSql.java](src/main/java/cn/fancychuan/flink/cdc/FlinkCDCWithSql.java)
+
+TODO：为什么通过
+```flink run -c cn.fancychuan.flink.cdc.FlinkCDCWithSql ./flink-cdc-1.0-SNAPSHOT.jar ```
+是能够提交作业的，而通过界面就报错？
+```
+2021-11-03 00:24:45,416 WARN  org.apache.flink.client.deployment.application.DetachedApplicationRunner [] - Could not execute application: 
+org.apache.flink.client.program.ProgramInvocationException: The main method caused an error: Failed to execute sql
+	at org.apache.flink.client.program.PackagedProgram.callMainMethod(PackagedProgram.java:330) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.client.program.PackagedProgram.invokeInteractiveModeForExecution(PackagedProgram.java:198) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.client.ClientUtils.executeProgram(ClientUtils.java:114) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.client.deployment.application.DetachedApplicationRunner.tryExecuteJobs(DetachedApplicationRunner.java:78) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.client.deployment.application.DetachedApplicationRunner.run(DetachedApplicationRunner.java:67) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.runtime.webmonitor.handlers.JarRunHandler.lambda$handleRequest$0(JarRunHandler.java:100) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	at java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1590) [?:1.8.0_231]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_231]
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266) [?:1.8.0_231]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_231]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293) [?:1.8.0_231]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_231]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_231]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_231]
+Caused by: org.apache.flink.table.api.TableException: Failed to execute sql
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeInternal(TableEnvironmentImpl.java:719) ~[flink-table-blink_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeOperation(TableEnvironmentImpl.java:1067) ~[flink-table-blink_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeSql(TableEnvironmentImpl.java:665) ~[flink-table-blink_2.11-1.12.0.jar:1.12.0]
+	at cn.fancychuan.flink.cdc.FlinkCDCWithSql.main(FlinkCDCWithSql.java:32) ~[?:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_231]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_231]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_231]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_231]
+	at org.apache.flink.client.program.PackagedProgram.callMainMethod(PackagedProgram.java:316) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	... 13 more
+Caused by: java.lang.IllegalArgumentException: Job client must be a CoordinationRequestGateway. This is a bug.
+	at org.apache.flink.util.Preconditions.checkArgument(Preconditions.java:142) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.streaming.api.operators.collect.CollectResultFetcher.setJobClient(CollectResultFetcher.java:95) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.streaming.api.operators.collect.CollectResultIterator.setJobClient(CollectResultIterator.java:98) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.table.planner.sinks.SelectTableSinkBase$1.setJobClient(SelectTableSinkBase.java:93) ~[flink-table-blink_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeInternal(TableEnvironmentImpl.java:709) ~[flink-table-blink_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeOperation(TableEnvironmentImpl.java:1067) ~[flink-table-blink_2.11-1.12.0.jar:1.12.0]
+	at org.apache.flink.table.api.internal.TableEnvironmentImpl.executeSql(TableEnvironmentImpl.java:665) ~[flink-table-blink_2.11-1.12.0.jar:1.12.0]
+	at cn.fancychuan.flink.cdc.FlinkCDCWithSql.main(FlinkCDCWithSql.java:32) ~[?:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_231]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_231]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_231]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_231]
+	at org.apache.flink.client.program.PackagedProgram.callMainMethod(PackagedProgram.java:316) ~[flink-dist_2.11-1.12.0.jar:1.12.0]
+	... 13 more
+2021-11-03 00:24:45,418 ERROR org.apache.flink.runtime.webmonitor.handlers.JarRunHandler   [] - Exception occurred in REST handler: Could not execute application.
+```
