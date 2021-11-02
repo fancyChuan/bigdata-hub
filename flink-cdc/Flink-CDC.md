@@ -106,7 +106,14 @@ flink run -c cn.fancychuan.flink.cdc.FlinkCDC -s hdfs://hadoop101:8020/forlearn/
 
 [FlinkCDCWithSql.java](src/main/java/cn/fancychuan/flink/cdc/FlinkCDCWithSql.java)
 
-TODO：为什么通过
+#### Flink-CDC：DataStream和FlinkSQL的对比
+优缺点| DataStream | FlinkSQL
+--- | --- | ---
+优点 | 多表多库 | 需要自定义反序列化器
+缺点 | 不需要自定义反序列化器 | 单表查询
+
+#### TODO：
+为什么通过
 ```flink run -c cn.fancychuan.flink.cdc.FlinkCDCWithSql ./flink-cdc-1.0-SNAPSHOT.jar ```
 是能够提交作业的，而通过界面就报错？
 ```

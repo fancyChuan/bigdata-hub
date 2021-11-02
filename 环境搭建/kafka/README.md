@@ -12,7 +12,7 @@ log.dirs=/opt/modules/kafka_2.9.2-0.8.1/logs
 - 0.下载安装包 http://kafka.apache.org/downloads.html
 - 1.解压缩并创建一个软连接到/usr/local/kafka
 ```
-tar -zxvf kafka_2.11-0.11.0.0.tgz -C /opt/app/
+tar -zxvf kafka_2.11-0.11.0.2.tgz -C /opt/app/
 
 sudo ln -s /opt/app/kafka_2.11-0.11.0.2 /usr/local/kafka
 ```
