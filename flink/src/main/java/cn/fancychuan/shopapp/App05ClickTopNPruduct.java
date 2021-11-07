@@ -50,9 +50,9 @@ public class App05ClickTopNPruduct {
 
         SingleOutputStreamOperator<UserBehaviorBean> userBehaviorStream = dataStream.filter((FilterFunction<UserBehaviorBean>) userBehaviorBean -> "pv".equals(userBehaviorBean.getBehavior()));
 
-        userBehaviorStream.keyBy(UserBehaviorBean::getItemId)
-                .timeWindow(Time.hours(1), Time.minutes(5))
-                .aggregate();
+//        userBehaviorStream.keyBy(UserBehaviorBean::getItemId)
+//                .timeWindow(Time.hours(1), Time.minutes(5))
+//                //.aggregate();
     }
 
     private static class CountAgg implements AggregateFunction<SensorReading, ItemCountBean, ItemCountBean> {
