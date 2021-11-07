@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS us_population (
       population BIGINT
       CONSTRAINT my_pk PRIMARY KEY (state, city))
 column_encoded_bytes=0;
+
+# 这里没有指定列族，那么默认是0号列族 
 ```
 > 主键映射到 HBase 中会成为 Rowkey. 如果有多个主键(联合主键), 会把多个主键的值拼成 rowkey
 
@@ -43,6 +45,19 @@ upsert into us_population values('NY','NewYork',8143197);
 upsert into us_population values('CA','Los Angeles',3844829);
 upsert into us_population values('IL','Chicago',2842518);
 ```
+- 在hbase中查看结果
+```
+hbase(main):015:0> scan 'US_POPULATION'
+ROW                                             COLUMN+CELL                                                                                                                               
+ CALos Angeles                                  column=0:POPULATION, timestamp=1636257287696, value=\x80\x00\x00\x00\x00:\xAA\xDD                                                         
+ CALos Angeles                                  column=0:_0, timestamp=1636257287696, value=x                                                                                             
+ ILChicago                                      column=0:POPULATION, timestamp=1636257288767, value=\x80\x00\x00\x00\x00+_\x96                                                            
+ ILChicago                                      column=0:_0, timestamp=1636257288767, value=x                                                                                             
+ NYNewYork                                      column=0:POPULATION, timestamp=1636257287663, value=\x80\x00\x00\x00\x00|A]                                                               
+ NYNewYork                                      column=0:_0, timestamp=1636257287663, value=x                                                                                             
+3 row(s) in 0.0260 seconds
+```
+
 ##### hbase表存在
 需要映射先到Phoenix中，否则无法查看
 - 方式1 视图映射，适用于只做查询的场景
