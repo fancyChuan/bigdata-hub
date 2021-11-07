@@ -88,14 +88,19 @@ upsert into "student" values('1008', 'phoenix', '66');
     - 相比于直接创建映射表，视图的查询效率会低， 原因是：创建映射表的时候，Phoenix 会在表中创建一些空的键值对，这些空键值对的存在可以用来提高查询效率。
     - 使用create table创建的关联表，如果对表进行了修改，源数据也会改变，同时如果关联表被删除，源表也会被删除。但是视图就不会，如果删除视图，源数据不会发生改变
 
+
+
+
 #### 二级索引
 HBase 里面只有 rowkey 作为一级索引， 如果要对库里的非 rowkey 字段进行数据检索和查询， 往往要通过 MapReduce/Spark 等分布式计算框架进行，硬件资源消耗和时间延迟都会比较高
 
-从 0.94 版本开始, HBase 开始支持二级索引.
-- 全局索引：创建后在hbase中会生成一个表专门储存索引
+从 0.94 版本开始, HBase 开始支持二级索引。
+
+二级索引的分类，有两种：全局索引、本地索引
+- global全局索引：创建后在hbase中会生成一个表专门储存索引
     - 适合多读少写的场景。因为每次写操作，不仅需要更新数据，还需要更新索引
     - 网络开销大，家中RegionServer的压力
-- 本地索引：创建后在原表中新增一个列族，在列族储存索引信息
+- local本地索引：创建后在原表中新增一个列族，在列族储存索引信息
     - 使用多写少读的场景
 ```
 # 全局索引
@@ -109,7 +114,7 @@ create local index idx_addr on user_1(addr);
 案例测试：
 - 准备数据
 ```
-create table user_1(id varchar primary key, name varchar, addr varchar)
+create table user_1(id varchar primary key, name varchar, addr varchar);
 
 upsert into user_1 values ('1', 'zs', 'beijing');
 upsert into user_1 values ('2', 'lisi', 'shanghai');
