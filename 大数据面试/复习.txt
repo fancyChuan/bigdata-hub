@@ -90,11 +90,19 @@
         （2）channel
             file
             memory
-            kafka       磁盘  可靠性高    效率高于
+            kafka channel: 磁盘  可靠性高    效率高于memory channel + kafka sink
+                flume在1.6报表有bug，使用tipic头，1.7版本解决
+
+        （3）HDFS sink
+            小文件问题：大小（128m），时间（1-2个小时），event个数（不用）
 
     2、拦截器 监控器 选择器
+        （1）拦截器
+            ETL：判断json是否完整
 
     3、优化及挂了怎么办
+
+### Kafka
 
 ### Spark
 1、入门
