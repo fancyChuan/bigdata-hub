@@ -19,14 +19,14 @@ sudo xsync /etc/profile
 # 6. 将Phoenix的两个jar包创建到hbase/lib的软链接
 xcall ln -s /usr/local/phoenix/phoenix-4.14.2-HBase-1.3-server.jar /usr/local/hbase/lib/phoenix-4.14.2-HBase-1.3-server.jar
 xcall ln -s /usr/local/phoenix/phoenix-4.14.2-HBase-1.3-client.jar /usr/local/hbase/lib/phoenix-4.14.2-HBase-1.3-client.jar
-# 7. 启动hadoop,zk,hbase后，启动Phoenix
+# 7. 启动hadoop,zk,hbase后，启动Phoenix（注意：如果hbase已经启动，需要重启第6个步骤的jar包才能加载进来）
 bin/sqlline.py hadoop101,hadoop102,hadoop103:2181:/hbase
 ```
 
 ### 配置hbase支持Phoenix二级索引
 - 步骤 1: 添加如下配置到 HBase 的 Hregionerver 节点的 hbase-site.xml
 ```
-<!-- phoenix regionserver 配置参数 -->
+<!-- phoenix regionserver 配置参数，用于支持hbase二级索引 -->
 <property>
     <name>hbase.regionserver.wal.codec</name>
     <value>org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec</value>
@@ -47,7 +47,7 @@ bin/sqlline.py hadoop101,hadoop102,hadoop103:2181:/hbase
 ```
 - 步骤 2: 添加如下配置到 HBase 的 Hmaster 节点的 hbase-site.xml
 ```
-<!-- phoenix master 配置参数 -->
+<!-- phoenix 在 hbase master 配置参数 -->
 <property>
     <name>hbase.master.loadbalancer.class</name>
     <value>org.apache.phoenix.hbase.index.balancer.IndexLoadBalancer</value>

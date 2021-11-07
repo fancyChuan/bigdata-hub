@@ -1856,6 +1856,240 @@
             "conflicts": "SPARK2 (<< 2.0.0.cloudera2)",
             "replaces": "IMPALA, SOLR, SPARK",
             "hash": "913c56859cc9fb7b5a400c89b717f94fe17d0436"
+        },
+
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-sles11.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-el5.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-el6.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-xenial.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-precise.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-wheezy.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-trusty.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-el7.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-jessie.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+        {
+            "hash": "0e153fe6735d640cab43e9007afe5e1ff702774a",
+            "depends": "CDH (>= 5.9), CDH (<< 6)",
+            "replaces": "SPARK",
+            "parcelName": "SPARK2-2.4.0.cloudera1-1.cdh5.13.3.p0.1007356-sles12.parcel",
+            "components": [
+                {
+                    "pkg_version": "na\n",
+                    "version": "2.4.0.cloudera1\n",
+                    "name": "spark2\n",
+                    "pkg_release": "na\n"
+                }
+            ]
+        },
+
+        {
+            "parcelName": "CLABS_PHOENIX-4.5.2-1.clabs_phoenix1.2.0.p0.774-sles11.parcel",
+            "components": [
+                {
+                    "pkg_version": "4.5.2+phoenix1.2.0+0",
+                    "pkg_release": "1.phoenix1.2.0.p0.78",
+                    "name": "phoenix",
+                    "version": "4.5.2-phoenix1.2.0"
+                }
+            ],
+            "depends": "CDH (>= 5.5), CDH (<< 6.0)",
+            "hash": "cd89d7f8b3a1b85ea31618e67506c4ec44b41017"
+        },
+        {
+            "parcelName": "CLABS_PHOENIX-4.5.2-1.clabs_phoenix1.2.0.p0.774-precise.parcel",
+            "components": [
+                {
+                    "pkg_version": "4.5.2+phoenix1.2.0+0",
+                    "pkg_release": "1.phoenix1.2.0.p0.78",
+                    "name": "phoenix",
+                    "version": "4.5.2-phoenix1.2.0"
+                }
+            ],
+            "depends": "CDH (>= 5.5), CDH (<< 6.0)",
+            "hash": "63e5cc98c0b86ce99fd4d9482f12180434a56bfe"
+        },
+        {
+            "parcelName": "CLABS_PHOENIX-4.5.2-1.clabs_phoenix1.2.0.p0.774-el7.parcel",
+            "components": [
+                {
+                    "pkg_version": "4.5.2+phoenix1.2.0+0",
+                    "pkg_release": "1.phoenix1.2.0.p0.78",
+                    "name": "phoenix",
+                    "version": "4.5.2-phoenix1.2.0"
+                }
+            ],
+            "depends": "CDH (>= 5.5), CDH (<< 6.0)",
+            "hash": "7420482ae7772eb0d493bc6f9406279dff6ad723"
+        },
+        {
+            "parcelName": "CLABS_PHOENIX-4.5.2-1.clabs_phoenix1.2.0.p0.774-wheezy.parcel",
+            "components": [
+                {
+                    "pkg_version": "4.5.2+phoenix1.2.0+0",
+                    "pkg_release": "1.phoenix1.2.0.p0.78",
+                    "name": "phoenix",
+                    "version": "4.5.2-phoenix1.2.0"
+                }
+            ],
+            "depends": "CDH (>= 5.5), CDH (<< 6.0)",
+            "hash": "19e8192946ddabfe293a36ea33e92b6c82e458b0"
+        },
+        {
+            "parcelName": "CLABS_PHOENIX-4.5.2-1.clabs_phoenix1.2.0.p0.774-el6.parcel",
+            "components": [
+                {
+                    "pkg_version": "4.5.2+phoenix1.2.0+0",
+                    "pkg_release": "1.phoenix1.2.0.p0.78",
+                    "name": "phoenix",
+                    "version": "4.5.2-phoenix1.2.0"
+                }
+            ],
+            "depends": "CDH (>= 5.5), CDH (<< 6.0)",
+            "hash": "caee033befb6508b1f122d72cdc2a654fa97a903"
+        },
+        {
+            "parcelName": "CLABS_PHOENIX-4.5.2-1.clabs_phoenix1.2.0.p0.774-el5.parcel",
+            "components": [
+                {
+                    "pkg_version": "4.5.2+phoenix1.2.0+0",
+                    "pkg_release": "1.phoenix1.2.0.p0.78",
+                    "name": "phoenix",
+                    "version": "4.5.2-phoenix1.2.0"
+                }
+            ],
+            "depends": "CDH (>= 5.5), CDH (<< 6.0)",
+            "hash": "9f1338c3b03ee65e158fd96681e79513a218da72"
+        },
+        {
+            "parcelName": "CLABS_PHOENIX-4.5.2-1.clabs_phoenix1.2.0.p0.774-trusty.parcel",
+            "components": [
+                {
+                    "pkg_version": "4.5.2+phoenix1.2.0+0",
+                    "pkg_release": "1.phoenix1.2.0.p0.78",
+                    "name": "phoenix",
+                    "version": "4.5.2-phoenix1.2.0"
+                }
+            ],
+            "depends": "CDH (>= 5.5), CDH (<< 6.0)",
+            "hash": "8867ec7d622b904e5a833d5d7724f13be1a54cff"
         }
+
     ]
 }

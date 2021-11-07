@@ -7,7 +7,8 @@ CM也就是 cloudera manager
 - CDH6： https://archive.cloudera.com/cdh6/
 - CM5：  http://archive.cloudera.com/cm5/cm/5/
 - CM6：  https://archive.cloudera.com/cm6/
-
+> CDH官方开始收费后，以上地址已无法下载
+> 目前这个地址还可以：http://ro-bucharest-repo.bigstepcloud.com/cloudera-repos/cm5/redhat/7/x86_64/
 
 这里选择5.13.3版本，centos7环境下
 ```
@@ -84,4 +85,7 @@ CDH新建集群后的配置
 - oozie服务器数据目录/var/lib/oozie/data
 - zookeeper数据目录/var/lib/zookeeper 事务日志目录/var/lib/zookeeper
 
+
+参考资料：
+[CDH运维：CDH官方包收费之后](https://blog.csdn.net/adorechen/article/details/116661772)
 
