@@ -20,7 +20,7 @@ column_encoded_bytes=0;
 ```
 > 主键映射到 HBase 中会成为 Rowkey. 如果有多个主键(联合主键), 会把多个主键的值拼成 rowkey
 
-> 在 Phoenix 中, 默认会把表名,字段名等自动转换成大写. 如果要使用消息, 需要把他们用双引号括起来.
+> 在 Phoenix 中, 默认会把表名,字段名等自动转换成大写. 如果要使用小写, 需要把他们用双引号括起来.
 
 启动并创建表之后，在hbase中可以看到多了Phoenix的表
 ```
@@ -61,6 +61,11 @@ id varchar primary key,
 "info"."name" varchar,
 "info"."age" varchar
 ) column_encoded_bytes=0;
+
+upsert into "student" values('1008', 'phoenix', '66');
+
+# 注意，这里的student，因为在hbase创建的时候是小写，那么在Phoenix使用的时候，需要加上双引号
+# 否则，Phoenix会找不到表
 ```
 > 添加column_encoded_bytes=0这个参数之后, 在 HBase 中添加的数据在 Phoenix 中也可以查询到. 否则查询不到
 
