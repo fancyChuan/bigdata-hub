@@ -23,6 +23,19 @@ xcall ln -s /usr/local/phoenix/phoenix-4.14.2-HBase-1.3-client.jar /usr/local/hb
 bin/sqlline.py hadoop101,hadoop102,hadoop103:2181
 ```
 
+### 配置HBase和Phoenix的映射
+```
+    <!-- 开启hbase的namespace和Phoenix的schema之间的映射 -->
+    <property>
+        <name>phoenix.schema.isNamespaceMappingEnabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>phoenix.schema.mapSystemTablesToNamespace</name>
+        <value>true</value>
+    </property>
+```
+
 ### 配置hbase支持Phoenix二级索引
 - 步骤 1: 添加如下配置到 HBase 的 Hregionerver 节点的 hbase-site.xml
 ```

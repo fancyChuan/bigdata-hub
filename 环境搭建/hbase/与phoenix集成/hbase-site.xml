@@ -47,33 +47,40 @@
         <value>/data/zookeeper/zkData</value>
     </property>
 
-    <!-- phoenix regionserver 配置参数 -->
+    <!-- phoenix regionserver 配置参数，用于支持hbase二级索引 -->
     <property>
         <name>hbase.regionserver.wal.codec</name>
         <value>org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec</value>
     </property>
-
     <property>
         <name>hbase.region.server.rpc.scheduler.factory.class</name>
         <value>org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory</value>
         <description>Factory to create the Phoenix RPC Scheduler that uses separate queues for index and metadata updates</description>
     </property>
-
     <property>
         <name>hbase.rpc.controllerfactory.class</name>
         <value>org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory</value>
         <description>Factory to create the Phoenix RPC Scheduler that uses separate queues for index and metadata updates</description>
     </property>
 
-    <!-- phoenix master 配置参数 -->
+    <!-- phoenix 在 hbase master 配置参数 用于二级索引 -->
     <property>
         <name>hbase.master.loadbalancer.class</name>
         <value>org.apache.phoenix.hbase.index.balancer.IndexLoadBalancer</value>
     </property>
-
     <property>
         <name>hbase.coprocessor.master.classes</name>
         <value>org.apache.phoenix.hbase.index.master.IndexMasterObserver</value>
+    </property>
+
+    <!-- 开启hbase的namespace和Phoenix的schema之间的映射 -->
+    <property>
+        <name>phoenix.schema.isNamespaceMappingEnabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>phoenix.schema.mapSystemTablesToNamespace</name>
+        <value>true</value>
     </property>
 
 </configuration>
