@@ -1,4 +1,5 @@
 # 数据仓库第4版 Inmon
+《Building the Data Warehouse》
 ## 第1章 决策支持系统的发展
 
 
@@ -8,3 +9,4 @@
 - 主题的
 - 集成的：数仓最重要的特性
   - 
+![image](images/图2-2集成问题.jpg)
