@@ -9,7 +9,7 @@
         - 汇总层DWS：基于明细层的汇总层（可以和业务方一起沟通确定），一般针对频繁使用的维度进行汇总
 - dm层：基于dw层，也就是数据集市（Data Mart），或者说应用层，一般由下游数据用户拥有维护，数仓提供咨询和支持
 
-![image](https://github.com/fancyChuan/bigdata-learn/blob/master/hive/img/数仓建模/hadoop数仓逻辑架构.png?raw=true)
+![image](images/hadoop数仓逻辑架构.png?raw=true)
 
 采用这种分层的好处：
 -  屏蔽源头系统业务变更、系统变更对于下游用户的影晌
@@ -56,9 +56,9 @@
 
 分为需求流程规范和开发流程规范
 
-![image](https://github.com/fancyChuan/bigdata-learn/blob/master/hive/img/数仓建模/数仓的需求流程规范.png?raw=true)
+![image](images/数仓的需求流程规范.png?raw=true)
 
-![image](https://github.com/fancyChuan/bigdata-learn/blob/master/hive/img/数仓建模/数仓的开发流程规范.png?raw=true)
+![image](images/数仓的开发流程规范.png?raw=true)
 
 注意开发流程规范中，要有数据初步验证、发布后要配置数据质量监控
 
@@ -66,11 +66,11 @@
 ### 三、数据平台新架构——数据湖
 作为新的大数据架构，数据湖采集和存储一切数据，既包含结构化的数据也包含非结构化（如语音、视频等）和半结构化的数据（如JSON 和XML 等），既包含原始数据又包含经过处理的、集成的数据。
 
-![image](https://github.com/fancyChuan/bigdata-learn/blob/master/hive/img/数仓建模/数据湖.png?raw=true)
+![image](images/数据湖.png?raw=true)
 
 数据湖**鼓励分析师和数据科学家**对原始数据在分析沙箱中进行探索、研究、实验，对于有价值的数据，再和数据开发、管理团队一起将其转为更容易操作和使用的数据
 
-![image](https://github.com/fancyChuan/bigdata-learn/blob/master/hive/img/数仓建模/数据湖和数仓比较.png?raw=true)
+![image](images/数据湖和数仓比较.png?raw=true)
 
 #### 核心区别：
 - 数据湖存放所有数据，而数仓一般存放的都是经过处理、结构化的数据
