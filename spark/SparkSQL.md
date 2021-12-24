@@ -79,14 +79,13 @@ val rdd2 = testDS.rdd
 
 两种自定义聚合函数与RDD的aggregate操作的区别于联系
 
-对比项  | 无类型 | 类型安全（类型） | RDD的聚合操作
---- | --- | --- | ---
-继承类 | UserDefinedAggregateFunction | Aggregator |
-初始值 | initialize() | zero() | new Tuple()
-更新操作 | update() | reduce() | 实现接口
-合并操作 | merge() | merge() | 实现接口
-计算返回值 | evaluate() | finish() | 对结果RDD再操作
-
+| 对比项   | 无类型                          | 类型安全（类型）   | RDD的聚合操作    |
+|-------|------------------------------|------------|-------------|
+| 继承类   | UserDefinedAggregateFunction | Aggregator |             |
+| 初始值   | initialize()                 | zero()     | new Tuple() |
+| 更新操作  | update()                     | reduce()   | 实现接口        |
+| 合并操作  | merge()                      | merge()    | 实现接口        |
+| 计算返回值 | evaluate()                   | finish()   | 对结果RDD再操作   |
 
 #### 数据源
 SparkSQL支持多种数据源
@@ -118,3 +117,23 @@ Dataset<Row> sqlDF = spark.sql("SELECT * FROM parquet.`examples/src/main/resourc
 ```
 
 数据保存模式
+
+
+### 常用参数配置
+```
+-- 设置动态资源分配的最小executor为300
+set spark.dynamicAllocation.minExecutors=300;
+set spark.dynamicAllocation.maxExecutors=1500;
+-- 开启hdfs shuffle功能，将shuffle数据双写到hdfs上，能有效解决集群负载高引起的shuffle失败问题。注意会带来多写一份数据的时间开销和hdfs集群负担，只建议在shuffle数据量较大（单个task shuffle数据量超过1g）的任务开启
+set spark.shuffle.hdfs.enabled=true;
+
+-- Adaptive execution开关，包含自动调整并行度，解决数据倾斜等优化。
+set spark.sql.adaptive.enabled=true;
+-- Spark Adaptive Execution 相关，动态最大的并行度。
+set spark.sql.adaptive.maxNumPostShufflePartitions=4093;
+
+
+set spark.sql.shuffle.partitions=600;
+set spark.driver.memory=20g;
+set spark.executor.memory=20g;
+```
