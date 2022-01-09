@@ -28,6 +28,7 @@
         <module>flume</module>
         <module>datax</module>
         <module>flink-cdc</module>
+        <module>seatunnel</module>
     </modules>
 
     <properties>
