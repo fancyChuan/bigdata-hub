@@ -76,6 +76,13 @@ val userData = sc.sequenceFile[UserID, UserInfo]("hdfs://...xxx")
 - 访问这些数据的开销
 - 垃圾回收的负载
 
+Spark常见的两类OOM问题：Driver OOM和Executor OOM。如果发生在executor，可以通过增加分区数量，减少每个executor负载。但是此时，会增加driver的负载。所以，可能同时需要增加driver内存
+```
+// 每个spark action的所有序列化结果的总大小限制，比如collect算子
+set spark.driver.maxResultSize=4g;
+set spark.driver.memory=45g;
+```
+
 ##### spark的内存管理
 spark的内存使用大部分属于两类：执行（用于计算）和存储（用于缓存和在集群中传播）
 
