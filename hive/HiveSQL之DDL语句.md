@@ -12,7 +12,7 @@
 
 #### 1. [create/Drop/Alter/Use Database](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-Create/Drop/Alter/UseDatabase)
 - create database
-```sql
+```
 CREATE (DATABASE|SCHEMA) [IF NOT EXISTS] database_name
   [COMMENT database_comment]
   [LOCATION hdfs_path]
@@ -22,11 +22,11 @@ CREATE (DATABASE|SCHEMA) [IF NOT EXISTS] database_name
 - drop database
     - RESTRICT: 默认值，在数据库中存在表的时候会失败，但如果是手动复制到该数据库下的，因为元数据中并没有相关信息，所以照样可以删除成功
     - CASCADE: 不管是否库中有表，全部删除
-```sql
+```
 DROP (DATABASE|SCHEMA) [IF EXISTS] database_name [RESTRICT|CASCADE];
 ```
 - alter database
-```sql
+```
 ALTER (DATABASE|SCHEMA) database_name SET DBPROPERTIES (property_name=property_value, ...);   -- (Note: SCHEMA added in Hive 0.14.0)
  
 ALTER (DATABASE|SCHEMA) database_name SET OWNER [USER|ROLE] user_or_role;   -- (Note: Hive 0.13.0 and later; SCHEMA added in Hive 0.14.0)
@@ -35,7 +35,7 @@ ALTER (DATABASE|SCHEMA) database_name SET LOCATION hdfs_path; -- (Note: Hive 2.2
 ```
 #### 2. [Create/Drop/Truncate Table](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-CreateTableCreate/Drop/TruncateTable)
 - create table
-```sql
+```
 CREATE [TEMPORARY] [EXTERNAL] TABLE [IF NOT EXISTS] [db_name.]table_name    -- (Note: TEMPORARY available in Hive 0.14.0 and later)
   [(col_name data_type [COMMENT col_comment], ... [constraint_specification])]
   [COMMENT table_comment]
@@ -58,11 +58,11 @@ CREATE [TEMPORARY] [EXTERNAL] TABLE [IF NOT EXISTS] [db_name.]table_name
   [LOCATION hdfs_path];
 ```
 - drop table
-```sql
+```
 DROP TABLE [IF EXISTS] table_name [PURGE];     -- (Note: PURGE available in Hive 0.14.0 and later)
 ```
 - truncate table
-```sql
+```
 TRUNCATE TABLE table_name [PARTITION partition_spec];
  
 partition_spec:
@@ -70,7 +70,7 @@ partition_spec:
 ```
 #### 3. [Alter table/partition/column](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-AlterTable/Partition/Column)
 - alter table
-```sql
+```
 # 重命名
 ALTER TABLE table_name RENAME TO new_table_name;
 # 修改表属性
@@ -103,7 +103,7 @@ ALTER TABLE table_name ADD CONSTRAINT constraint_name FOREIGN KEY (column, ...) 
 ALTER TABLE table_name DROP CONSTRAINT constraint_name;
 ```
 - alter partition
-```sql
+```
 # 添加分区
 ALTER TABLE table_name ADD [IF NOT EXISTS] PARTITION partition_spec [LOCATION 'location'][, PARTITION partition_spec [LOCATION 'location'], ...];
 partition_spec:
@@ -127,7 +127,7 @@ ALTER TABLE table_name ARCHIVE PARTITION partition_spec;
 ALTER TABLE table_name UNARCHIVE PARTITION partition_spec;
 ```
 - Alter Either Table or Partition
-```sql
+```
 # 修改文件格式
 ALTER TABLE table_name [PARTITION partition_spec] SET FILEFORMAT file_format;
 # 修改路径
@@ -147,7 +147,7 @@ ALTER TABLE table_name [PARTITION (partition_key = 'partition_value' [, ...])] C
 ALTER TABLE table_name [PARTITION (partition_key = 'partition_value' [, ...])] UPDATE COLUMNS;
 ```
 - Alter Column
-```sql
+```
 # 修改列信息
 ALTER TABLE table_name [PARTITION partition_spec] CHANGE [COLUMN] col_old_name col_new_name column_type
   [COMMENT col_comment] [FIRST|AFTER column_name] [CASCADE|RESTRICT];
@@ -160,7 +160,7 @@ ALTER TABLE table_name
 ALTER TABLE foo PARTITION (ds='2008-04-08', hr=12) CHANGE COLUMN dec_column_name dec_column_name DECIMAL(38,18);
 ```
 #### 4. [Create/Drop/Alter View](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-Create/Drop/AlterView)
-```sql
+```
 # 创建视图
 CREATE VIEW [IF NOT EXISTS] [db_name.]view_name [(column_name [COMMENT column_comment], ...) ]
   [COMMENT view_comment]
@@ -176,7 +176,7 @@ table_properties:
 ALTER VIEW [db_name.]view_name AS select_statement;
 ```
 #### 5. [Create/Drop/Alter Index](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-Create/Drop/AlterIndex)
-```sql
+```
 # 创建索引
 CREATE INDEX index_name
   ON TABLE base_table_name (col_name, ...)
@@ -197,13 +197,13 @@ DROP INDEX [IF EXISTS] index_name ON table_name;
 ALTER INDEX index_name ON table_name [PARTITION partition_spec] REBUILD;
 ```
 #### 6. [Create/Drop Macro](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-Create/DropMacro)
-```sql
+```
 CREATE TEMPORARY MACRO macro_name([col_name col_type, ...]) expression;
 
 DROP TEMPORARY MACRO [IF EXISTS] macro_name;
 ```
 #### 7. [Create/Drop/Reload Function](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL#LanguageManualDDL-Create/Drop/ReloadFunction)
-```sql
+```
 # 临时函数
 CREATE TEMPORARY FUNCTION function_name AS class_name;
 DROP TEMPORARY FUNCTION [IF EXISTS] function_name;
