@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class AnalyseSQL {
 
-    public static void main(String[] args) throws IOException, SemanticException, ParseException {
+    public static void main(String[] args) throws IOException, SemanticException, ParseException, InterruptedException {
         TableLineage tableLineage = new TableLineage();
 
         // String sqltext = FileUtils.readFromFile("E:\\JavaWorkshop\\bigdata-learn\\hive\\src\\main\\resources\\sqls.txt");

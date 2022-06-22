@@ -100,3 +100,7 @@ WHEN NOT MATCHED [AND <boolean expression4>] THEN INSERT VALUES<value list>
 
 [一文学会Hive解析Json数组](https://www.51cto.com/article/660074.html)
 
+
+### 常用函数
+- greatest和least函数，实现多列取最大、最小值
+> 活动场景内如果发生多次关注行为，付费统计周期为（首次场景内关注时间，min(最后一次场景内关注后首次取关，首次场景内关注+60天））】

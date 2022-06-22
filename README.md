@@ -25,6 +25,7 @@
   - [datax](./datax)
   - [sqoop](./sqoop)
   - [flume](./flume)
+  - [seatunnel](./seatunnel)
 - 大数据调度：满足复杂大规模作业的调度场景
   - [oozie](bigdata-scheduler/oozie)
   - [azkaban](bigdata-scheduler/azkaban)
