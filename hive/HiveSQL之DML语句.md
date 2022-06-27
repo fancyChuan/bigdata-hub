@@ -104,3 +104,32 @@ WHEN NOT MATCHED [AND <boolean expression4>] THEN INSERT VALUES<value list>
 ### 常用函数
 - greatest和least函数，实现多列取最大、最小值
 > 活动场景内如果发生多次关注行为，付费统计周期为（首次场景内关注时间，min(最后一次场景内关注后首次取关，首次场景内关注+60天））】
+
+
+### 小众特殊场景使用函数
+- space: space(int n) 返回长度为n的空字符串。
+````
+-- 可以用在数据放大多少倍上
+select  anchor_id,
+        date_add(from_unixtime(unix_timestamp(start_date, 'yyyy/MM/dd'), 'yyyy-MM-dd'), pos) period_date,
+        `period/day` as server_period,
+        start_date,
+        trill_id,
+        end_date
+from    webcast.tmp_anchor_field_control_serv
+lateral view
+        posexplode (
+            split (
+                space(
+                    datediff(
+                        from_unixtime(unix_timestamp(end_date, 'yyyy/MM/dd'), 'yyyy-MM-dd'),
+                        from_unixtime(unix_timestamp(start_date, 'yyyy/MM/dd'), 'yyyy-MM-dd')
+                    )
+                ),
+                ''
+            )
+        ) t as pos,
+        val
+```
+- repeat(string str, int n)。返回重复n次后的str字符串
+
