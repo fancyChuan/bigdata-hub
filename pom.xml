@@ -29,6 +29,8 @@
         <module>datax</module>
         <module>flink-cdc</module>
         <module>seatunnel</module>
+        <module>hudi</module>
+        <module>bitsail</module>
     </modules>
 
     <properties>
