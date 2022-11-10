@@ -1,13 +1,9 @@
 ## bigdata-hub
 大数据相关的技术可以分为：传输、存储、计算三大方面
 
-### pom相关
-1. 《hadoop权威指南》第4版使用的pom
-- hadoop-book-pom-manager
-- hadoop-pom
 
 ### 知识体系
-- 基础重要框架
+- 基础框架
   - [hadoop](./hadoop)：HDFS、MR、YARN及高级话题、企业优化
   - [hive](./hive)：基础使用、优化、SQL编译过程、数据血缘、进阶、权限控制
     - [hive优化](./hive/hive调优)
@@ -26,6 +22,7 @@
   - [sqoop](./sqoop)
   - [flume](./flume)
   - [seatunnel](./seatunnel)
+  - [bitsail](./bitsail)：字节开源的高性能数据集成引擎
 - 大数据调度：满足复杂大规模作业的调度场景
   - [oozie](bigdata-scheduler/oozie)
   - [azkaban](bigdata-scheduler/azkaban)
@@ -49,6 +46,7 @@
   - 增强性数据分析
   - [数据中台](./大数据建设/数据中台建设)
   - [数据湖](./大数据建设/数据湖)
+    - [Hudi](./hudi) 
   - [湖仓一体Lakehouse](./大数据建设/湖仓Lakehouse)
 - 其他
   - [数字化转型](./数字化转型)
@@ -72,3 +70,5 @@
 - [《Hive性能调优实战》-林志煌](https://weread.qq.com/web/reader/a503221071a486c0a503e7akc81322c012c81e728d9d180)
   - 笔记：[01感受hive性能调优的多样式](hive/hive调优/01感受hive性能调优的多样式.md)
   - 笔记：[02Hive问题排查与调优思路](hive/hive调优/02Hive问题排查与调优思路.md)
+- 《数据仓库》
+  - 笔记：[《数据仓库-Inmon第4版》](hive/数据仓库/数据仓库第4版/《数据仓库-Inmon第4版》.md)
