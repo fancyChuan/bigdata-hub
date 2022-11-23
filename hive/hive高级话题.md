@@ -5,23 +5,23 @@
 - 共享锁shared（S） 触发后仍可以支持并发执行 todo:为什么要加共享锁？
 - 互斥锁exclusive（X） 只要触发了这种锁，该表或分区不能并发执行作业
 
-hivesql | 对应的锁情况
---- | ---
-select .. T1 partition P1 | S on T1, T1.P1
-insert into T2(partition P2) select .. T1 partition P1 | S on T2, T1, T1.P1 and X on T2.P2
-insert into T2(partition P.Q) select .. T1 partition P1 | S on T2, T2.P, T1, T1.P1 and X on T2.P.Q
-alter table T1 rename T2 | X on T1
-alter table T1 add cols | X on T1
-alter table T1 replace cols | X on T1
-alter table T1 change cols | X on T1
-alter table T1 add partition P1 | S on T1, X on T1.P1
-alter table T1 drop partition P1 | S on T1, X on T1.P1
-alter table T1 touch partition P1 | S on T1, X on T1.P1
-*alter table T1 set serdeproperties * | S on T1
-*alter table T1 set serializer * | S on T1
-*alter table T1 set file format * | S on T1
-*alter table T1 set tblproperties * | X on T1
-drop table T1 | X on T1
+| hivesql                                                 | 对应的锁情况                                   |
+|---------------------------------------------------------|------------------------------------------|
+| select .. T1 partition P1                               | S on T1, T1.P1                           |
+| insert into T2(partition P2) select .. T1 partition P1  | S on T2, T1, T1.P1 and X on T2.P2        |
+| insert into T2(partition P.Q) select .. T1 partition P1 | S on T2, T2.P, T1, T1.P1 and X on T2.P.Q |
+| alter table T1 rename T2                                | X on T1                                  |
+| alter table T1 add cols                                 | X on T1                                  |
+| alter table T1 replace cols                             | X on T1                                  |
+| alter table T1 change cols                              | X on T1                                  |
+| alter table T1 add partition P1                         | S on T1, X on T1.P1                      |
+| alter table T1 drop partition P1                        | S on T1, X on T1.P1                      |
+| alter table T1 touch partition P1                       | S on T1, X on T1.P1                      |
+| *alter table T1 set serdeproperties *                   | S on T1                                  |
+| *alter table T1 set serializer *                        | S on T1                                  |
+| *alter table T1 set file format *                       | S on T1                                  |
+| *alter table T1 set tblproperties *                     | X on T1                                  |
+| drop table T1                                           | X on T1                                  |
 
 注意：
 - load data [local] inpath '' into table xx partition 也会触发锁，触发的锁同insert
@@ -52,3 +52,11 @@ SHOW LOCKS <TABLE_NAME> PARTITION (<PARTITION_DESC>) extended;
     <value>cn.fancychuan.hive.auth.CustomHiveServer2Auth</value>
 </property>
 ```
+
+### 物化视图Materialized views
+传统上，用于加速数据仓库中查询处理的最强大技术之一是对相关摘要或实例化视图进行预计算。
+
+Apache Hive 3.0.0 中引入的初始实现侧重于引入物化视图和基于项目中的那些物化的自动查询重写
+
+参考文档：https://www.docs4dev.com/docs/zh/apache-hive/3.1.1/reference/Materialized_views.html
+
