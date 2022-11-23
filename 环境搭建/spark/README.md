@@ -167,3 +167,12 @@ sbin/start-history-server.sh
 ### 4. python等跟spark结合的环境搭建
 
 [spark学习环境搭建.md](../../spark/spark学习环境搭建(windows).md)
+
+
+## 常用端口
+
+- Spark 查看当前 Spark-shell 运行任务情况端口号：4040（计算）
+- Spark Master 内部通信服务端口号：7077
+- Standalone 模式下，Spark Master Web 端口号：8080（资源）
+- Spark 历史服务器端口号：18080
+- Hadoop YARN 任务运行情况查看端口号：8088
