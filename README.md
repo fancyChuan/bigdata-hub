@@ -3,7 +3,7 @@
 
 
 ### 知识体系
-- 基础框架
+- （核心）基础框架
   - [hadoop](./hadoop)：HDFS、MR、YARN及高级话题、企业优化
   - [hive](./hive)：基础使用、优化、SQL编译过程、数据血缘、进阶、权限控制
     - [hive优化](./hive/hive调优)

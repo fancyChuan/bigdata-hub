@@ -14,6 +14,7 @@
     <version>1.0.0</version>
     <modules>
         <module>spark2.4.4</module>
+        <module>spark3.0</module>
     </modules>
     <!--TODO：为什么packaging设为pom的时候，spark\src\main\resources下面的log4j.properties就不生效呢？-->
     <packaging>pom</packaging>
