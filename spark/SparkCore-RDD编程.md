@@ -1,5 +1,8 @@
 ## RDD编程
-
+Spark 计算框架为了能够进行高并发和高吞吐的数据处理，封装了三大数据结构，用于处理不同的应用场景。三大数据结构分别是
+- RDD：弹性分布式数据集
+- 累积器：分布式共享只写变量
+- 广播变量：分布式共享只读变量
 
 JavaSparkContext是SparkContext的子类，针对java的SparkContext版本
 

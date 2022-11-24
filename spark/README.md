@@ -14,6 +14,12 @@ spark开发
 - spark优化
 - 集群管理
 
+> 模拟分布式计算：[simulation](spark3.0/src/main/scala/cn/fancychuan/spark3/simulation)
+> - Driver：任务主程序，启动并获取分布式计算结果。1.连接执行者（网络通信），2.拆分数据 3. 分配计算任务 4.获取执行结果
+> - Executor：真正执行计算的地方，执行者1
+> - Executor2：真正执行计算的地方，执行者2
+> - SubTask：类似于线程，被分配计算任务的地方
+> - Task：数据和计算逻辑所在地方，需要由Driver拆分后才进行
 
 参考资料
 
