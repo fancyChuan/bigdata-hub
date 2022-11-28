@@ -71,10 +71,14 @@ RDD 体现了装饰者模式，将数据处理的逻辑进行封装（和IO模�
 sc.parallelize(["hello", "spark"])
 # java
 JavaRDD<String> lines = sc.parallelize(Arrays.asList("hello", "spark"))
-# scala 还有一个makeRDD函数
+# scala 还有一个makeRDD函数（底层实现是 parallelize)
 val x = sc.parallelize(List("hello", "spark-shell"))
 val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 ``` 
+> 还有一种方式：使用new的方式直接构造RDD，一般由Spark框架自身使用
+
+**示例代码：**[buildrdd](spark3.0/src/main/scala/cn/fancychuan/spark3/sparkcore/buildrdd)
+
 #### 1.2  RDD操作
 转化(transformation)操作
 - 返回一个新的RDD，进行的是惰性求值（读取文件sc.textFile()也是惰性的）
