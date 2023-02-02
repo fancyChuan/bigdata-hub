@@ -6,7 +6,7 @@
 - （核心）基础框架
   - [hadoop](./hadoop)：HDFS、MR、YARN及高级话题、企业优化
   - [hive](./hive)：基础使用、优化、SQL编译过程、数据血缘、进阶、权限控制
-    - [hive优化](./hive/hive调优)
+    - [hive优化](./hive/hive调优)、[hivesql功力提升专项(含复杂需求)](./hive/HiveSQL功力提升.md)
     - [hive数据血缘](./hive/hive数据血缘)
     - [数仓工作与建设](./hive/数仓工作与建设)
     - [数仓建模](./hive/数仓建模)
@@ -48,6 +48,7 @@
   - [数据湖](./大数据建设/数据湖)
     - [Hudi](./hudi) 
   - [湖仓一体Lakehouse](./大数据建设/湖仓Lakehouse)
+  - [DataOps](./大数据建设/DataOps)
 - 其他
   - [数字化转型](./数字化转型)
 
