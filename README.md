@@ -6,7 +6,8 @@
 - （核心）基础框架
   - [hadoop](./hadoop)：HDFS、MR、YARN及高级话题、企业优化
   - [hive](./hive)：基础使用、优化、SQL编译过程、数据血缘、进阶、权限控制
-    - [hive优化](./hive/hive调优)、[hivesql功力提升专项(含复杂需求)](./hive/HiveSQL功力提升.md)
+    - [hive优化](./hive/hive调优)
+    - [hivesql功力提升专项](./hive/HiveSQL功力提升.md)：各类难度较高的需求场景的实现方式
     - [hive数据血缘](./hive/hive数据血缘)
     - [数仓工作与建设](./hive/数仓工作与建设)
     - [数仓建模](./hive/数仓建模)

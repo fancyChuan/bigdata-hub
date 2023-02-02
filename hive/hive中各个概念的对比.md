@@ -48,6 +48,14 @@ A001        11139       20201112    99991231
 
 #### 几个by的区别对比
 - ORDER BY 会对输入做全局排序，因此只有一个 Reduce（多个 Reduce 无法保证全局有序）会导致当输入规模较大时，需要较长的计算时间，
-- Hive中指定了sort by，那么在每个reducer端都会做排序，也就是说保证了局部有序好处是：执行了局部排序之后可以为接下去的全局排序提高不少的效率（其实就是做一次归并排序就可以做到全局排序了。 
-- ditribute by是控制map的输出在reducer是如何划分的（即输出到不同的文件里）。 
+- Hive中指定了sort by，那么在每个reducer端都会做排序，也就是说保证了局部有序好处是：执行了局部排序之后可以为接下去的全局排序提高不少的效率（其实就是做一次归并排序就可以做到全局排序了。
+- ditribute by
+  - DISTRIBUTE BY是控制map的输出在reducer是如何划分的
+  - DISTRIBUTE BY是控制在map端如何拆分数据给reduce端的。
+  - DISTRIBUTE BY可以控制某个特定行应该到哪个reducer。
 - cluster by的功能就是distribute by和sort by相结合（根据指定字段输出到不同文件里，然后对各个文件里的数据排序）
+```
+distribute by a sort by a
+等价于
+cluster by a  -- 不支持asc desc
+```
