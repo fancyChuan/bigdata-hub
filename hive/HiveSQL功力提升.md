@@ -42,6 +42,8 @@ group by room_id
 
 
 ### 分组后按顺序组装
+需求描述：将一组切片数据，按时间顺序存到array中，并给到下游消费
+
 通过 distribute by 来实现，可以保证collect_list组装的时候按顺序
 > 知识点：执行顺序上，group by 执行后 having，之后就会执行 distribute by 或者 cluster by
 ```
@@ -72,3 +74,4 @@ group by room_id
                     ) n91
             GROUP by room_id
 ```
+### 行列互转

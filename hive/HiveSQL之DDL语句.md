@@ -1,3 +1,6 @@
+# DDL
+https://www.cnblogs.com/fanzhenyong/p/9746796.html
+
 ### DDL(Data Definition Language)
 - Create/Drop/Alter/Use Database
 - Create/Drop/Truncate Table
