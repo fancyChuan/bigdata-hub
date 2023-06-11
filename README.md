@@ -34,6 +34,9 @@
     - 计算中间件：linkis
     - 数据交换：exchangis
 
+- 其他框架
+  - [StreamPark](https://github.com/apache/incubator-streampark)：原名StreamX，是一个流处理应用程序开发管理框架
+
 - 环境搭建
   - [apache版本搭建](./环境搭建)
   - [CDH集群搭建](./环境搭建/CM+CDH安装)
@@ -50,7 +53,7 @@
   - [数据湖](./大数据建设/数据湖)
     - [Hudi](./hudi) 
   - [湖仓一体Lakehouse](./大数据建设/湖仓Lakehouse)
-  - [DataOps](./大数据建设/DataOps)
+  - [DataOps](./大数据建设/DataOps)：数据工程化
 - 其他
   - [数字化转型](./数字化转型)
 
