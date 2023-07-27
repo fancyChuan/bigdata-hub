@@ -30,12 +30,13 @@
   - [dolphinscheduler](bigdata-scheduler/dolphinscheduler)
 - 第三方or商业集成技术
   - [aliyun-bigdata](./aliyun-bigdata)：阿里云大数据（包括DataWorks、MaxCompute等）
-  - [dss](./dss)：微众开源一站式数据平台（DataSphere Studio）
+  - [DataSphere Studio](./dss)：微众开源一站式数据平台（DataSphere Studio）
     - 计算中间件：linkis
     - 数据交换：exchangis
 
 - 其他框架
   - [StreamPark](https://github.com/apache/incubator-streampark)：原名StreamX，是一个流处理应用程序开发管理框架
+
 
 - 环境搭建
   - [apache版本搭建](./环境搭建)
@@ -47,6 +48,13 @@
   - [数据质量](./大数据建设/数据质量管理)
   - [混合计算](./大数据建设/混合计算)
   - [实时数仓建设](./大数据建设/实时数仓建设)
+  - [元数据管理](./大数据建设/元数据管理)
+    - 开源元数据管理平台
+      - Apache Atlas
+      - LinkedIn DataHub
+      - Amundsen
+      - Metacat
+      - OpenMetadata
 - 前沿
   - 增强性数据分析
   - [数据中台](./大数据建设/数据中台建设)
