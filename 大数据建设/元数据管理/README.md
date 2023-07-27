@@ -33,3 +33,33 @@ OpenMetadata 包括以下内容：
 - **连接器**： 支持连接到各种数据库、仪表板、管道和消息传递服务的 55 个连接器。
 - **术语表**： 添加受控词汇来描述组织内的重要概念和术语。添加词汇表、术语、标签、描述和审阅者。
 - **数据安全**： 支持 Google、Okta、自定义 OIDC、Auth0、Azure、Amazon Cognito 和 OneLogin 作为 SSO 的身份提供商。此外，还支持 AWS SSO 和 Google 基于 SAML 的身份验证。
+
+#### 安装
+使用docker
+```
+# 环境要求 Python (version 3.7, 3.8 or 3.9)
+python --version
+# 环境要求 Docker (version 20.10.0 or greater)
+docker --version
+# 环境要求 Docker Compose (version v2.1.1 or greater)
+docker compose version
+
+
+# 创建python虚拟环境
+conda create -n openmetadata_py39 python=3.9
+# 激活python虚拟环境
+conda activate openmetadata_py39
+# 创建目录
+mkdir openmetadata-docker && cd openmetadata-docker
+# 安装openmetadata
+pip install --upgrade "openmetadata-ingestion[docker]"
+# 确认安装成功
+metadata docker --help
+# 启动
+metadata docker --start
+#启动postgre
+metadata docker --start -db postgres
+```
+
+一切就绪后访问：http://localhost:8585
+
