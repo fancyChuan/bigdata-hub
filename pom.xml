@@ -32,6 +32,7 @@
         <module>clickhouse</module>
         <module>hudi</module>
         <module>bitsail</module>
+        <module>paimon</module>
     </modules>
 
     <properties>

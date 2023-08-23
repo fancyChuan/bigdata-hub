@@ -80,7 +80,7 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 **示例代码：**[buildrdd](spark3.0/src/main/scala/cn/fancychuan/spark3/sparkcore/buildrdd)
 
 #### 1.2  RDD操作
-转化(transformation)操作
+转化(transformation)操作：功能的补充和封装，将旧的RDD包装成新的RDD
 - 返回一个新的RDD，进行的是惰性求值（读取文件sc.textFile()也是惰性的）
 - 可以操作任意数量的输入RDD，比如rdd1.union(rdd2)
 - Spark会使用谱系图（lineage graph）来记录不同RDD之间的关系
