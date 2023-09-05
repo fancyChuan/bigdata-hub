@@ -3,7 +3,7 @@ package cn.fancychuan.spark3.sparkcore.operator
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-object Spark01_RDD_Operator_Transform_Par {
+object Spark01_RDD_Operator_Transform_map {
 
     def main(args: Array[String]): Unit = {
 

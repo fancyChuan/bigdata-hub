@@ -2,7 +2,7 @@ package cn.fancychuan.spark3.sparkcore.operator
 
 import org.apache.spark.{SparkConf, SparkContext}
 
-object Spark03_RDD_Operator_Transform1 {
+object Spark03_RDD_Operator_Transform_mapPartitionsWithIndex {
 
     def main(args: Array[String]): Unit = {
 
@@ -10,20 +10,17 @@ object Spark03_RDD_Operator_Transform1 {
         val sc = new SparkContext(sparkConf)
 
         // TODO 算子 - mapPartitions
-        val rdd = sc.makeRDD(List(1,2,3,4))
-
+        val rdd = sc.makeRDD(List(1,2,3,4), 2)
+        // 【1，2】，【3，4】
         val mpiRDD = rdd.mapPartitionsWithIndex(
             (index, iter) => {
-                // 1,   2,    3,   4
-                //(0,1)(2,2),(4,3),(6,4)
-                iter.map(
-                    num => {
-                        (index, num)
-                    }
-                )
+                if ( index == 1 ) {
+                    iter
+                } else {
+                    Nil.iterator
+                }
             }
         )
-
         mpiRDD.collect().foreach(println)
 
 
