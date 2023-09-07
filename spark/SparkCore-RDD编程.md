@@ -74,7 +74,7 @@ JavaRDD<String> lines = sc.parallelize(Arrays.asList("hello", "spark"))
 # scala 还有一个makeRDD函数（底层实现是 parallelize)
 val x = sc.parallelize(List("hello", "spark-shell"))
 val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
-``` 
+```
 > 还有一种方式：使用new的方式直接构造RDD，一般由Spark框架自身使用
 
 **示例代码：**[buildrdd](spark3.0/src/main/scala/cn/fancychuan/spark3/sparkcore/buildrdd)
@@ -85,23 +85,34 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 - 可以操作任意数量的输入RDD，比如rdd1.union(rdd2)
 - Spark会使用谱系图（lineage graph）来记录不同RDD之间的关系
 
-| 类型       | 函数                          | 说明                                        | 举例                        |
-|----------|-----------------------------|-------------------------------------------|---------------------------|
-| Value类型  | map(func)                   | 对每个元素执行传入的方法，一对一                          | rdd.map(_ * 2) // 所有元素乘以2 |
-| Value类型  | mapPartition(func)          | func函数处理一整个分区的数据。即有n个分区，就调用func函数n次。      |                           |
-| Value类型  | mapPartitionWithIndex(func) | 与mapPartitions类似，只是输入参数多了一个分区号            |                           |
-| Value类型  | flatMap                     | 对每个元素执行传入的方法，一对多                          | 把字符串切分为单词                 |
-| Value类型  | glom                        | 将分区中的所有元素组成一个列表                           |                           |
-| Value类型  | groupBy                     | 分组，按照传入函数的`返回值`进行分组,分组后的结果，还是按照原来的分区数进行存储 |                           |
-| Value类型  | filter                      | 过滤出符合条件的元素                                |                           |
-| Value类型  | distinct                    | 去重，开销很大，需要通过网络把所有数据进行混洗                   |                           |
-| Value类型  | coalesce                    | 缩减分区数，用于大数据集过滤后，提高小数据集的执行效率               |                           |
-| Value类型  | repartition                 | 根据分区数，重新通过网络随机洗牌所有数据                      |                           |
-| 双Value类型 | union                       | 并集，合并前有重复的元素合并后也有                         | rdd1.union(rdd2)          |
-| Value类型  | intersection                | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗     |                           |
-| Value类型  | subtract                    | 差集，有需要混洗                                  |                           |
-| Value类型  | cartesian                   | 笛卡尔积，在考虑所有组合的时候有用                         |                           |
-| Value类型  | sample                      | 采样                                        | 参见 Main.testSample()      |
+| 类型        | 函数                        | 说明                                                         | 举例                            |
+| ----------- | --------------------------- | ------------------------------------------------------------ | ------------------------------- |
+| Value类型   | map(func)                   | 对每个元素执行传入的方法，一对一                             | rdd.map(_ * 2) // 所有元素乘以2 |
+| Value类型   | mapPartition(func)          | func函数处理一整个分区的数据。即有n个分区，就调用func函数n次。 |                                 |
+| Value类型   | mapPartitionWithIndex(func) | 与mapPartitions类似，只是输入参数多了一个分区号              |                                 |
+| Value类型   | flatMap                     | 对每个元素执行传入的方法，一对多                             | 把字符串切分为单词              |
+| Value类型   | glom                        | 将同一个分区中的所有元素组成一个内存数组（数组方便取最大值等），分区不变 |                                 |
+| Value类型   | groupBy                     | 分组，按照传入函数的`返回值`进行分组,分组后分区数默认不变，<br />极限情况数据可能都在一个分区中，<br />数据会被打乱重新组合，这个也叫shuffle操作 |                                 |
+| Value类型   | filter                      | 过滤出符合条件的元素，不符合的会被丢弃。<br />筛选后分区不变，但分区内的数据可能不均衡，可能会出现数据倾斜 |                                 |
+| Value类型   | distinct                    | 去重，开销很大，需要通过网络把所有数据进行混洗               |                                 |
+| Value类型   | coalesce                    | 缩减分区数，用于大数据集过滤后，提高小数据集的执行效率       |                                 |
+| Value类型   | repartition                 | 根据分区数，重新通过网络随机洗牌所有数据                     |                                 |
+| 双Value类型 | union                       | 并集，合并前有重复的元素合并后也有                           | rdd1.union(rdd2)                |
+| Value类型   | intersection                | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗 |                                 |
+| Value类型   | subtract                    | 差集，有需要混洗                                             |                                 |
+| Value类型   | cartesian                   | 笛卡尔积，在考虑所有组合的时候有用                           |                                 |
+| Value类型   | sample                      | 采样：根据指定的规则从数据集中抽取数据                       | 参见 Main.testSample()          |
+
+> map和mapPartitions的区别：
+> - 数据处理视角：一条一条处理、以分区为单位
+> - 功能视角：map前后条数不变；mapPartitions传递迭代器，不要求执行前后条数不变
+> - 性能视角：map性能低；mapPartitions性能高，但是有内存溢出的风险（完成比完美更重要）
+
+> 理解分区不变：
+>
+> 
+
+
 
 行动(action)操作
 - 触发实际计算（一个action会触发一个job），向驱动器程序返回结果或者把结果写入外部系统
@@ -339,4 +350,5 @@ sampleStdev() | 采样的标准差
 
 #### 4.5 Spark Shuffle
 与MapReduce的Sort-based Shuffle不同，Spark的实现有两种：Hash Shuffle和 Sort-based Shuffle
+
 ##### Hash Shuffle

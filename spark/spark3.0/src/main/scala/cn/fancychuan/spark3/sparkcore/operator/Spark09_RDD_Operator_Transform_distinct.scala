@@ -13,8 +13,10 @@ object Spark09_RDD_Operator_Transform_distinct {
         // TODO 算子 - distinct 去重
         val rdd = sc.makeRDD(List(1,2,3,4,1,2,3,4))
 
-        // map(x => (x, null)).reduceByKey((x, _) => x, numPartitions).map(_._1)
 
+        // 源码中去重的实现代码：map(x => (x, null)).reduceByKey((x, _) => x, numPartitions).map(_._1)
+        // reduceByKey的时候，将相同的key汇总，同时将value聚合；而聚合的逻辑是取第1个null
+        // 最后再取key返回，就达到了去重的目的
         // (1, null),(2, null),(3, null),(4, null),(1, null),(2, null),(3, null),(4, null)
         // (1, null)(1, null)(1, null)
         // (null, null) => null
