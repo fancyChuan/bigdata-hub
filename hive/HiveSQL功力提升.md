@@ -75,3 +75,28 @@ group by room_id
             GROUP by room_id
 ```
 ### 行列互转
+
+
+## 复杂SQL解析
+### JSON数组
+```
+
+SELECT  *
+        , size(xx)
+from    (
+select  result,
+                    get_json_object(t.result, '$.node_details') as node_details
+                    , from_json(get_json_object(t.result, '$.node_details'), 'array<string>') as xx
+            from    (
+                        select  '{"node_details":[{"event_id":6470,"event_name":"识别节点","process_detail":[{"group_id":150362,"group_name":"评论召回直播间","version":33},{"group_id":46993,"group_name":"封建迷信","version":7,"rule_detail":[{"rule_id":312487,"rule_name":"封建迷信_报生日"}]},{"group_id":37348,"group_name":"未成年相关","version":4},{"group_id":35273,"group_name":"词表","version":4},{"group_id":32324,"group_name":"导流识别","version":31}]},{"event_id":6471,"event_name":"识别节点"}]}' as result
+                    ) t
+) xxx
+-- lateral view explode(
+--     split(
+--         regexp_replace(node_detail2, '\\},\\{"event_id"', '\\}@\\{"event_id"') ,'@'
+--     )
+-- ) list as a 
+-- lateral view
+--         json_tuple(a, 'event_id') ai as event_id
+
+```
