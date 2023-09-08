@@ -94,14 +94,16 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 | Value类型   | glom                        | 将同一个分区中的所有元素组成一个内存数组（数组方便取最大值等），分区不变 |                                 |
 | Value类型   | groupBy                     | 分组，按照传入函数的`返回值`进行分组,分组后分区数默认不变，<br />极限情况数据可能都在一个分区中，<br />数据会被打乱重新组合，这个也叫shuffle操作 |                                 |
 | Value类型   | filter                      | 过滤出符合条件的元素，不符合的会被丢弃。<br />筛选后分区不变，但分区内的数据可能不均衡，可能会出现数据倾斜 |                                 |
+| Value类型   | sample                      | 采样：根据指定的规则从数据集中抽取数据。<br />常用于抽样分析判断导致数据倾斜的原因 | 参见 Main.testSample()          |
 | Value类型   | distinct                    | 去重，开销很大，需要通过网络把所有数据进行混洗               |                                 |
 | Value类型   | coalesce                    | 缩减分区数，用于大数据集过滤后，提高小数据集的执行效率       |                                 |
 | Value类型   | repartition                 | 根据分区数，重新通过网络随机洗牌所有数据                     |                                 |
+| Value类型   | sortBy                      | 用于排序。可以指定规则/函数，之后按结果排，默认排序。<br />排序后分区数不变，中间存在shuffle过程 |                                 |
 | 双Value类型 | union                       | 并集，合并前有重复的元素合并后也有                           | rdd1.union(rdd2)                |
-| Value类型   | intersection                | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗 |                                 |
-| Value类型   | subtract                    | 差集，有需要混洗                                             |                                 |
-| Value类型   | cartesian                   | 笛卡尔积，在考虑所有组合的时候有用                           |                                 |
-| Value类型   | sample                      | 采样：根据指定的规则从数据集中抽取数据                       | 参见 Main.testSample()          |
+| 双Value类型 | intersection                | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗 | rdd1.intersection(rdd2)         |
+| 双Value类型 | subtract                    | 差集：以一个 RDD 元素为主，去除两个 RDD 中重复元素，将其他元素保留下来。<br />需要shuffle |                                 |
+| 双Value类型 | cartesian                   | 笛卡尔积，在考虑所有组合的时候有用                           |                                 |
+| 双Value类型 | zip                         | 将2个RDD中的元素以键值对的形式合并。<br />第1个RDD的元素为key，第2个RDD相同位置的元素为Value |                                 |
 
 > map和mapPartitions的区别：
 > - 数据处理视角：一条一条处理、以分区为单位
@@ -112,7 +114,11 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 >
 > 
 
-
+> 如果不用distinct，该如何去重？
+>
+> ```
+> map(x => (x, null)).reduceByKey((x, _) => x, numPartitions).map(_._1)
+> ```
 
 行动(action)操作
 - 触发实际计算（一个action会触发一个job），向驱动器程序返回结果或者把结果写入外部系统
