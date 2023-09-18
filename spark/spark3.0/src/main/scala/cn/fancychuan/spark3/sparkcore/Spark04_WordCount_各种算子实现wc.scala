@@ -5,7 +5,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable
 
-object Spark03_WordCount {
+object Spark04_WordCount_各种算子实现wc {
     def main(args: Array[String]): Unit = {
 
         val sparConf = new SparkConf().setMaster("local").setAppName("WordCount")

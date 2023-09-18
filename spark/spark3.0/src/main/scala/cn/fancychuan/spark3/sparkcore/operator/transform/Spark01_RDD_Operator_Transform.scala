@@ -1,5 +1,6 @@
 package cn.fancychuan.spark3.sparkcore.operator.transform
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
 object Spark01_RDD_Operator_Transform {
@@ -26,6 +27,7 @@ object Spark01_RDD_Operator_Transform {
         //val mapRDD: RDD[Int] = rdd.map((num)=>num*2) // 类型可以推断出来，那么Int也可以省略
         //val mapRDD: RDD[Int] = rdd.map(num=>num*2) // 参数只有一个，括号可以省略
         val mapRDD: RDD[Int] = rdd.map(_ * 2) // 变量只出现一次，且按顺序，可以用_代替
+
 
         mapRDD.collect().foreach(println)
 

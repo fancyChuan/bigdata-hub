@@ -1,6 +1,7 @@
 package cn.fancychuan.spark3.sparkcore.operator.transform
 
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.rdd.RDD
+import org.apache.spark.{HashPartitioner, SparkConf, SparkContext}
 
 object Spark14_RDD_Operator_Transform_partitionBy {
 

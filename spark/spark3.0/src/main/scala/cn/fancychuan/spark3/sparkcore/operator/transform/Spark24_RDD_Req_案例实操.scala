@@ -1,5 +1,6 @@
 package cn.fancychuan.spark3.sparkcore.operator.transform
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
 object Spark24_RDD_Req_案例实操 {
