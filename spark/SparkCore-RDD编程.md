@@ -127,17 +127,17 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 - 当调用一个新的行动操作时，整个RDD都会从头开始计算。可以通过将中间结果持久化避免这种低效的行为
 > collect()需要确保单台机器的内存放得下的时候才能使用
 
-| 函数                                  | 说明                                            | 举例                              |
-|-------------------------------------|-----------------------------------------------|---------------------------------|
-| reduce                              | 操作RDD中的两个元素，返回一个同类型的新元素，有点类似于执行窗口为2的函数        | 累加 rdd.reduce((a, b) -> a + b)  |
-| fold                                | 跟reduce类似，只是多了个初始值，用作为每个分区第一次调用时的结果           | rdd.fold(100, (a, b) -> a + b)) |
-| aggregate(zeroValue, seqOp, combOp) | seqOp在每个分区执行map操作，combOp是把seqOP操作后的结果执行fold操作 | 求均值                             |
-| countByValue()                      | 各元素在RDD中出现的次数                                 |                                 |
-| take(num)                           | 取num个元素                                       |                                 |
-| top(num)                            | 取前num个元素                                      |                                 |
-| takeOrdered(num, ordering)          | 按照指定规则排序后取前num个元素                             |                                 |
-| takeSample                          | 采样                                            |                                 |
-| foreach(func)                       |                                               |                                 |
+| 函数                                | 说明                                                         | 举例                             |
+| ----------------------------------- | ------------------------------------------------------------ | -------------------------------- |
+| reduce                              | 操作RDD中的两个元素，返回一个同类型的新元素，有点类似于执行窗口为2的函数 | 累加 rdd.reduce((a, b) -> a + b) |
+| fold                                | 跟reduce类似，只是多了个初始值，用作为每个分区第一次调用时的结果 | rdd.fold(100, (a, b) -> a + b))  |
+| aggregate(zeroValue, seqOp, combOp) | seqOp在每个分区执行map操作，combOp是把seqOP操作后的结果执行fold操作。<br />初始值同时参与分区内和分区间的计算 | 求均值                           |
+| countByValue()                      | 各元素在RDD中出现的次数                                      |                                  |
+| take(num)                           | 取num个元素                                                  |                                  |
+| top(num)                            | 取前num个元素                                                |                                  |
+| takeOrdered(num, ordering)          | 按照指定规则排序后取前num个元素                              |                                  |
+| takeSample                          | 采样                                                         |                                  |
+| foreach(func)                       |                                                              |                                  |
 
 #### 1.3 向Spark传递函数
 大部分转化操作和一部分行动操作都需要依赖用户传递的函数来计算。有几个注意的地方：
