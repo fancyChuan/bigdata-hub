@@ -381,3 +381,20 @@ sampleStdev() | 采样的标准差
 与MapReduce的Sort-based Shuffle不同，Spark的实现有两种：Hash Shuffle和 Sort-based Shuffle
 
 ##### Hash Shuffle
+
+
+
+
+
+### RDD序列化
+
+闭包检查：
+
+- 从计算的角度，算子以外的代码都是在Driver端执行，算子里的代码都是在Executor端执行。
+- Scala函数式编程中，会导致算子内经常要用到算子外的数据，这就形成了闭包
+- 如果算子外的数据无法序列化，就无法传给Executor端执行。因此执行计算任务之前需要检测闭包内对象是否进行序列化
+
+> Scala2.12后闭包编译方式发生了改变
+
+对方法和属性序列化
+
