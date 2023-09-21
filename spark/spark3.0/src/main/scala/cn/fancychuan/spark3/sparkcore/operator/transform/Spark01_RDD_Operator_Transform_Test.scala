@@ -1,4 +1,4 @@
-package cn.fancychuan.spark3.sparkcore.operator
+package cn.fancychuan.spark3.sparkcore.operator.transform
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}

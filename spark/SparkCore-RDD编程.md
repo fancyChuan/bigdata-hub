@@ -74,7 +74,7 @@ JavaRDD<String> lines = sc.parallelize(Arrays.asList("hello", "spark"))
 # scala 还有一个makeRDD函数（底层实现是 parallelize)
 val x = sc.parallelize(List("hello", "spark-shell"))
 val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
-``` 
+```
 > 还有一种方式：使用new的方式直接构造RDD，一般由Spark框架自身使用
 
 **示例代码：**[buildrdd](spark3.0/src/main/scala/cn/fancychuan/spark3/sparkcore/buildrdd)
@@ -85,23 +85,41 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 - 可以操作任意数量的输入RDD，比如rdd1.union(rdd2)
 - Spark会使用谱系图（lineage graph）来记录不同RDD之间的关系
 
-| 类型       | 函数                          | 说明                                        | 举例                        |
-|----------|-----------------------------|-------------------------------------------|---------------------------|
-| Value类型  | map(func)                   | 对每个元素执行传入的方法，一对一                          | rdd.map(_ * 2) // 所有元素乘以2 |
-| Value类型  | mapPartition(func)          | func函数处理一整个分区的数据。即有n个分区，就调用func函数n次。      |                           |
-| Value类型  | mapPartitionWithIndex(func) | 与mapPartitions类似，只是输入参数多了一个分区号            |                           |
-| Value类型  | flatMap                     | 对每个元素执行传入的方法，一对多                          | 把字符串切分为单词                 |
-| Value类型  | glom                        | 将分区中的所有元素组成一个列表                           |                           |
-| Value类型  | groupBy                     | 分组，按照传入函数的`返回值`进行分组,分组后的结果，还是按照原来的分区数进行存储 |                           |
-| Value类型  | filter                      | 过滤出符合条件的元素                                |                           |
-| Value类型  | distinct                    | 去重，开销很大，需要通过网络把所有数据进行混洗                   |                           |
-| Value类型  | coalesce                    | 缩减分区数，用于大数据集过滤后，提高小数据集的执行效率               |                           |
-| Value类型  | repartition                 | 根据分区数，重新通过网络随机洗牌所有数据                      |                           |
-| 双Value类型 | union                       | 并集，合并前有重复的元素合并后也有                         | rdd1.union(rdd2)          |
-| Value类型  | intersection                | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗     |                           |
-| Value类型  | subtract                    | 差集，有需要混洗                                  |                           |
-| Value类型  | cartesian                   | 笛卡尔积，在考虑所有组合的时候有用                         |                           |
-| Value类型  | sample                      | 采样                                        | 参见 Main.testSample()      |
+| 类型          | 函数                        | 说明                                                         | 举例                            |
+| ------------- | --------------------------- | ------------------------------------------------------------ | ------------------------------- |
+| Value类型     | map(func)                   | 对每个元素执行传入的方法，一对一                             | rdd.map(_ * 2) // 所有元素乘以2 |
+| Value类型     | mapPartition(func)          | func函数处理一整个分区的数据。即有n个分区，就调用func函数n次。 |                                 |
+| Value类型     | mapPartitionWithIndex(func) | 与mapPartitions类似，只是输入参数多了一个分区号              |                                 |
+| Value类型     | flatMap                     | 对每个元素执行传入的方法，一对多                             | 把字符串切分为单词              |
+| Value类型     | glom                        | 将同一个分区中的所有元素组成一个内存数组（数组方便取最大值等），分区不变 |                                 |
+| Value类型     | groupBy                     | 分组，按照传入函数的`返回值`进行分组,分组后分区数默认不变，<br />极限情况数据可能都在一个分区中，<br />数据会被打乱重新组合，这个也叫shuffle操作 |                                 |
+| Value类型     | filter                      | 过滤出符合条件的元素，不符合的会被丢弃。<br />筛选后分区不变，但分区内的数据可能不均衡，可能会出现数据倾斜 |                                 |
+| Value类型     | sample                      | 采样：根据指定的规则从数据集中抽取数据。<br />常用于抽样分析判断导致数据倾斜的原因 | 参见 Main.testSample()          |
+| Value类型     | distinct                    | 去重，开销很大，需要通过网络把所有数据进行混洗               |                                 |
+| Value类型     | coalesce                    | 缩减分区数，用于大数据集过滤后，提高小数据集的执行效率       |                                 |
+| Value类型     | repartition                 | 根据分区数，重新通过网络随机洗牌所有数据                     |                                 |
+| Value类型     | sortBy                      | 用于排序。可以指定规则/函数，之后按结果排，默认排序。<br />排序后分区数不变，中间存在shuffle过程 |                                 |
+| 双Value类型   | union                       | 并集，合并前有重复的元素合并后也有                           | rdd1.union(rdd2)                |
+| 双Value类型   | intersection                | 交集，会去除重复的元素，单个RDD内的重复元素也会移除。性能较差，需要混洗 | rdd1.intersection(rdd2)         |
+| 双Value类型   | subtract                    | 差集：以一个 RDD 元素为主，去除两个 RDD 中重复元素，将其他元素保留下来。<br />需要shuffle |                                 |
+| 双Value类型   | cartesian                   | 笛卡尔积，在考虑所有组合的时候有用                           |                                 |
+| 双Value类型   | zip                         | 将2个RDD中的元素以键值对的形式合并。<br />第1个RDD的元素为key，第2个RDD相同位置的元素为Value |                                 |
+| Key-Value类型 | partitionBy                 | 按照指定的Partitioner重新分区。默认的分区器是HashPartitioner | 奇数一个分区，偶数一个分区      |
+
+> map和mapPartitions的区别：
+> - 数据处理视角：一条一条处理、以分区为单位
+> - 功能视角：map前后条数不变；mapPartitions传递迭代器，不要求执行前后条数不变
+> - 性能视角：map性能低；mapPartitions性能高，但是有内存溢出的风险（完成比完美更重要）
+
+> 理解分区不变：
+>
+> 
+
+> 如果不用distinct，该如何去重？
+>
+> ```
+> map(x => (x, null)).reduceByKey((x, _) => x, numPartitions).map(_._1)
+> ```
 
 行动(action)操作
 - 触发实际计算（一个action会触发一个job），向驱动器程序返回结果或者把结果写入外部系统
@@ -109,17 +127,17 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 - 当调用一个新的行动操作时，整个RDD都会从头开始计算。可以通过将中间结果持久化避免这种低效的行为
 > collect()需要确保单台机器的内存放得下的时候才能使用
 
-| 函数                                  | 说明                                            | 举例                              |
-|-------------------------------------|-----------------------------------------------|---------------------------------|
-| reduce                              | 操作RDD中的两个元素，返回一个同类型的新元素，有点类似于执行窗口为2的函数        | 累加 rdd.reduce((a, b) -> a + b)  |
-| fold                                | 跟reduce类似，只是多了个初始值，用作为每个分区第一次调用时的结果           | rdd.fold(100, (a, b) -> a + b)) |
-| aggregate(zeroValue, seqOp, combOp) | seqOp在每个分区执行map操作，combOp是把seqOP操作后的结果执行fold操作 | 求均值                             |
-| countByValue()                      | 各元素在RDD中出现的次数                                 |                                 |
-| take(num)                           | 取num个元素                                       |                                 |
-| top(num)                            | 取前num个元素                                      |                                 |
-| takeOrdered(num, ordering)          | 按照指定规则排序后取前num个元素                             |                                 |
-| takeSample                          | 采样                                            |                                 |
-| foreach(func)                       |                                               |                                 |
+| 函数                                | 说明                                                         | 举例                             |
+| ----------------------------------- | ------------------------------------------------------------ | -------------------------------- |
+| reduce                              | 操作RDD中的两个元素，返回一个同类型的新元素，有点类似于执行窗口为2的函数 | 累加 rdd.reduce((a, b) -> a + b) |
+| fold                                | 跟reduce类似，只是多了个初始值，用作为每个分区第一次调用时的结果 | rdd.fold(100, (a, b) -> a + b))  |
+| aggregate(zeroValue, seqOp, combOp) | seqOp在每个分区执行map操作，combOp是把seqOP操作后的结果执行fold操作。<br />初始值同时参与分区内和分区间的计算 | 求均值                           |
+| countByValue()                      | 各元素在RDD中出现的次数                                      |                                  |
+| take(num)                           | 取num个元素                                                  |                                  |
+| top(num)                            | 取前num个元素                                                |                                  |
+| takeOrdered(num, ordering)          | 按照指定规则排序后取前num个元素                              |                                  |
+| takeSample                          | 采样                                                         |                                  |
+| foreach(func)                       |                                                              |                                  |
 
 #### 1.3 向Spark传递函数
 大部分转化操作和一部分行动操作都需要依赖用户传递的函数来计算。有几个注意的地方：
@@ -168,21 +186,23 @@ PairRDD 键值对RDD，元素为Java或Scala中的Tuple2对象或者python中的
 > 注意在Java中没有二元组类型，需要使用scala.Tuple2()来创建
 
 ##### PairRDD的转化操作
-| 函数名                      | 作用                         |
-|--------------------------|----------------------------|
-| reduceByKey              | 把相同的key汇总到一起进行reduce操作     |
-| groupByKey               | 把相同key的value分组             |
-| combineByKey             | 基于key进行聚合，功能特点跟aggregate很像 |
-| mapValues                | 只对value执行操作                |
-| flatMapValues            | 只对value操作，跟flatMap类似       |
-| keys()                   | 返回仅包含key的RDD               |
-| values()                 | 返回仅包含value的RDD             |
-| sortByKey()              | 对元素按key排序                  |
-| rdd1.subtractByKey(rdd2) | 删掉rdd1中与rdd2的key相同的元素      |
-| rdd1.join(rdd2)          | 内连接                        |
-| rdd1.rightOutJoin(rdd2)  | 右外连接                       |
-| rdd1.leftOutJoin(rdd2)   | 左外连接                       |
-| rdd1.cogroup(rdd2)       | 将两个RDD具有相同key的value分组到一起   |
+| 函数名                   | 作用                                                         |
+| ------------------------ | ------------------------------------------------------------ |
+| reduceByKey              | 把相同的key汇总到一起进行reduce操作                          |
+| groupByKey               | 把相同key的value分组                                         |
+| combineByKey             | 基于key进行聚合，功能特点跟aggregate很像                     |
+| aggregateByKey           | 将数据按照不同的规则分别进行**分区内**计算和**分区间**计算   |
+| foldByKey                | 当分区内计算规则和分区间计算规则相同时，aggregateByKey 就可以简化为foldByKey |
+| mapValues                | 只对value执行操作                                            |
+| flatMapValues            | 只对value操作，跟flatMap类似                                 |
+| keys()                   | 返回仅包含key的RDD                                           |
+| values()                 | 返回仅包含value的RDD                                         |
+| sortByKey()              | 对元素按key排序                                              |
+| rdd1.subtractByKey(rdd2) | 删掉rdd1中与rdd2的key相同的元素                              |
+| rdd1.join(rdd2)          | 内连接                                                       |
+| rdd1.rightOutJoin(rdd2)  | 右外连接                                                     |
+| rdd1.leftOutJoin(rdd2)   | 左外连接                                                     |
+| rdd1.cogroup(rdd2)       | 将两个RDD具有相同key的value分组到一起                        |
 
 combineByKey(createCombiner, mergeValue, mergeCombiners, partitioner) 执行细节
 - 执行过程
@@ -200,6 +220,26 @@ combineByKey(createCombiner, mergeValue, mergeCombiners, partitioner) 执行细�
 > 自定义分区的方式：
 > 1. 创建RDD时指定分区数，不指定的话，跟集群环境有关。比如本地运行spark时 local[3] 就是3个分区。比如 sc.parallelize(...., 3) 指定了三个分区，不加3则是默认分区数
 > 2. 修改原有的RDD分区，通过coalesce(),repartition()也可以，只是性能比coalesce()差
+
+
+
+> reduceByKey 和 groupByKey 的区别？
+>
+> - shuffle视角：两个算子都需要shuffle
+>   - reduceByKey可以在shuffle前对分区内相同key的数据进行预聚合(combine)，这样或减少落盘的数据量。reduceByKey性能比较高
+>   - groupByKey只是分组，数据量不会减少。
+> - 功能视角：
+>   - reduceByKey 包括分区和聚合的功能
+>   - groupByKey 只能分组
+
+> reduceByKey、foldByKey、aggregateByKey、combineByKey 的区别？
+>
+> - reduceByKey：相同key的第一个数据不进行任何计算，分区内和分区间计算规则相同
+> - foldByKey：相同key的第一个数据和初始值进行分区内计算，分区内和分区间计算规则一致
+> - aggregateByKey：相同key的第一个数据和初始值进行分区内计算，分区内和分区间计算规则可以不相同
+> - combineByKey：当计算时，如果数据结构不满足要求，可以让第一个数据转化结构。分区间和分区内计算规则不相同
+
+
 
 ##### PairRDD的行动操作
 | 函数名            | 说明            |
@@ -339,4 +379,22 @@ sampleStdev() | 采样的标准差
 
 #### 4.5 Spark Shuffle
 与MapReduce的Sort-based Shuffle不同，Spark的实现有两种：Hash Shuffle和 Sort-based Shuffle
+
 ##### Hash Shuffle
+
+
+
+
+
+### RDD序列化
+
+闭包检查：
+
+- 从计算的角度，算子以外的代码都是在Driver端执行，算子里的代码都是在Executor端执行。
+- Scala函数式编程中，会导致算子内经常要用到算子外的数据，这就形成了闭包
+- 如果算子外的数据无法序列化，就无法传给Executor端执行。因此执行计算任务之前需要检测闭包内对象是否进行序列化
+
+> Scala2.12后闭包编译方式发生了改变
+
+对方法和属性序列化
+

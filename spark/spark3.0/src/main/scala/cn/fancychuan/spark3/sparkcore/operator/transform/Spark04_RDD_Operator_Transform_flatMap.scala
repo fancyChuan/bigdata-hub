@@ -1,9 +1,9 @@
-package cn.fancychuan.spark3.sparkcore.operator
+package cn.fancychuan.spark3.sparkcore.operator.transform
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-object Spark04_RDD_Operator_Transform1 {
+object Spark04_RDD_Operator_Transform_flatMap {
 
     def main(args: Array[String]): Unit = {
 
@@ -11,17 +11,15 @@ object Spark04_RDD_Operator_Transform1 {
         val sc = new SparkContext(sparkConf)
 
         // TODO 算子 - flatMap
-        val rdd: RDD[String] = sc.makeRDD(List(
-            "Hello Scala", "Hello Spark"
+        val rdd: RDD[List[Int]] = sc.makeRDD(List(
+            List(1, 2), List(3, 4)
         ))
-
-        val flatRDD: RDD[String] = rdd.flatMap(
-            s => {
-                s.split(" ")
+        val flatRDD: RDD[Int] = rdd.flatMap(
+            list => {
+                list
             }
         )
         flatRDD.collect().foreach(println)
-
 
 
         sc.stop()
