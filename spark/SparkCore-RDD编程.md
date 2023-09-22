@@ -396,5 +396,9 @@ sampleStdev() | 采样的标准差
 
 > Scala2.12后闭包编译方式发生了改变
 
-对方法和属性序列化
 
+
+序列化框架：
+
+- Spark2.0 开始支持另外一种Kryo 序列化机制。Kryo 速度是 Serializable 的 10 倍（Java序列化比较重）
+- 注意：使用Kryo 序列化，也要继承Serializable 接口
