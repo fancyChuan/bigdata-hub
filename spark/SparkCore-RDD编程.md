@@ -401,4 +401,19 @@ sampleStdev() | 采样的标准差
 序列化框架：
 
 - Spark2.0 开始支持另外一种Kryo 序列化机制。Kryo 速度是 Serializable 的 10 倍（Java序列化比较重）
+- 当 RDD 在 Shuffle 数据的时候，简单数据类型、数组和字符串类型已经在 Spark 内部使用 Kryo 来序列化
 - 注意：使用Kryo 序列化，也要继承Serializable 接口
+
+> 示例：[serializable_Kryo.scala](spark/spark3.0/src/main/scala/cn/fancychuan/spark3/sparkcore/serializable_Kryo.scala)
+
+
+
+### RDD依赖
+
+作用：RDD 的Lineage 会记录RDD 的元数据信息和转换行为，当该RDD 的部分分区数据丢失时，它可以根据这些信息来重新运算和恢复丢失的数据分区
+
+
+
+宽依赖（shuffle依赖）：父RDD的一个分区被多个子RDD的分区依赖，会导致shuffle。一多对应。一个生多个。
+
+窄依赖：父RDD的一个分区最多被一个子RDD的分区依赖。一一对应。独生。

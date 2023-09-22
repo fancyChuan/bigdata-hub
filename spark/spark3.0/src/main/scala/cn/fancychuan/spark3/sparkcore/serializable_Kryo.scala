@@ -15,7 +15,8 @@ object serializable_Kryo {
       // 替换默认的序列化机制
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       // 注册需要使用 kryo 序列化的自定义类
-      .registerKryoClasses(Array(classOf[Searcher])) val sc = new SparkContext(conf)
+      .registerKryoClasses(Array(classOf[Searcher]))
+        val sc = new SparkContext(conf)
         val rdd: RDD[String] = sc.makeRDD(Array("hello world", "hello atguigu", "atguigu", "hahah"), 2)
 
         val searcher = new Searcher("hello")
