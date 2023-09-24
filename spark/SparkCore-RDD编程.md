@@ -250,14 +250,7 @@ combineByKey(createCombiner, mergeValue, mergeCombiners, partitioner) 执行细�
 
 对于二元操作，结果RDD的分区方式取决于父RDD。当两个父RDD都有分区方式时取决于第一个，否则取决于有分区方式的那个。默认是使用哈希分区，分区的数量与操作的并行度一样。
 
-#### 2.3 自定义分区方式
-Spark提供HashPartitioner和RangePartitioner，同时允许自定义Partitioner对象，可以让用户利用领域知识进一步减少通信开销。
-
-实现：继承org.apache.spark.Partitioner并实现三个方法
-- numPartitions： 返回创建的分区数
-- getPartition： 返回给定key的分区编号
-- equals：很重要，Spark需要用这个方法来判断分区器对象是否和其他分区器实例相同，这样Spark才能判断两个RDD的分区方式是否相同
-> 注意：若算法依赖java的hashCode()，这个方法可能会返回负数，需要确保getPartition()永远返回一个非负数
+> 
 
 
 ### 3. 数据的读取与保存
@@ -479,3 +472,21 @@ sampleStdev() | 采样的标准差
 - Cache缓存，只是将数据保存起来，不切断血缘依赖，checkpoint会切断血缘依赖（相当于换了数据源）
 - Cache缓存通常存在磁盘、内存等地方，可靠性低。checkpoint数据通常存在HDFS上，可靠性高
 - 建议对checkpoint()的RDD 使用Cache 缓存，这样 checkpoint 的 job 只需从 Cache 缓存中读取数据即可，否则需要再从头计算一次RDD
+
+
+
+### 自定义RDD分区
+
+- Spark提供HashPartitioner和RangePartitioner，同时允许自定义Partitioner对象，可以让用户利用领域知识进一步减少通信开销。
+  - Hash是默认的分区器：对于给定的key，计算器hashcode然后除以分区个数取余
+  - Range 分区：将一定范围内的数据映射到一个分区中，尽量保证每个分区数据均匀，而且分区间有序
+
+- 分区器直接决定了RDD 中分区的个数、RDD 中每条数据经过Shuffle 后进入哪个分区，进而决定了Reduce 的个数
+  - 只有Key-Value类型的RDD才有分区器，非KV类型RDD的分区器是None
+
+- 自定义分区器的实现：继承org.apache.spark.Partitioner并实现三个方法
+  - numPartitions： 返回创建的分区数
+  - getPartition： 返回给定key的分区编号
+  - equals：很重要，Spark需要用这个方法来判断分区器对象是否和其他分区器实例相同，这样Spark才能判断两个RDD的分区方式是否相同
+
+  > 注意：若算法依赖java的hashCode()，这个方法可能会返回负数，需要确保getPartition()永远返回一个非负数
