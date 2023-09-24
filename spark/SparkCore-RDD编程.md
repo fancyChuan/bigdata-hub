@@ -435,5 +435,18 @@ sampleStdev() | 采样的标准差
 
 #### RDD任务划分
 
+任务划分有几个概念：Application、Job、Stage 和 Task
+
+- Application：初始化一个SparkContext，就会生成一个Application
+- Job：一个action算子就会生成一个job
+- Stage：Stage 等于宽依赖(ShuffleDependency)的个数加 1
+- Task：一个stage阶段中，最后一个RDD的分区个数就是task的个数
+
+注意：Application->Job->Stage->Task 每一层都是 1 对 n 的关系
+
+![image](img/RDD任务划分示意图.jpg)
+
+![image](img/RDD任务划分源码.png)
+
 
 
