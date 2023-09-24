@@ -162,20 +162,7 @@ val rdd1 = sc.makeRDD(Array(1,2,3,4,5))
 | PairFlatMapFunction<T, K, V> | Function<T, Iterator<Tuple2<K, V>>> | 用于rdd.flatMapToPair()生成PairRDD<K,V> |
 | PairMapFunction<T, K, V>     | Function<T, Tuple2<K, V>>           | 用于rdd.mapToPair()生成PairRDD<K,V>     |
 
-#### 1.4 持久化（缓存）
-- persist() 缓存，unpersist() 取消缓存
-> cache是persist的一种简化方法，cache底层调用的是persist的无参方法，同时使用的MEMORY_ONLY模式
-- 缓存级别： 类型定义在StorageLevel中
-
-| 级别                  | 含义解释                                                             |
-|---------------------|------------------------------------------------------------------|
-| MEMORY_ONLY         | 这是默认的持久化策略，使用cache()方法时，实际就是使用的这种持久化策略：使用未序列化的Java对象格式，将数据保存在内存中 |
-| MEMORY_ONLY_SER     | 含义同MEMORY_ONLY，只是会对RDD中的数据进行序列化，更省内存，能避免频繁GC                     |
-| MEMORY_AND_DISK     | 内存存不下则溢写到磁盘                                                      |
-| MEMORY_AND_DISK_SER | 内存存不下则溢写到磁盘，进行序列化                                                |
-| DISK_ONLY           | 只放在磁盘                                                            |
-
-> 在存储级别后面加个 "_2" 可以把持久化数据存为两份
+#### 
 
 #### 1.5 键值对操作
 PairRDD 键值对RDD，元素为Java或Scala中的Tuple2对象或者python中的元组
@@ -450,3 +437,45 @@ sampleStdev() | 采样的标准差
 
 
 
+### RDD持久化
+
+#### Cache/Persist缓存
+
+- persist() 缓存，unpersist() 取消缓存
+
+> cache是persist的一种简化方法，cache底层调用的是persist的无参方法，同时使用的MEMORY_ONLY模式(缓存在JVM的堆内存中)
+
+- cache操作会增加血缘关系，但不会该原来的血缘关系
+- 持久化操作必须在行动算子执行时进行
+
+用途：
+
+- 数据重用
+- 在数据执行较长，或者数据比较重要的时候
+
+
+
+#### 缓存级别
+
+类型定义在StorageLevel中
+
+| 级别                | 含义解释                                                     |
+| ------------------- | ------------------------------------------------------------ |
+| MEMORY_ONLY         | 这是默认的持久化策略，使用cache()方法时，实际就是使用的这种持久化策略：<br />使用未序列化的Java对象格式，将数据保存在内存中 |
+| MEMORY_ONLY_SER     | 含义同MEMORY_ONLY，只是会对RDD中的数据进行序列化，更省内存，能避免频繁GC |
+| MEMORY_AND_DISK     | 内存存不下则溢写到磁盘                                       |
+| MEMORY_AND_DISK_SER | 内存存不下则溢写到磁盘，进行序列化                           |
+| DISK_ONLY           | 只放在磁盘                                                   |
+
+> 在存储级别后面加个 "_2" 可以把持久化数据存为两份
+
+#### checkpoint检查点
+
+- 将RDD 中间结果写入磁盘
+- 对 RDD 进行 checkpoint 操作并不会马上被执行，必须执行 Action 操作才能触发
+
+#### 缓存和检查点的区别
+
+- Cache缓存，只是将数据保存起来，不切断血缘依赖，checkpoint会切断血缘依赖（相当于换了数据源）
+- Cache缓存通常存在磁盘、内存等地方，可靠性低。checkpoint数据通常存在HDFS上，可靠性高
+- 建议对checkpoint()的RDD 使用Cache 缓存，这样 checkpoint 的 job 只需从 Cache 缓存中读取数据即可，否则需要再从头计算一次RDD
