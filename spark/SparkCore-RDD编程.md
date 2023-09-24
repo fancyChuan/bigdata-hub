@@ -410,10 +410,30 @@ sampleStdev() | 采样的标准差
 
 ### RDD依赖
 
+#### 宽窄依赖
+
 作用：RDD 的Lineage 会记录RDD 的元数据信息和转换行为，当该RDD 的部分分区数据丢失时，它可以根据这些信息来重新运算和恢复丢失的数据分区
 
 
 
 宽依赖（shuffle依赖）：父RDD的一个分区被多个子RDD的分区依赖，会导致shuffle。一多对应。一个生多个。
 
-窄依赖：父RDD的一个分区最多被一个子RDD的分区依赖。一一对应。独生。
+窄依赖：父RDD的一个分区最多被一个子RDD的分区依赖。一 一对应。独生。
+
+
+
+#### RDD阶段划分
+
+- 一个shuffle依赖会创建一个ShuffleMapStage
+  - RDD中存在shuffle依赖时，阶段会自动增加一个
+  - 阶段的数量=“shuffle依赖”的数量+1
+- ResultStage只有一个，最后需要执行的阶段
+
+![image](img/阶段划分源码1.png)
+
+![image](img/阶段划分源码2.png)
+
+#### RDD任务划分
+
+
+
