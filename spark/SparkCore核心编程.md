@@ -1,9 +1,10 @@
-## RDD编程
+# SparkCore 编程
 Spark 计算框架为了能够进行高并发和高吞吐的数据处理，封装了三大数据结构，用于处理不同的应用场景。三大数据结构分别是
 - RDD：弹性分布式数据集（用于数据处理的核心模型）
 - 累积器：分布式共享只写变量
 - 广播变量：分布式共享只读变量
 
+## 一、RDD编程
 从计算的角度上讲，数据处理过程中需要计算资源（内存和CPU）和计算模型（逻辑）。执行时需要将计算资源和计算模型进行协调和整合。Spark框架在执行时先申请资源，
 再将应用程序的处理逻辑拆分成一个个小的计算任务，把发放到各个执行节点。
 
@@ -252,44 +253,7 @@ combineByKey(createCombiner, mergeValue, mergeCombiners, partitioner) 执行细�
 
 > 
 
-
-### 3. 数据的读取与保存
-
-spark支持的一些常见的格式
-- 文件文件
-    - sc.textFile()
-    - sc.wholeTextFiles()
-        -  得到一个PairRDD，文件名为key，整个文件内容为value
-        - wholeTextFiles对于大量的小文件效率比较高，大文件效果没有那么高
-        - 一些文件系统的路径名采用通配符的形式效果比一个一个文件名添加上去更高效
-    - saveAsTextFile()，spark将传入的路径作为目录对待
-- JSON
-    - 注意是否有跨行json
-    - 如果构建json解析器的开销比较大，那么可以使用mapPartitions()来重用解析器
-    - 对于大规模数据，格式错误是家常便饭，一般会跳过解析出错的数据，但需要使用累加器跟踪错误的个数
-    - 性能还不错，使用比较简单的常用库： python使用自带的json，而Java和Scala则使用Jackson
-- CSV
-    - 不支持嵌套字段，需要手动组合和分解特定的字段
-    - 使用的库：python自带的csv，java、scala使用opencsv库（hadoop的CSVInputFormat也可以读取，只不过不支持换行符）
-    
-- SequenceFile 用于键值对数据的常见Hadoop文件格式
-    - 由没有对象关系结构的键值对文件组成
-- Protocol buffers 快速节约空间的跨语言格式
-- 对象文件 用来将Spark作业中的数据存储下来以让共享的代码读取。改变类的时候会它会失效，因为依赖于java序列化
-    - 看起来像是SequenceFile的简单封装，允许只包含值的RDD
-    - 用java序列化写出（和SequenceFile不一样），有可能相当慢
-    - objectFile() saveAsObjectFile()
-    - 在python中无法使用，作为代替使用：saveAsPickleFile() pickleFile()
-
-文件压缩
-
-文件系统
-- 本地/“常规”文件系统
-- HDFS
-
-SparkSQL中的结构化数据
-- Hive，需要安装配置好hive，然后把hiv
-- JSON，不需要安装好hive
+- 
 
 
 ### 4. Spark编程进阶
@@ -482,11 +446,63 @@ sampleStdev() | 采样的标准差
   - Range 分区：将一定范围内的数据映射到一个分区中，尽量保证每个分区数据均匀，而且分区间有序
 
 - 分区器直接决定了RDD 中分区的个数、RDD 中每条数据经过Shuffle 后进入哪个分区，进而决定了Reduce 的个数
-  - 只有Key-Value类型的RDD才有分区器，非KV类型RDD的分区器是None
-
+  
+- 只有Key-Value类型的RDD才有分区器，非KV类型RDD的分区器是None
+  
 - 自定义分区器的实现：继承org.apache.spark.Partitioner并实现三个方法
   - numPartitions： 返回创建的分区数
   - getPartition： 返回给定key的分区编号
   - equals：很重要，Spark需要用这个方法来判断分区器对象是否和其他分区器实例相同，这样Spark才能判断两个RDD的分区方式是否相同
 
   > 注意：若算法依赖java的hashCode()，这个方法可能会返回负数，需要确保getPartition()永远返回一个非负数
+
+
+
+### 数据读取与保存
+
+可以从2个维度来理解：文件格式、文件系统
+
+#### 文件格式
+
+spark支持的一些常见的格式
+
+- 文件文件
+  - sc.textFile()
+  - sc.wholeTextFiles()
+    -  得到一个PairRDD，文件名为key，整个文件内容为value
+    -  wholeTextFiles对于大量的小文件效率比较高，大文件效果没有那么高
+    -  一些文件系统的路径名采用通配符的形式效果比一个一个文件名添加上去更高效
+  - saveAsTextFile()，spark将传入的路径作为目录对待
+- JSON
+  - 注意是否有跨行json
+  - 如果构建json解析器的开销比较大，那么可以使用mapPartitions()来重用解析器
+  - 对于大规模数据，格式错误是家常便饭，一般会跳过解析出错的数据，但需要使用累加器跟踪错误的个数
+  - 性能还不错，使用比较简单的常用库： python使用自带的json，而Java和Scala则使用Jackson
+- CSV
+  - 不支持嵌套字段，需要手动组合和分解特定的字段
+  - 使用的库：python自带的csv，java、scala使用opencsv库（hadoop的CSVInputFormat也可以读取，只不过不支持换行符）
+
+- SequenceFile 用于键值对数据的常见Hadoop文件格式
+  - 由没有对象关系结构的键值对文件组成
+- Protocol buffers 快速节约空间的跨语言格式
+- 对象文件 用来将Spark作业中的数据存储下来以让共享的代码读取。改变类的时候会它会失效，因为依赖于java序列化
+  - 看起来像是SequenceFile的简单封装，允许只包含值的RDD
+  - 用java序列化写出（和SequenceFile不一样），有可能相当慢
+  - objectFile() saveAsObjectFile()
+  - 在python中无法使用，作为代替使用：saveAsPickleFile() pickleFile()
+
+SparkSQL中的结构化数据
+
+- Hive，需要安装配置好hive，然后把hive
+- JSON，不需要安装好hive
+
+#### 文件系统
+
+- 本地/“常规”文件系统
+- HDFS
+- HBase
+- 数据库
+
+#### 文件压缩
+
+- 
