@@ -1,4 +1,4 @@
-package cn.fancychuan.spark3.sparkcore.acc
+package cn.fancychuan.spark3.sparkcore.accumulator
 
 import org.apache.spark.{SparkConf, SparkContext}
 

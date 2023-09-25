@@ -1,8 +1,8 @@
-package cn.fancychuan.spark3.sparkcore.acc
+package cn.fancychuan.spark3.sparkcore.accumulator
 
 import org.apache.spark.{SparkConf, SparkContext}
 
-object Spark03_Acc_多记少记 {
+object Spark02_Acc_longAccumulator {
 
     def main(args: Array[String]): Unit = {
 
@@ -18,20 +18,14 @@ object Spark03_Acc_多记少记 {
         //sc.doubleAccumulator
         //sc.collectionAccumulator
 
-        val mapRDD = rdd.map(
+        rdd.foreach(
             num => {
                 // 使用累加器
                 sumAcc.add(num)
-                num
             }
         )
 
         // 获取累加器的值
-        // 少加：转换算子中调用累加器，如果没有行动算子的话，那么不会执行
-        // 多加：转换算子中调用累加器，如果没有行动算子的话，那么不会执行
-        // 一般情况下，累加器会放置在行动算子进行操作
-        mapRDD.collect()
-        mapRDD.collect()
         println(sumAcc.value)
 
         sc.stop()
