@@ -3,6 +3,10 @@ package cn.fancychuan.spark3.sparkcore.practice
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
+/**
+ * 将RDD(品类ID, 点击数量) => (品类ID, (点击数量, 0, 0))
+ * 然后使用union算子，避免使用cogroup
+ */
 object Spark02_Req1_HotCategoryTop10Analysis1 {
 
     def main(args: Array[String]): Unit = {
