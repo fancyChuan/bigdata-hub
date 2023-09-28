@@ -161,3 +161,17 @@ set spark.executor.memory=20g;
 
 
 
+## 2、SparkSQL核心编程
+
+学习重点：使用DataFrame和DataSet进行编程，了解它们之间的关系和相互转换
+
+### 编程起点：上下文环境对象
+
+- SparkCore中，主要是SparkContext
+- 老版本中，SparkSQL提供两种起点：
+  - 一个叫 SQLContext，用于 Spark自己提供的SQL 查询；
+  - 一个叫HiveContext，用于连接 Hive 的查询
+- 新版本中，统一为SparkSession，实质上是SQLContext和HiveContext的组合，所以它两能用的API在SparkSession同样能用
+  - SparkSession内部封装了SparkContext，计算实际上是SparkContext完成的
+  - spark-shell中，SparkSession被命名为spark，也就是可以在命令行中直接使用spark来使用SparkSession
+
