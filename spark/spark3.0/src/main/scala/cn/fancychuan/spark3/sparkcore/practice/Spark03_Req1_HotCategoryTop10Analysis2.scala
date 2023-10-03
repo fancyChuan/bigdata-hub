@@ -3,6 +3,10 @@ package cn.fancychuan.spark3.sparkcore.practice
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
+/**
+ * 将原始数据直接处理成：(品类ID, (点击数量, 0, 0))
+ * 然后在map的过程中直接计算，使用flatMap
+ */
 object Spark03_Req1_HotCategoryTop10Analysis2 {
 
     def main(args: Array[String]): Unit = {

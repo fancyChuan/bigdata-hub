@@ -543,3 +543,24 @@ SparkSQL中的结构化数据
 
 ## 四、实践
 
+### 需求实现
+
+
+
+### 工程化代码
+
+三层架构：
+- 控制层：controller，负责调度
+- 服务层：service
+- 持久层：DAO
+
+
+
+代码分包如下：
+- application
+- bean：存放实体类
+- common
+- controller：
+- dao：持久层
+- service
+- util

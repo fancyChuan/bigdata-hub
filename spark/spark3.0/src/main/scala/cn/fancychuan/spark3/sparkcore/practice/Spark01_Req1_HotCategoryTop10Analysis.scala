@@ -3,6 +3,15 @@ package cn.fancychuan.spark3.sparkcore.practice
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
+/**
+ * 1. 使用三个RDD分别代表指标
+ * 2. 使用cogroup连接三个RDD
+ * 3. 再对值处理
+ *
+ * 这种实现方式的问题：
+ * 1. actionRDD被重复使用
+ * 2. cogroup可能会存在shuffle，性能可能比较低
+ */
 object Spark01_Req1_HotCategoryTop10Analysis {
 
     def main(args: Array[String]): Unit = {
