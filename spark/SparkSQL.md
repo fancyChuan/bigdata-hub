@@ -38,9 +38,7 @@ Dataset<Employee> ds = spark.read().json(path).as(employeeEncoder);
 ds.show();
 ```
 
-- 临时视图：df.createOrReplaceTempView("people") 是会话范围生效的，当前session失效视图也不可用
-- 全局视图：df.createGlobalTempView("people") 被绑定到 global_temp 类似于库，通过global_temp.people调用
-> 是整个application生效的，还是一直存在？？ 
+
 
 
 DataFrame/Datasets 结构化数据，是需要有结构的描述信息Schema，也就是元数据，创建方式参见 [SchemaTest.java](https://github.com/fancyChuan/bigdata-learn/blob/master/spark/src/main/java/learningSpark/sparkSQL/SchemaTest.java)
@@ -62,7 +60,7 @@ Encoder 动态生成代码以便spark各种操作，并在执行计划中做优�
 ```
 testDF = rdd.toDF("col1", "col2")
 ```
-- Dataset转DataFrame
+- Dataset转DataFrame。实际开发中，一般通过样例类/POJO类来将RDD转为DataFrame
 ```
 testDF = testDS.toDF
 ```
@@ -70,22 +68,16 @@ testDF = testDS.toDF
 ```
 testDS = testDF.as[Sechma]
 ```
-- DataFrame/Dataset转RDD
+- DataFrame/Dataset转RDD。（这两种类型实际上都是对RDD的封装，因此可以直接获取内部的RDD）
 ```
+// 注意: 此时得到的RDD存储类型为Row
 val rdd1 = testDF.rdd
 val rdd2 = testDS.rdd
 ```
 
 
+
 #### 聚合操作
-常用的聚合操作【java写法】
-- 分组计数 df.groupBy("column").count().show()
-    - 结果按指定字段排序 df.groupBy("column").count().sort("count") // 计数默认字段名为 "count"
-    - 结果按指定字段排序 df.groupBy("column").count().sort(col("count").desc()) 
-    - 字段重命名       df.groupBy("column").count().withColumnRenamed("count", "cnt").sort("cnt")
-    - 字段重命名       df.groupBy("column").agg(count).sort("cnt")
-    - 直接使用SQL解决： spark.sql("select column, count(1) cnt from df group by column order by cnt desc")
-    
 
 用于Row是无类型的自定义聚合操作
 - 需要继承 UserDefinedAggregateFunction 抽象类并实现方法
@@ -165,7 +157,7 @@ set spark.executor.memory=20g;
 
 学习重点：使用DataFrame和DataSet进行编程，了解它们之间的关系和相互转换
 
-### 编程起点：上下文环境对象
+### 2.1 编程起点：上下文环境对象
 
 - SparkCore中，主要是SparkContext
 - 老版本中，SparkSQL提供两种起点：
@@ -175,3 +167,90 @@ set spark.executor.memory=20g;
   - SparkSession内部封装了SparkContext，计算实际上是SparkContext完成的
   - spark-shell中，SparkSession被命名为spark，也就是可以在命令行中直接使用spark来使用SparkSession
 
+### 2.2 DataFrame
+
+#### 创建
+
+- 从Spark数据源进行创建，支持的文件格式有以下这些：
+
+```
+scala> spark.read.
+csv   format   jdbc   json   load   option   options   orc   parquet   schema   table   text   textFile
+```
+
+- 从RDD进行转换
+- 从Hive Table进行查询返回
+
+#### SQL语法
+
+要使用SQL风格来查询数据，必须要有临时视图或者全局视图
+
+- 临时视图：df.createOrReplaceTempView("people") 是会话范围生效的，当前session失效视图也不可用
+- 全局视图：df.createGlobalTempView("people") 被绑定到 global_temp 类似于库，通过global_temp.people调用
+
+> 是整个application生效的
+
+```
+scala> spark.sql("SELECT * FROM global_temp.people").show()
++---+--------+
+|age|username|
++---+--------+
+| 20|zhangsan|
+| 30|	lisi|
+| 40|	wangwu|
++---+--------+
+
+scala> spark.newSession().sql("SELECT * FROM global_temp.people").show()
++---+--------+
+|age|username|
++---+--------+
+| 20|zhangsan|
+| 30|	lisi|
+| 40|	wangwu|
++---+--------+
+```
+
+#### DSL语法
+
+DataFrame提供了一个DSL去管理结构化的数据，可以在Scala、Java、Python中使用DSL，使用DSL语法风格就不必去创建临时视图了
+
+
+
+注意:涉及到运算的时候, 每列都必须使用$, 或者采用引号表达式：单引号+字段名
+
+```
+scala> df.printSchema root
+|-- age: Long (nullable = true)
+|-- username: string (nullable = true)
+
+scala> df.select($"username",$"age" + 1).show()
+scala> df.select('username, 'age + 1).show()
+# 过滤age>30
+scala> df.filter($"age">30).show
++---+---------+
+|age| username|
++---+---------+
+| 40|	wangwu|
++---+---------+
+# 聚合汇总
+scala> df.groupBy("age").count.show
++---+-----+
+|age|count|
++---+-----+
+| 20|	1|
+| 30|	1|
+| 40|	1|
++---+-----+
+
+```
+
+##### 聚合操作
+
+常用的聚合操作【java写法】
+
+- 分组计数 df.groupBy("column").count().show()
+- 结果按指定字段排序 df.groupBy("column").count().sort("count") // 计数默认字段名为 "count"
+- 结果按指定字段排序 df.groupBy("column").count().sort(col("count").desc()) 
+- 字段重命名       df.groupBy("column").count().withColumnRenamed("count", "cnt").sort("cnt")
+- 字段重命名       df.groupBy("column").agg(count).sort("cnt")
+- 直接使用SQL解决： spark.sql("select column, count(1) cnt from df group by column order by cnt desc")
