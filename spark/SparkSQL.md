@@ -15,17 +15,45 @@ spark用于处理**结构化数据**的一个模块，提供了除数据之外�
 - SparkSQL前身是Shark，基于Hive所开发的工具，修改了Hive架构中的内存管理、物理计划、执行三个模块，使得能够运行在Spark引擎上
 - Shark对于HIve有太多的依赖，制约了Spark的发展。2014年6月1日开始Shark停止更新，全力发展SparkSQL
 
-### Datasets/DataFrame/RDD之间的区别与联系
+### Datasets/DataFrame/RDD之间的关系
 
-> DataFrame是一个分布式数据容器，类似于传统数据库中的二维表格
+#### 版本上
+
+- Spark1.0 => RDD
+
+- Spark1.3 => DataFrame
+
+- Spark1.6 => Dataset
+
+  > 在后期的 Spark 版本中，DataSet 有可能会逐步取代RDD和 DataFrame 成为唯一的API 接口
+
+
+
+#### 相同点
+
+- 都是Spark下的分布式弹性数据集，为处理超大型数据提供便利
+- 三者都有惰性机制
+- 三者都有共同的算子函数
+- 三者都会根据Spark的内存情况自动缓存运算。即使数据量非常大，也不用担心内存溢出
+- 三者都有partition的概念
+- DataFrame 和DataSet 均可使用模式匹配获取各个字段的值和类型
+
+#### 区别和联系
+
 - RDD是最底层的抽象，其他两个都是基于RDD做了更高级的封装，更加友好易用
 - DataFrame的概念来源于python的pandas，比RDD多了表头，也叫SchemaRDD
     - DataFrame也是懒执行的，性能上比RDD高，主要原因：
       - 使用了优化器Catalyst进行针对性优化：比如filter下推、裁剪等（减少了数据读取）
       - RDD只能在stage层面进行简单、通用的流水线优化
     - 跟hive类型，也支持嵌套数据结构（struct、array、map）
+    - DataFrame是一个分布式数据容器，类似于传统数据库中的二维表格
+    - DataFrame 每一行的类型固定为Row，需要通过解析才能获取每一列的值
+    - DataFrame 与DataSet 一般不与 spark mllib 同时使用
+    - DataFrame 与DataSet 均支持 SparkSQL 的操作
+    - DataFrame 与DataSet 支持一些特别方便的保存方式，比如保存成 csv
 - Datasets是spark1.6版本以后提出，提供了强类型支持，是DataFrame的拓展（DataFrame只知道字段不知道字段的类型），是spark最新的数据抽象。
     - 既有类型安全检查，也具有DataFrame的查询优化特性
+    - Dataset 和DataFrame 拥有完全相同的成员函数，区别只是没一行的数据类型不同
     - DataFrame是Dataset的特例 DataFrame = Dataset[Row] Row就是数据结构信息
     - 也会经过优化器Catalyst优化
     - 可以和java bean结合，在编译时就能检查出其他两个在运行才会发现的异常（因为不仅知道字段，还知道字段的类型）
@@ -51,24 +79,49 @@ Encoder 动态生成代码以便spark各种操作，并在执行计划中做优�
 
 ### Datasets/DataFrame/RDD相互转换
 
-- RDD转为Dataset：
-    - 利用反射获取Schema信息
-    - 指定Schema信息
-        - 当java bean无法被使用时，需要指定，比如RDD的元素是字符串
-        - 使用DataTypes创建Schema信息
-- RDD转DataFrame  
+<img src="img/RDD、DataFrame和DataSet的关系.png" style="zoom:80%;" />
+
+#### RDD转为Dataset
+
+SparkSQL 能够自动将包含有 case 类的RDD 转换成DataSet，case 类定义了 table 的结构，case 类属性通过反射变成了表的列名。Case 类可以包含诸如 Seq 或者 Array 等复杂的结构
+
+- 利用反射获取Schema信息
+
+- 指定Schema信息
+    - 当java bean无法被使用时，需要指定，比如RDD的元素是字符串
+    - 使用DataTypes创建Schema信息
+
+```
+scala> case class User(name:String, age:Int) defined class User
+
+scala> sc.makeRDD(List(("zhangsan",30), ("lisi",49))).map(t=>User(t._1, t._2)).toDS
+res11: org.apache.spark.sql.Dataset[User] = [name: string, age: int]
+
+```
+
+#### RDD转DataFrame  
+
 ```
 testDF = rdd.toDF("col1", "col2")
 ```
-- Dataset转DataFrame。实际开发中，一般通过样例类/POJO类来将RDD转为DataFrame
+#### Dataset转DataFrame
+
+实际开发中，一般通过样例类/POJO类来将RDD转为DataFrame
+
 ```
 testDF = testDS.toDF
 ```
-- DataFrame转Dataset
+#### DataFrame转Dataset
+
+DataFrame其实是DataSet的特例，它们之间可以相互转换。
+
 ```
 testDS = testDF.as[Sechma]
 ```
-- DataFrame/Dataset转RDD。（这两种类型实际上都是对RDD的封装，因此可以直接获取内部的RDD）
+#### DataFrame/Dataset转RDD
+
+这两种类型实际上都是对RDD的封装，因此可以直接获取内部的RDD
+
 ```
 // 注意: 此时得到的RDD存储类型为Row
 val rdd1 = testDF.rdd
@@ -254,3 +307,37 @@ scala> df.groupBy("age").count.show
 - 字段重命名       df.groupBy("column").count().withColumnRenamed("count", "cnt").sort("cnt")
 - 字段重命名       df.groupBy("column").agg(count).sort("cnt")
 - 直接使用SQL解决： spark.sql("select column, count(1) cnt from df group by column order by cnt desc")
+
+
+
+### 2.3 DataSet
+
+DataSet 是具有强类型的数据集合，需要提供对应的类型信息
+
+#### 创建DataSet
+
+- 实际使用最多：使用样例类来创建DataSet
+
+- 使用基本类型的序列创建DataSet（实际用的很少）
+
+
+
+```
+scala> case class Person(name: String, age: Long) defined class Person
+
+scala> val caseClassDS = Seq(Person("zhangsan",2)).toDS()
+caseClassDS: org.apache.spark.sql.Dataset[Person] = [name: string, age: Long] scala> caseClassDS.show
++---------+---+
+|	name|age|
++---------+---+
+| zhangsan| 2|
++---------+---+
+
+# 使用基本类型的序列
+scala> val ds = Seq(1,2,3,4,5).toDS
+ds: org.apache.spark.sql.Dataset[Int] = [value: int]
+
+```
+
+
+
