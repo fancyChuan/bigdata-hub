@@ -33,6 +33,7 @@
         <module>hudi</module>
         <module>bitsail</module>
         <module>paimon</module>
+        <module>pulsar</module>
     </modules>
 
     <properties>
