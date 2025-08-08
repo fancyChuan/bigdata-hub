@@ -25,6 +25,7 @@ export PATH=$PATH:$JAVA_HOME/bin:$SCALA_HOME/bin
 
 # build
 export GRADLE_HOME=/usr/local/gradle
+
 export M2_HOME=/usr/local/maven
 export PATH=$PATH:$M2_HOME/bin:$GRADLE_HOME/bin
 
